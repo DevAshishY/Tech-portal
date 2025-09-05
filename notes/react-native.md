@@ -227,6 +227,13 @@ data on array is constant , it should same
 <Modal>: modal popup 
 <pressable>: because we need one button multple event so use , you can use attbuite onPress, onLongPress,onPressIn,onPressOut   (onLongPress will take 5 second)
 
+<StatusBar>
+On device top of show status bar
+
+<StatusBar> att -> backgroundColor, barstyle,hidden  
+
+you can change background, style,hidden
+
 
 ```
 
@@ -267,5 +274,72 @@ multiple css
 
 
 ## css Property
+textAlign, textAlignVertical,elavation (for box shadow)
+
+## Form Element
+TextInput
+
+## Life cycle method
+
+mounting
+updating
+unmounting
+
+## Check os
+{Plateform.os} : dedect OS
+
+## Plateform react version
+
+Palteform.constands.reactNativeVersion
+
+## NPM Package on Native
+
+### webView inside app
+
+```
+import WebView from 'react-native-webview';
+
+<WebView
+        source={{
+          uri: 'https://development.tms.bjshomedelivery.com/login?error=unauthorized%20access',
+        }}></WebView>
+
+```
+
+## Navigation on App
+
+type of nav, stack,drawer,tab
+
+stack:  when we click on signup then show a sccren this type says stack nav
+
+npm install @react-navigation/native-stack
+
+## npm pkg for nav 
+
+npm install @react-navigations/native
+
+## when install package tab or navigation or any package shpw error 
+
+npm start --clean-cache
+
+## LocalHost Api on react-native
+ipconfig /ifconfig :for ip address window /linux
+
+localHost api form backend not woking on emulaator so need to run with  ip address then api url will work 
+
+## change icon ()
+andriod (easyappicon generate and replace inside andriod)
 
 
+## Async stroage
+Async stroage : like local stroage 
+how can possible delete asyc data :delete cache of app or uninstall app or  remove by code 
+
+```
+install
+npm install react-native-async-stroage/async-stroage
+npm pod install
+```
+
+## Redux with saga 
+for async side effects handle need saga
