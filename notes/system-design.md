@@ -105,3 +105,45 @@ https://medium.com/redbus-in/what-is-interaction-to-next-paint-inp-9c35cd7b6539
 https://web.dev/articles/cls
 https://web.dev/articles/optimize-cls
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### HLD 
+
+**Step-1 Fundamental**
+ serverless vs serverful 
+ 
+horizontal and vertical scaling 
+
+what are the threads 
+
+what are the pages 
+
+how does internet work 
+
+**Step-2 Database**
+
+sql vs nonsql Dbs 
+
+In-memory dbs
+
+Data-Replication and Migration
+
+Data Partitioning 
+
+Sharding
