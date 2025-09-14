@@ -125,10 +125,48 @@ https://web.dev/articles/optimize-cls
 
 ### HLD 
 
-**Step-1 Fundamental**
- serverless vs serverful 
+### Step-1 Fundamental
+
+ **Serverless vs serverful** 
+
+ aws lamda is serverless and aws ec2 is serverful
+
+<img width="666" height="620" alt="image" src="https://github.com/user-attachments/assets/160523c3-3ef0-4095-ab76-e73b14c6e20a" />
+
+
  
-horizontal and vertical scaling 
+**horizontal and vertical scaling** 
+
+<img width="757" height="669" alt="image" src="https://github.com/user-attachments/assets/28601456-7267-4fe6-9bfc-aaba46bdf3d7" />
+
+```
+
+When you first launch an app, you might start with one server.
+
+Suppose you have 1,000 users, and everything works fine.
+
+As users grow, you can upgrade the same server by adding more RAM, CPU, or storage.
+
+This is called Vertical Scaling.
+
+Example: Going from a small laptop to a powerful gaming PC.
+
+But one server has limits — you can only upgrade it so much.
+
+Once you hit that limit, you need multiple servers to handle more users.
+
+Then you add a Load Balancer, which distributes traffic between servers.
+
+This is called Horizontal Scaling.
+
+Example: Instead of one big truck, you use multiple trucks to deliver packages.
+
+Summary
+
+Vertical Scaling: Upgrade one server (more power).
+
+Horizontal Scaling: Add more servers + use a load balancer.
+```
 
 what are the threads 
 
