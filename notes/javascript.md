@@ -532,6 +532,10 @@ because of issue in block scope and functional scope
 // object
 
 
+**65 Cumulative Layout Shift**
+is a metric used by Google to evaluate the performance and user experience of a website. With fonts, layout shift happens when the browser initially renders text in a fallback or system font and then swaps it out for a custom font once it has loaded. This swap can cause the text size, spacing, or layout to change, shifting elements around it.
+
+
 ## Examples
 
 
@@ -767,106 +771,6 @@ because of issue in block scope and functional scope
 
     Answer
 
-------------------------------------------
-**# T52 Implement a function that serializes a Javascript value into a JSON string—(asked in Meta)**
 
-    Answer
 
-------------------------------------------
-**# T53 Implement a function that performs a deep copy of a value, but also handles circular references—(asked in Adobe, Tekion, Navi)**
 
-    Answer
-
-------------------------------------------
-**# T54 Implement a function that determines if two values are deep equal—(asked in Google, Tekion)**
-
-    Answer
-
-------------------------------------------
-**# T55 Implement the functionality behaviour of Promise.any—(asked in Zepto)**
-
-    Answer
-
-------------------------------------------
-**# T56 Implement the functionality behaviour of Promise.allSettled—(asked in Tekion, Adobe)**
-
-    Answer
-
-------------------------------------------
-**# T57 Implement a function that returns a memoized version of a function which accepts a single argument—(asked in Meta, Intuit, Gameskraft)**
-
-    Answer
-
-------------------------------------------
-**# T58 Implement a function that deserializes a JSON string into a Javascript value—(asked in Meta)**
-
-    Answer
-
-------------------------------------------
-**# T59 Implement a class that can subscribe to and emit events that trigger attached callback functions—(asked in Flipkart, Jio, Adobe, Meta, Tekion)**
-
-    Answer
-
-------------------------------------------
-**# T60 Implement a debounce function that comes with a cancel method to cancel delayed invocations—(asked in Flipkart, MakeMyTrip, Google...)**
-
-    Answer
-
-------------------------------------------
-**# T61 Implement a function that recursively flattens an array into a single level deep—(asked in Disney+Hotstar, Rippling)**
-
-    Answer
-
-------------------------------------------
-**# T62 Implement a promisify function that allows the original function to override the return value—(asked in Amazon)**
-
-    Answer
-
-------------------------------------------
-**# T63 Implement a function to execute N async tasks in series—(asked in Jio, MakeMyTrip, Tekion)**
-
-    Answer
-
-------------------------------------------
-**# T64 Implement a function to execute N async tasks in parallel—(asked in Zepto, Paytm, BookMyShow)**
-
-    Answer
-
-------------------------------------------
-**# T65 Implement a function to execute N async tasks in race.**
-
-    Answer
-
-------------------------------------------
-**# T66 Implement a pipe function which chains N number of functions—(asked in Adobe)**
-
-    Answer
-
-------------------------------------------
-**# T67 Implement negative indexing in Array using Proxies**
-
-    Answer
-
-------------------------------------------
-**# T68 Implement Lodash \_.get method which gets value from the path—(asked in TikTok, Amazon, Quizzizz, MindTickle)**
-
-    Answer
-
-------------------------------------------
-**# T69 Implement your custom version of the call method which sets the "this" context—(asked in Meesho)**
-
-    Answer
-
-------------------------------------------
-**# T70 Implement throttling of promises which throttles API requests to max limit.**
-
-    Answer
-
-------------------------------------------
-**# T71 Implement memoizing or caching identical API requests—(asked in Facebook)**
-
-    Answer
-
-------------------------------------------
-
-    Answer
