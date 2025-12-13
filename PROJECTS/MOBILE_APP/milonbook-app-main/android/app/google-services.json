@@ -1,0 +1,28 @@
+{
+  "project_info": {
+    "project_number": "360127623363",
+    "project_id": "anju-60455",
+    "storage_bucket": "anju-60455.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:360127623363:android:59fbca5b7633478dcf7276",
+        "android_client_info": {
+          "package_name": "com.milonbook"
+        }
+      },
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdoOhEl50KBWonxF40zM7wjKKyRbdUVG8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
