@@ -772,5 +772,83 @@ is a metric used by Google to evaluate the performance and user experience of a 
     Answer
 
 
+**# GUESS OUTPUT**
+```
+T52 console.log(2 + '2' - '2');
+console.log(typeof typeof 1);
+console.log(3 > 2 > 1);
+let a = [1, 2, 3];
+let b = [1, 2, 3];
+console.log(a == b, a === b); false false
+Write a program for sum(1)(2)
+1.
+let n = 10;
+n = n + "1";
+n = n - "1";
+console.log(n);
+2.
+2; //problem
+const user = {
+  email: "my@email.com",
+  updateEmail: (email) => {
+    this.email = email;
+  },
+};
+user.updateEmail("new@email.com");
+console.log(user.email);
+// solution
+const user = {
+  email: "my@email.com",
+  updateEmail: function (email) {
+    this.email = email;
+  },
+};
 
+user.updateEmail("new@email.com");
+console.log(user.email);
+// solution
+const user = {
+  email: "my@email.com",
+  updateEmail: function (email) {
+    this.email = email;
+  },
+};
+user.updateEmail("new@email.com");
+console.log(user.email);
+3.
+setTimeout(() => console.log(1), 0);
+console.log(2);
+new Promise((res) => {
+  res();
+}).then(() => console.log(3));
+console.log(4);
+//
+setTimeout(() => console.log(1), 0);
+console.log(2);
+new Promise((res) => {
+  setTimeout(() => res(), 0);
+}).then(() => console.log(3));
+console.log(4);
+4.
+let fruit = 'apple';
+let hungry = true;
+if(hungry){
+var fruit = 'orange'
+console.log(fruit);
+}
+console.log(fruit);
+5.
+let a = 'Hello';
+function x() {
+    let b = 'World';
+    console.log(a + ' ' + b, "1");
+    if (b === 'World') {
+        let c = 'hello';
+        console.log(a + ' ' + b + ' ' + c, "2");
+    }
+    console.log(a + ' ' + b + ' ' + c, "3");
+}
+x();
+
+ ```
 
