@@ -1,345 +1,338 @@
-# Install
+# React Native Notes
 
-## install Java Development Kit
-download and install or sudo apt install openjdk-21-jre-headless
-## download andriod studio.zip from download => andriod studio => bin open terminal here and type this command  
-./studio.sh
-## How to Set Up ANDROID_HOME on Ubuntu
+---
 
+# Part 1 — Setup & Installation
+
+---
+
+## 1. Install Java Development Kit
+
+```bash
+sudo apt install openjdk-21-jre-headless
 ```
 
-If you use Bash (default shell in Ubuntu):
+Or download and install manually.
 
-1-Open the Terminal and Edit the Shell Configuration File
+---
 
+## 2. Install Android Studio
+
+1. Download `android-studio.zip`
+2. Extract → navigate to `android-studio/bin/`
+3. Open terminal and run:
+
+```bash
+./studio.sh
+```
+
+**Create desktop shortcut (Ubuntu):**
+Android Studio → Tools → Create Desktop Entry
+
+---
+
+## 3. Set Up ANDROID_HOME (Ubuntu)
+
+```bash
+# 1. Open shell config
 nano ~/.bashrc
 
-2. Add These Lines at the End of the File
-
+# 2. Add these lines at the end
 export ANDROID_HOME=$HOME/Android/Sdk
 export PATH=$PATH:$ANDROID_HOME/emulator
 export PATH=$PATH:$ANDROID_HOME/platform-tools
 export PATH=$PATH:$ANDROID_HOME/tools
 export PATH=$PATH:$ANDROID_HOME/tools/bin
 
-3- save and exit 
+# 3. Save and exit (Ctrl+X → Y → Enter)
 
-Press CTRL + X
-Press Y (to confirm changes)
-Press Enter (to save)
-
-4-Apply the chnages
-
+# 4. Apply changes
 source ~/.bashrc
 
-
-
-5. Verify the Setup Check if ANDROID_HOME is set:
-
+# 5. Verify
 echo $ANDROID_HOME
-
-Expected output:/home/bjshw-005016/Android/Sdk
-
+# Expected: /home/<user>/Android/Sdk
 ```
 
-## Now open andriod studio and open virtual device manager
-more actions => virtual device manager
+---
 
+## 4. Open Virtual Device Manager
 
-# Andriod studio 
+Android Studio → More Actions → Virtual Device Manager
 
-## create desktop short cut for ubantu
-Android Studio > Tools > Create Desktop Entry
+Make sure device is selected and folder path shows `app` on top right side.
 
+---
 
+## 5. Open Project in Android Studio
 
-## open project on andriod studio 
-file => import project => open only andriod folder on your repo , when it open it will sync and convert it andriod project autometic if not you can sync on top option sync project with gradle file 
+File → Import Project → open **only the `android` folder** from your repo.
+It will auto-sync and convert to an Android project. If not, click **Sync Project with Gradle Files** at the top.
 
-## error video
-https://www.youtube.com/@irekhatechsolutions
+**Close project:** File → Close Project
 
-## if project open how to close 
-File → Close Project
+---
 
-## error clean catch
+## 6. Clear Cache (Fix Build Errors)
+
+When Android Studio caches get corrupted:
+
 ```
-error Android Studio) caches project metadata, Gradle files, and compiled files.
- caches get corrupted or outdated, they can cause unexplained build errors
- Invalidating caches forces the IDE to re-index the project and fetch fresh metadata
-
-  file ->  Invalidate Caches/Restart
-   Build -> Clean Project
-   
+File → Invalidate Caches / Restart
+Build → Clean Project
 ```
 
-## run emulator 
+---
 
-make sure device should be seleted on Andriod studio and folder path should app on top right side 
+## 7. Create & Run Project (VS Code)
 
+```bash
+# Create project
+npx @react-native-community/cli init nativeFirst
 
-## create project vs code
-npx @react-native-community/cli init  nativeFirst
-
-## run project
+# Run project
 npx react-native start
-
-
-# Thoery
-
-## current version 
-0.78
-
-## reactive native develop option 
-When it comes to developing mobile applications using React Native, developers have two main options: Expo and React Native CLI. Both approaches have their own set of advantages and disadvantages
-
-## Advantages of Expo
-
-```
-    Quick Start: Expo allows you to quickly start developing your app without worrying about device-specific setup or native code dependencies.
-    Over-the-Air Updates: With Expo, you can deploy updates to your app directly to user devices without requiring them to download a new version from the app store.
-    Access to Pre-built Libraries: Expo provides a wide range of pre-built libraries and APIs, making it easy to add features like push notifications, in-app purchases, and maps to your app.
-    Simplified Build Process: Expo handles the build process for you, abstracting away the need to configure build tools and deal with native code compilation.
-    EAS: With Expo, you don’t need a mac to build the app for iOS. You can have the code built and deployed to EAS in the cloud. From there you can directly deploy it to the store.
-    Native Physical Device: With Expo, you can have the Expo Go app installed in your mobile and connect over the same network and get your app tested on any physical device [both Android and iOS].
-
-
-```
-## Disadvantages of Expo:
-
-```
- Limited Native Modules: Expo restricts access to certain native modules, which means you may encounter limitations when trying to integrate certain third-party libraries or accessing low-level device features.
-    Less Control Over the Build: With Expo, you have less control over the build configuration and customization options compared to React Native CLI.
-    Size and Performance: Expo apps tend to have a larger bundle size compared to React Native CLI apps, which can impact download and loading times. Additionally, certain performance optimizations may not be available in Expo.
-
-```
-## React Native CLI
-
-```
-React Native CLI is the traditional approach for building React Native apps. It provides maximum flexibility and control over your project setup and configuration.
 ```
 
-## Advantages of React Native CLI:
+---
 
-```
-    Full Native Module Support: React Native CLI allows you to access and integrate any native module available in the React Native ecosystem, giving you the flexibility to leverage a wide range of third-party libraries and device capabilities.
-    Customization Options: You have complete control over the build configuration, allowing you to fine-tune your app’s performance, size, and behavior.
-    Ecosystem Compatibility: React Native CLI is fully compatible with the entire React Native ecosystem, including all community libraries and tools.
+## 8. Error Resources
 
-```
+- https://www.youtube.com/@irekhatechsolutions
 
-## Disadvantages of React Native CLI:
+---
 
-```
-    Steeper Learning Curve: React Native CLI requires more initial setup and configuration, which can be overwhelming for developers new to React Native or mobile app development.
-    Longer Development Setup Time: Setting up a React Native CLI project involves installing and configuring native dependencies, which can take longer compared to getting started with Expo.
-    Manual Build Process: React Native CLI requires you to manually configure build tools, which can be more time-consuming and complex, especially for developers unfamiliar with native app development.
-    Native Physical Device: React Native CLI requires you to have physical platform specific devices for testing your app in Android and iOS. For iOS, you would surely need a Mac to build and test your app.
+---
 
-```
+# Part 2 — Theory
 
-## more chnages on version
-0.71 incluse type script by default
+---
 
-## Folder structure
-```
-metro.config.js and watchman (watchman check file if any chnages then metro reload fast our app) 
-babel.config.js :convert es code to plan js
+## 1. Current Version
 
-esLintrc :config of Es
-andriod and ios :convert code as per anderiod and ios and make build as enviremnt
-packagelock.json :store dependency to dependency 
-Gemfile :it is for ruby when we debug app ruby need so we can change config 
-.prettierrc.config :app formatting config
-.bundl.config :when we bundle ios or andriod app then we can set config
-__tests__ : test case
+**0.78** (0.71+ includes TypeScript by default)
 
-```
+---
 
-## React native compoents
-native have no tag we say compoent and it will come from react native and first letter will captial
+## 2. Expo vs React Native CLI
 
-```
-<Text> :for text 
-<View> :work as wrapper , or you can say for fragment, we can't write anything inside View , always put inside string on Text
-<Button>:and for text pass on title as attribute and color also as attribute , default button from native we can not more style
+| | Expo | React Native CLI |
+|---|---|---|
+| **Setup** | Quick, no native config | Requires native setup |
+| **Native Modules** | Limited access | Full access |
+| **Build** | Handled by Expo / EAS | Manual configuration |
+| **Bundle Size** | Larger | Smaller |
+| **iOS without Mac** | ✅ (via EAS cloud) | ❌ (needs Mac) |
+| **Physical Device** | Expo Go app over same network | Needs platform-specific device |
+| **Customization** | Less control | Full control |
+| **Best For** | Prototyping, quick starts | Production, custom native code |
 
-<TouchableHighlight> for custom button
+---
 
+## 3. Folder Structure
 
-      <TouchableHighlight>
-        <Text>Button</Text>
-      </TouchableHighlight> now you can apply css on Text
+| File/Folder | Purpose |
+|---|---|
+| `metro.config.js` | Metro bundler config (watchman monitors file changes for hot reload) |
+| `babel.config.js` | Converts ES6+ code to plain JS |
+| `.eslintrc` | ESLint configuration |
+| `android/` & `ios/` | Native platform code and build config |
+| `package-lock.json` | Locks dependency versions |
+| `Gemfile` | Ruby config (needed for iOS debugging) |
+| `.prettierrc` | Code formatting config |
+| `.bundle/config` | Bundle config for iOS/Android builds |
+| `__tests__/` | Test cases |
 
+---
 
-<TouchableOpacity> for checkbox or radio
+## 4. Core Components
 
+| Component | Purpose | Notes |
+|---|---|---|
+| `<Text>` | Display text | All strings must be inside `<Text>` |
+| `<View>` | Container/wrapper | Like `<div>` — can't render text directly |
+| `<Button>` | Basic button | Use `title` and `color` attributes, limited styling |
+| `<TouchableHighlight>` | Custom button | Background color changes on press |
+| `<TouchableOpacity>` | Custom button / checkbox | Opacity fades on press |
+| `<Pressable>` | Multi-event button | Supports `onPress`, `onLongPress`, `onPressIn`, `onPressOut` |
+| `<TextInput>` | Text input field | Form element |
+| `<ScrollView>` | Scrollable wrapper | Use as wrapper for scrollable content |
+| `<FlatList>` | Performant list | Only renders visible items, has header/footer support |
+| `<SectionList>` | Grouped list | For nested arrays with section headers |
+| `<ActivityIndicator>` | Loader/spinner | Loading indicator |
+| `<Modal>` | Modal popup | Overlay component |
+| `<StatusBar>` | Device status bar | `backgroundColor`, `barStyle`, `hidden` |
 
-<TouchableOpacity> for checkbox or radio TouchableHighlight emphasizes the press effect by changing the background color, while TouchableOpacity provides a fade effect by adjusting opacity. T
+---
 
-<FlatList> (for print data as list or you can same as map on react)
+## 5. FlatList Example
 
-
-<FlatList data={users} renderItem={
-({item})=><Text>{item.name}</Text>
-}
-
-FlatList att keyExtractor like key on list in react
-
-
-why flat list  : we can add header footer and if we have laerge list it will show only view on screen option other will hise for ui , we have more options 
-map: we can use map also 
-ScrollView: for scrolling list use as wrappper
-
-
-SectionList (for array inside array, next list use it ) :
-
- const user = [
-    {
-      name: 'ashish',
-      data: [1, 2, 3, 4],
-    },
-    {
-      name: 'ashish',
-      data: [5, 6, 7, 8],
-    },
-  ];
-  const chnageme = (e: any) => {
-    console.warn(e);
-  };
-  return (
-    <>
-      <Text>fff</Text>
-      <TextInput
-        placeholder="please enter yout name"
-        onChangeText={e => chnageme(e)}></TextInput>
-      <SectionList
-        sections={user}
-        renderItem={({item}) => <Text>{item}</Text>}
-        renderSectionHeader={({section: {name}}) => <Text>{name}</Text>}
-      />
-    </>
-
-data on array is constant , it should same 
-
-
-<ActivityIndecator> : loader 
-<Modal>: modal popup 
-<pressable>: because we need one button multple event so use , you can use attbuite onPress, onLongPress,onPressIn,onPressOut   (onLongPress will take 5 second)
-
-<StatusBar>
-On device top of show status bar
-
-<StatusBar> att -> backgroundColor, barstyle,hidden  
-
-you can change background, style,hidden
-
-
+```tsx
+<FlatList
+  data={users}
+  keyExtractor={(item) => item.id.toString()}
+  renderItem={({ item }) => <Text>{item.name}</Text>}
+/>
 ```
 
-## events 
+**Why FlatList over `map`?**
+- Only renders visible items (better for large lists)
+- Built-in header/footer support
+- Pull-to-refresh support
 
-onPress (mobile have onPress on web we can say click)
+---
 
-onChangeText
+## 6. SectionList Example
 
-## Style in native
+```tsx
+const data = [
+  { title: 'Group A', data: [1, 2, 3, 4] },
+  { title: 'Group B', data: [5, 6, 7, 8] },
+];
 
-```
-inline 
-
-style={{fontSize:20}} , double object first for norma objct and second for jsx , for multile proprty comma saprated
-
-internal
-
-import styleSheet from react-native
-const styles = Stylesheet.create({
-textBox:{
-color:'red'
-}
-
-})
-
-<Text style={styles.textBox}>hello</Text>
-
-externl
-
-make interfile code saprate file and export and use
-
-multiple css
-
-<Text style={[styles.textBox,Exstyle.textBox,{color:'red'}]}
-
+<SectionList
+  sections={data}
+  renderItem={({ item }) => <Text>{item}</Text>}
+  renderSectionHeader={({ section: { title } }) => <Text>{title}</Text>}
+/>
 ```
 
+**Note:** The `data` key in each section object must be named `data`.
 
-## css Property
-textAlign, textAlignVertical,elavation (for box shadow)
+---
 
-## Form Element
-TextInput
+## 7. Events
 
-## Life cycle method
+| Event | Description |
+|---|---|
+| `onPress` | Tap event (equivalent of `onClick` on web) |
+| `onChangeText` | Text input change |
+| `onLongPress` | Hold for ~5 seconds |
+| `onPressIn` | Finger touches down |
+| `onPressOut` | Finger lifts up |
 
-mounting
-updating
-unmounting
+---
 
-## Check os
-{Plateform.os} : dedect OS
+## 8. Styling in React Native
 
-## Plateform react version
+**3 approaches:**
 
-Palteform.constands.reactNativeVersion
+**Inline:**
 
-## NPM Package on Native
-
-### webView inside app
-
+```tsx
+<Text style={{ fontSize: 20, color: 'red' }}>Hello</Text>
 ```
+
+**Internal (StyleSheet):**
+
+```tsx
+import { StyleSheet } from 'react-native';
+
+const styles = StyleSheet.create({
+  textBox: { color: 'red', fontSize: 16 }
+});
+
+<Text style={styles.textBox}>Hello</Text>
+```
+
+**External:** Create a separate file, export styles, and import.
+
+**Multiple styles:**
+
+```tsx
+<Text style={[styles.textBox, externalStyles.textBox, { color: 'red' }]}>Hello</Text>
+```
+
+**Useful CSS properties:** `textAlign`, `textAlignVertical`, `elevation` (Android box shadow)
+
+---
+
+## 9. Lifecycle Methods
+
+Same as React:
+- **Mounting** — `constructor`, `render`, `componentDidMount`
+- **Updating** — `shouldComponentUpdate`, `render`, `componentDidUpdate`
+- **Unmounting** — `componentWillUnmount`
+
+(Or use hooks: `useEffect` with dependency array)
+
+---
+
+## 10. Platform Detection
+
+```tsx
+import { Platform } from 'react-native';
+
+Platform.OS;                              // 'android' or 'ios'
+Platform.constants.reactNativeVersion;    // { major, minor, patch }
+```
+
+---
+
+## 11. WebView
+
+```bash
+npm install react-native-webview
+```
+
+```tsx
 import WebView from 'react-native-webview';
 
-<WebView
-        source={{
-          uri: 'https://development.tms.bjshomedelivery.com/login?error=unauthorized%20access',
-        }}></WebView>
-
+<WebView source={{ uri: 'https://example.com' }} />
 ```
 
-## Navigation on App
+---
 
-type of nav, stack,drawer,tab
+## 12. Navigation
 
-stack:  when we click on signup then show a sccren this type says stack nav
+**Types:** Stack, Drawer, Tab
 
+```bash
+npm install @react-navigation/native
 npm install @react-navigation/native-stack
-
-## npm pkg for nav 
-
-npm install @react-navigations/native
-
-## when install package tab or navigation or any package shpw error 
-
-npm start --clean-cache
-
-## LocalHost Api on react-native
-ipconfig /ifconfig :for ip address window /linux
-
-localHost api form backend not woking on emulaator so need to run with  ip address then api url will work 
-
-## change icon ()
-andriod (easyappicon generate and replace inside andriod)
-
-
-## Async stroage
-Async stroage : like local stroage 
-how can possible delete asyc data :delete cache of app or uninstall app or  remove by code 
-
-```
-install
-npm install react-native-async-stroage/async-stroage
-npm pod install
 ```
 
-## Redux with saga 
-for async side effects handle need saga
+**Stack navigation** — screen-to-screen transitions (e.g., Login → Signup).
+
+**Fix package errors:**
+
+```bash
+npm start -- --reset-cache
+```
+
+---
+
+## 13. Localhost API on Emulator
+
+Localhost APIs don't work on the emulator. Use your machine's IP address instead:
+
+```bash
+# Get IP address
+ifconfig    # Linux/Mac
+ipconfig    # Windows
+```
+
+Replace `http://localhost:3000` with `http://192.168.x.x:3000`
+
+---
+
+## 14. Change App Icon
+
+**Android:** Use [easyappicon.com](https://easyappicon.com) to generate icons, then replace files inside `android/app/src/main/res/`.
+
+---
+
+## 15. AsyncStorage
+
+Like `localStorage` for React Native. Data is deleted when the app cache is cleared, app is uninstalled, or removed via code.
+
+```bash
+npm install @react-native-async-storage/async-storage
+npx pod-install   # iOS only
+```
+
+---
+
+## 16. Redux with Saga
+
+For handling async side effects, use **Redux Saga** alongside Redux Toolkit.

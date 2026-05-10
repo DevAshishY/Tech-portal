@@ -1,917 +1,797 @@
+# Angular Interview Questions
 
-## Questions
-
-**# T1 angular feature**
-
-    Data binding
-    Directives
-    Services or Dependency Injection
-    Routing
-    Observables
-    Forms
-    Pipes
-    HTTP
-    Authentication
-    Optimization
-    Deployment
-    Animation
-    Testing
+---
 
-------------------------------------------
+## T1. Angular Features
 
-**# T2 adding bootstrap**
+- Data binding
+- Directives
+- Services / Dependency Injection
+- Routing 
+- Observables
+- Forms
+- Pipes
+- HTTP
+- Authentication
+- Optimization
+- Deployment
+- Animation
+- Testing
 
-    npm i bootstrap@5.3.0-alpha3
+---
 
-    add css on angular.json from node module
+## T2. Adding Bootstrap
 
-------------------------------------------
-**# T4 how angular app bootstrap**
+```bash
+npm i bootstrap@5.3.0-alpha3
+```
 
-    index.html(entry point) => main.ts(bootstrap) => appModule(rootModule) => appComponent(root component)
+Add CSS path in `angular.json` from `node_modules`.
 
-------------------------------------------
+---
 
-**# T5 elementRef and render2 different**
+## T3. How Angular App Bootstraps
 
-    ElementRef gives you direct access to the native element of a component, Renderer2 provides a safer and more efficient way to perform DOM manipulations in Angular.
+```
+index.html (entry point) → main.ts (bootstrap) → AppModule (root module) → AppComponent (root component)
+```
 
-  ------------------------------------------
-  **# T6 decorator**
+---
 
-    Decorators are used to enhance or modify the behavior of the class they are applied to, and they are an essential part of Angular's metadata-driven approach to building applications.
+## T4. ElementRef vs Renderer2
 
-    @NgModule
-    @Component
-    @Injectable
-    @Directive
-    @Pipe
-    @Input
-    @Output
-    @HostBinding
-    @HostListener
-    @ContentChild
-    @ContentChildren
-    @ViewChild
-    @ViewChildren
+- **ElementRef** — gives direct access to the native DOM element of a component.
+- **Renderer2** — provides a safer, platform-independent way to perform DOM manipulations.
 
-------------------------------------------
-**# T7 @NgModule**
+---
 
-    Defines a module that contains components, directives, pipes, and providers.
+## T5. Decorators
 
-    import { NgModule } from '@angular/core';
+Decorators enhance or modify the behavior of the class they are applied to. They are an essential part of Angular's metadata-driven approach.
 
-    @NgModule({
-    declarations:[Component1, Component2],
-    imports: [Module1, Module2],
-    exports: [MyModule],
-    providers: [Service1, Service2],
-    bootstrap: [AppComponent]})
-    class MyModule {}
+| Decorator | Purpose |
+|---|---|
+| `@NgModule` | Define a module |
+| `@Component` | Define a component |
+| `@Injectable` | Mark a class for DI |
+| `@Directive` | Define a directive |
+| `@Pipe` | Define a pipe |
+| `@Input` | Receive data from parent |
+| `@Output` | Emit events to parent |
+| `@HostBinding` | Bind to host element property |
+| `@HostListener` | Listen to host element events |
+| `@ContentChild` | Query projected content |
+| `@ContentChildren` | Query all projected content |
+| `@ViewChild` | Query view element |
+| `@ViewChildren` | Query all view elements |
 
-------------------------------------------
-**# T8 @Component**
+---
 
-    Declares that a class is a component and provides metadata about the component.
+## T6. @NgModule
 
-    import { Component } from '@angular/core';
+Defines a module that contains components, directives, pipes, and providers.
 
-    @Component({
-    changeDetection?: ChangeDetectionStrategy
-    viewProviders?: Provider[]
-    moduleId?: string
-    templateUrl?: string
-    template?: string
-    styleUrls?: string[]
-    styles?: string[]
-    animations?: any[]
-    encapsulation?: ViewEncapsulation
-    interpolation?: [string, string]
-    entryComponents?: Array<Type<any> | any[]>
-    preserveWhitespaces?: boolean
+```ts
+import { NgModule } from '@angular/core';
 
-    // inherited from core/Directive
-    selector?: string
-    inputs?: string[]
-    outputs?: string[]
-    host?: {...}
-    providers?: Provider[]
-    exportAs?: string
-    queries?: {...}
-    })
+@NgModule({
+  declarations: [Component1, Component2],
+  imports: [Module1, Module2],
+  exports: [MyModule],
+  providers: [Service1, Service2],
+  bootstrap: [AppComponent]
+})
+class MyModule {}
+```
 
-    selector: '[app-servres]'
-    we can use selector as attibute and use this type <div app-servres></div>
+---
 
-------------------------------------------
-**# T9 @Injectable**
+## T7. @Component
 
-    Declares that a class has dependencies that should be injected into the constructor when the dependency injector is creating an instance of this class.
+Declares that a class is a component and provides metadata.
 
-    import { Injectable } from '@angular/core';
-    @Injectable()
+```ts
+import { Component } from '@angular/core';
 
-------------------------------------------
-**# T10 @Pipe**
+@Component({
+  selector: 'app-root',         // or '[app-servers]' for attribute selector
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.Emulated
+})
+export class AppComponent {}
+```
 
-    Declares that a class is a pipe and provides metadata about the pipe.
+**Tip:** Using `selector: '[app-servers]'` lets you use it as an attribute: `<div app-servers></div>`
 
-    import { Pipe } from ‘@angular/core’;
-    @Pipe({
-    name: string
-    pure?: boolean
-    })
+---
 
-------------------------------------------
-**# T11 @Input**
+## T8. @Injectable
 
-      Declares an input property that you can update via property binding (example: <my-cmp [myProperty]="someExpression">).
+Declares that a class has dependencies that should be injected via the constructor.
 
-      import { Input } from ‘@angular/core’;
-      @Input({
-      bindingPropertyName?: string
-      })
+```ts
+import { Injectable } from '@angular/core';
 
-      These decorators are used to define input and output properties for components. @Input allows a parent component to pass data to a child component, while @Output allows a child component to emit events to its parent component.
+@Injectable({ providedIn: 'root' })
+export class MyService {}
+```
 
-      @input or binding a custom property (like disbale attibute ) : process parent => to child
+---
 
-------------------------------------------
-**# T12 input alias**
+## T9. @Pipe
 
-    Answer
+Declares a class as a pipe and provides metadata.
 
-------------------------------------------
-**# T13 OutPut**
+```ts
+import { Pipe } from '@angular/core';
 
-    Declares an output property that fires events that you can subscribe to with an event binding (example:
+@Pipe({
+  name: 'myPipe',
+  pure: true
+})
+export class MyPipe {}
+```
 
-------------------------------------------
-**# T14 @HostBinding**
+---
 
-      while HostBinding allows us to bind to a property of the host element.
+## T10. @Input
 
-    @HostBinding('style.background') backgrondColor:string = this.defaultColor
+Declares an input property — parent passes data to child.
 
-------------------------------------------
-**# T15 @HostListener**
+```ts
+import { Input } from '@angular/core';
 
-  HostListener listens to host events
+@Input() myProperty: string;
+// Usage: <my-cmp [myProperty]="someExpression">
+```
 
-    @HostListener('mouseenter') mouseEnterFun(eventData:Event){
-    // this.render.setStyle(this.eleRef.nativeElement,'background-color','tranparent'); // by render target elemnet
-    this.backgrondColor =this.byHostBinding
+**Flow:** Parent → Child
 
-    }
-    @HostListener('mouseleave') mouseLeaveFun(eventData:Event){
-    // this.render.setStyle(this.eleRef.nativeElement,'background-color','red');// by render target elemnet
-    this.backgrondColor = this.defaultColor
+---
 
-------------------------------------------
-**# T16 @ContentChild**
+## T11. Input Alias
 
-## ![image](https://user-images.githubusercontent.com/106906674/232863485-67025abb-2a06-46ba-a63d-8ee1f9189da5.png)
+Answer
 
-------------------------------------------
-**# T17 @ContentChildren**
+---
 
-## ![image](https://user-images.githubusercontent.com/106906674/232863780-05e1ec6b-dd3b-4b6d-9504-b264da9b260f.png)
+## T12. @Output
 
-------------------------------------------
-**# T17 @ViewChild**
+Declares an output property — child emits events to parent.
 
-    Binds the first result of the component view query (myPredicate) to a property (myChildComponent) of the class. Not available for directives.
+```ts
+import { Output, EventEmitter } from '@angular/core';
 
-    import { ViewChild } from '@angular/core';
-    @ViewChild(Pane)
+@Output() myEvent = new EventEmitter<string>();
+// Usage: <my-cmp (myEvent)="handler($event)">
+```
 
-    These decorators are used to query and access child components or elements from a parent component.
+**Flow:** Child → Parent
 
-------------------------------------------
-**# T19 ViewChildren**
+---
 
-    Answer
+## T13. @HostBinding
 
-------------------------------------------
-**# T20 Directive**
+Binds to a property of the host element.
 
-    Answer
+```ts
+@HostBinding('style.background') backgroundColor: string = this.defaultColor;
+```
 
-------------------------------------------
-**# T21 Component Directive**
+---
 
-    Answer
+## T14. @HostListener
 
-------------------------------------------
-**# T22 Structural Directive**
+Listens to events on the host element.
 
-  ngIf
-  ngFor
-  ngSwitch
+```ts
+@HostListener('mouseenter') onMouseEnter() {
+  this.backgroundColor = this.highlightColor;
+}
 
-------------------------------------------
-**# T23 Attribute Directive**
+@HostListener('mouseleave') onMouseLeave() {
+  this.backgroundColor = this.defaultColor;
+}
+```
 
-    ngClass
-    ngStyle
-    ngModel
+---
 
-------------------------------------------
-**# T24 content projectio**
+## T15. @ContentChild & @ContentChildren
 
-    Single-slot
-    Multi-slot
-    Conditional
+- **@ContentChild** — queries a single projected content element (`ng-content`).
+- **@ContentChildren** — queries all projected content elements.
 
-    ng-content
-    ng-templete
+---
 
-------------------------------------------
-**# T25 data binding**
+## T16. @ViewChild
 
-    mean comunication between ts file(bussniess logic) and view (html file)
+Binds the first result of the component view query to a property. Not available for directives.
 
-    string interpolation {{data}} : Flow ts => templete
-    proprty binding [property]="data" :flow ts => templete
-    event binding (click)="expression" : flow ts <== templete
-    two way binding [(ngModal)]="data " :flow ts <==> templete
+```ts
+import { ViewChild } from '@angular/core';
 
-    **note: Event binding **
+@ViewChild(MyComponent) myChild: MyComponent;
+```
 
-    <input (input)="checkValue($event)" [value]="value">
-    checkValue(event:Event){
-    this.value = (<HTMLInputElement>event.target).value
-    }
+---
 
-    $event received as event so use htmlinpputElement in front
+## T17. @ViewChildren
 
-------------------------------------------
-**# T26 View encapsulation**
+Answer
 
+---
 
-    it ensures that the styles defined within a component are scoped only to that component and do not affect other components or elements in the DOM (Document Object Model).
+## T18. Directives Overview
 
-    1- Emulated (default):This ensures that the component's styles do not leak to other components.by adding a unique attribute
+Answer
 
-    2-None: This mode disables view encapsulation, allowing the component's styles to be applied globally.
+---
 
-    3-ShadowDom: it create self dom other css not work only current css work here means it's css not reflict any css.
+## T19. Component Directive
 
-------------------------------------------
-**# T27 local reference varible**
+Answer
 
-    **html file:**
+---
 
-    <input #reference type="text">
+## T20. Structural Directives
 
-    <button (click)="checkdata(reference)">
+Modify DOM structure by adding/removing elements.
 
-    **ts file**
+- `*ngIf`
+- `*ngFor`
+- `*ngSwitch`
 
-    checkdata(data:HTMLInputElement){
-    console.log(data) // define data as element target if div htmlDivElemnt
-    }
+---
 
-------------------------------------------
-**# T28 life cycle method**
+## T21. Attribute Directives
 
-    **ngOnchanges** :it call multiple time when com crated and called after a bound input propery change ,
+Modify appearance/behavior of existing elements.
 
-    **ngOnInt:** after initialize
+- `ngClass`
+- `ngStyle`
+- `ngModel`
 
-    **ngDocheck** called during every change
+---
 
-    **ngAfterContentInit**: called after content(ng-content) has been prpjected into view
+## T22. Content Projection
 
-    **ngAfterContentChecked** called every time the projected content has beed checked
+Types:
+- **Single-slot** — one `<ng-content>`
+- **Multi-slot** — multiple `<ng-content select="...">`
+- **Conditional** — using `<ng-template>`
 
-    **ngAfterViewInit** : called after com view and child view initialize
+---
 
-    **ngAfterViewchecked** : called after com view and child view checked
+## T23. Data Binding
 
-    **ngOnDistroy** : when com is distroy
+Communication between TS (business logic) and HTML (view).
 
-------------------------------------------
-**# T29 services /Di**
+| Type | Syntax | Flow |
+|---|---|---|
+| **String Interpolation** | `{{ data }}` | TS → Template |
+| **Property Binding** | `[property]="data"` | TS → Template |
+| **Event Binding** | `(click)="handler()"` | Template → TS |
+| **Two-way Binding** | `[(ngModel)]="data"` | TS ↔ Template |
 
-**method-1** create instance manually of service in component
+**Event binding example:**
 
-![image](https://user-images.githubusercontent.com/106906674/233548375-b551a0bd-8378-4427-87dd-0f35b0c0fccf.png)
+```html
+<input (input)="checkValue($event)" [value]="value">
+```
 
-Not need to provider
+```ts
+checkValue(event: Event) {
+  this.value = (event.target as HTMLInputElement).value;
+}
+```
 
-**method 2**- angular will provide instance
+---
 
-    ![image](https://user-images.githubusercontent.com/106906674/233548540-73ceea23-5692-405b-b7df-3f3faedef2f0.png)
+## T24. View Encapsulation
 
-    **need to provider hireecy meand it will work this and this child **
-    ![image](https://user-images.githubusercontent.com/106906674/233556416-257357aa-24b8-4b4f-81cc-97320e5a6af5.png)
+Scopes component styles to prevent leaking to other components.
 
-    **But if component is not child of provide on @component so need to menstion on global app mododule
-    **
-    ![image](https://user-images.githubusercontent.com/106906674/233556655-d6b062c7-2ecc-4ca2-9f45-777b244c0868.png)
+| Mode | Behavior |
+|---|---|
+| **Emulated** (default) | Scoped via unique attribute — styles don't leak |
+| **None** | Styles applied globally |
+| **ShadowDom** | Uses native Shadow DOM — fully isolated |
 
-------------------------------------------
-**# T30 servie inside service**
+---
 
-    ![image](https://user-images.githubusercontent.com/106906674/233560832-479e5cdb-bfe8-4dcb-af66-9fa627ff8098.png)
-    ![image](https://user-images.githubusercontent.com/106906674/233561146-8ff45781-aff2-4920-a69a-94f1f1a1be40.png)
+## T25. Local Reference Variable
 
-    **injectbale** : it is needed here because here we are injecting other service inside norammlywhen mamkking normal service not use @injetable but new angular provide default it
+```html
+<!-- HTML -->
+<input #reference type="text">
+<button (click)="checkData(reference)">Check</button>
+```
 
-------------------------------------------
-**# T31 routing**
+```ts
+// TS
+checkData(data: HTMLInputElement) {
+  console.log(data.value);
+}
+```
 
-      basic
+---
 
-      ![image](https://user-images.githubusercontent.com/106906674/233893784-2248400b-2c89-4530-a654-d9708d10cee0.png)
+## T26. Lifecycle Hooks
 
-      create path : Routes provided by angular core
+| Hook | When Called |
+|---|---|
+| `ngOnChanges` | When input property changes (called multiple times) |
+| `ngOnInit` | After component initializes |
+| `ngDoCheck` | During every change detection run |
+| `ngAfterContentInit` | After `ng-content` is projected |
+| `ngAfterContentChecked` | After projected content is checked |
+| `ngAfterViewInit` | After component + child views initialize |
+| `ngAfterViewChecked` | After component + child views are checked |
+| `ngOnDestroy` | Before component is destroyed |
 
-      RouterModule.forRoot(routes) : forRoot pass our routes
+---
 
-      ![image](https://user-images.githubusercontent.com/106906674/233893937-c69e9831-5f37-4596-b0fd-b6cf5872047b.png)
+## T27. Services & Dependency Injection
 
-      use apboslute path by using slash
+**Method 1** — create instance manually (no provider needed):
 
-      you can set path stringvalue by this type
+```ts
+const myService = new MyService();
+```
 
-      ![image](https://user-images.githubusercontent.com/106906674/233894910-f3eaf923-4ac4-477d-ae43-b8e1afe17e41.png)
+**Method 2** — Angular provides instance via DI:
 
-      set path and declear in declration need
-      ![image](https://user-images.githubusercontent.com/106906674/233895322-4191a2eb-3569-4f6c-ac2b-db99d51efd29.png)
+```ts
+constructor(private myService: MyService) {}
+```
 
-      **Active**
+Provider hierarchy:
+- Component-level → available to component + children only
+- Module-level (`AppModule`) → available globally
 
-      ![image](https://user-images.githubusercontent.com/106906674/233898298-45bc58cc-9720-41ac-8572-02c0df3e3e37.png)
+---
 
-      first link always active so pass
+## T28. Service Inside a Service
 
-      [routerLinkActiveOptions]="{exact:true}"
+Use `@Injectable()` decorator when injecting one service into another.
 
-      **navigate**
+```ts
+@Injectable({ providedIn: 'root' })
+export class ServiceA {
+  constructor(private serviceB: ServiceB) {}
+}
+```
 
-      this.\_router.navigate(['page2'],{relativeTo:this.activatedRoute} )
+---
 
-      navigate: can work as routing , relative to for currect route
+## T29. Routing
 
-      **set parems**
+**Basic setup:**
 
-      ![image](https://user-images.githubusercontent.com/106906674/233925854-7d358c2c-e529-4ab8-b353-4bbb0453c69b.png)
-      ![image](https://user-images.githubusercontent.com/106906674/233925929-57e1ca4a-8721-429c-9beb-4991f8ec02b0.png)
+```ts
+const routes: Routes = [
+  { path: '', component: HomeComponent },
+  { path: 'users', component: UsersComponent },
+  { path: 'users/:id', component: UserDetailComponent },
+];
 
-      **route.snapshot**
-      is a static image of the route information, captured at the moment the component is created.
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule {}
+```
 
-      **route.params**
-      route.params, on the other hand, is an Observable that allows you to subscribe to changes to the route parameters. It provides the current route parameters and also updates the values when the parameters change.
+**Key concepts:**
 
-      **passing query parameter and fragment**
+| Concept | Example |
+|---|---|
+| **routerLink** | `[routerLink]="['/users']"` |
+| **routerLinkActive** | `routerLinkActive="active"` |
+| **Exact match** | `[routerLinkActiveOptions]="{exact: true}"` |
+| **Navigate programmatically** | `this.router.navigate(['/users'], { relativeTo: this.route })` |
+| **Route params** | `this.route.params.subscribe(p => ...)` |
+| **Snapshot** | `this.route.snapshot.params['id']` |
+| **Query params** | `[queryParams]="{page: 1}"` — shows as `?page=1` |
+| **Fragment** | `fragment="section1"` — shows as `#section1` |
+| **Children (nested)** | `children: [{ path: 'edit', component: EditComponent }]` |
+| **Redirect** | `{ path: 'old', redirectTo: '/new' }` |
+| **Wildcard** | `{ path: '**', redirectTo: '/not-found' }` (must be last) |
+| **pathMatch** | `{ path: '', redirectTo: '/home', pathMatch: 'full' }` |
 
-      <li>
-              <a routerLinkActive="active"  [routerLink]="['user']" [queryParams]="{page:'userPage',year:2010}" fragment="'hrllo'" >
-                  query/params  and fragment</a>
-            
-          </li>
+---
 
-      ![image](https://user-images.githubusercontent.com/106906674/234461212-af7dc07b-a7eb-4c7f-980e-e3f53e1b79cf.png)
-      query parameter will show with ? and fragment with #
+## T30. Router Guards
 
-      **geeting query parameter and fragment with sanpshot and parames observable**
+Control navigation based on conditions.
 
-      ![image](https://user-images.githubusercontent.com/106906674/234461434-67361b7c-5d46-499f-9777-bad1a2d9dc69.png)
+**Guard types:**
 
-      **nexted router by using children**
-      ![image](https://user-images.githubusercontent.com/106906674/234462281-565cc54b-6378-4bbb-b96e-e10984c369b1.png)
+| Guard | Purpose |
+|---|---|
+| `canActivate` | Can user access this route? |
+| `canActivateChild` | Can user access child routes? |
+| `canDeactivate` | Can user leave this route? |
+| `resolve` | Pre-fetch data before route loads |
 
-      **redirected to**
+**Example — canActivate:**
 
-      {path:'something',component:PageNotFoundComponent},
-      {path:'not-found',redirectTo:'/something'}
+```ts
+@Injectable()
+export class AuthGuard implements CanActivate {
+  constructor(private auth: AuthService, private router: Router) {}
 
-      **wildcard**
-
-      {path:'not-found',component:PageNotFoundComponent},
-      {path:'\*\*',redirectTo:'/not-found'}
-
-      make sure wildcard should be in last
-      **pathMatch**
-      if path is sonmething use path match
-
-      {path:'\*\*',redirectTo:'/not-found', pathMatch: 'full'}
-
-------------------------------------------
-**# T32  router Guards**
-
-      we can control navigation as per condition
-
-      1- create auth-guard.service.ts
-
-      2-authservice.ts (for check condition if user login or logout)
-
-      **authservice.ts**
-
-      export class authService{
-      loggin:boolean = false;
-
-          isAuthenticated(){
-              const promise = new Promise(
-                  (resolve,reject) =>{
-                      setTimeout(() => {
-                          resolve(this.loggin)
-                      }, 1000);
-                  }
-                  );
-                  return promise;
-          }
-          logIn(){
-              this.loggin =true;
-          }
-          logOut(){
-              this.loggin = false;
-          }
-
-      }
-
-      **create auth-guard.service.ts**
-
-      canactivated
-
-      **The method takes two parameters:**
-
-      route: An ActivatedRouteSnapshot object that represents the current route that the user is trying to access. it can contain URL, parameters, query parameters, and data
-
-      state: A RouterStateSnapshot object that represents the state of the router at the time the user is trying to access the route. It contains an array of ActivatedRouteSnapshot objects, one for each route in the hierarchy.
-
-      The method returns a value that can be one of the following types:
-
-      boolean: If the user is authorized to access the route, the method should return true. If not, it should return false.
-
-      UrlTree: If the user is not authorized to access the route, the method can return a UrlTree object that represents a redirect to another page.
-
-      Observable<boolean>: If the authorization check requires an asynchronous operation, the method can return an Observable that emits a boolean value when the operation is complete.
-
-      Promise<boolean>: If the authorization check requires an asynchronous operation that returns a promise, the method can return a promise that resolves to a boolean value when the operation is complete.
-
-      import { Injectable } from "@angular/core";
-      import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from "@angular/router";
-      import { Observable } from "rxjs";
-      import { authService } from "./auth-service";
-
-      @Injectable()
-      export class AuthGuard implements CanActivate{
-
-          constructor(private _authService:authService,private router:Router){
-
-          }
-
-      canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
-      return this.\_authService.isAuthenticated()
-      .then(
-      (authenticate:any)=>{
-      if(authenticate){
-      return true;
-      }
-      else{
-      this.router.navigate(['/'])
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
+    return this.auth.isAuthenticated().then((authenticated) => {
+      if (authenticated) return true;
+      this.router.navigate(['/']);
       return false;
-      }
-      }
-      )
-      }
+    });
+  }
+}
+```
 
-      }
+**Usage in routes:**
 
-      - use injectable because we are uising servie inside a service authservice
-      - inside canActivate check isAthenticated return true then allow navigation if not redirect to root
-      - export both service on appmodule provider
-      - apply on routhing file
+```ts
+{ path: 'admin', canActivate: [AuthGuard], component: AdminComponent }
+```
 
-      path:'routing', canActivate:[AuthGuard], component:RoutingComponent,
+**canActivateChild** — protects child routes only:
 
-      ---
+```ts
+{ path: 'admin', canActivateChild: [AuthGuard], children: [...] }
+```
 
-      ** protect only child route**
+**canDeactivate** — prevents leaving (e.g., unsaved form):
 
-      we can use canActivate:[AuthGuard] on child but it is not good way because it can multiple so using canActiveChild
+Create an interface, implement it in the component, and use the guard to call the component's method.
 
-      canActivateChild(childRoute: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
-      return this.canActivate(childRoute,state)
-      }
+---
 
-      we call canActive inside canActiveChild and pass expeceted parameter childRoute,state
+## T31. Resolve Guard (Dynamic Data)
 
-      now we can use for child route
+Pre-fetch data before navigating to a route.
 
-      path:'routing',
-      // canActivate:[AuthGuard],
-      canActivateChild:[AuthGuard],
-      component:RoutingComponent,
+---
 
-      ### can deActivted
+## T32. useHash in Angular Router
 
-      ![image](https://user-images.githubusercontent.com/106906674/235601691-13d8c7b9-f1c7-49f0-a6f0-00a7adb4bc52.png)
+By default Angular uses HTML5 History API for clean URLs. For older browsers (e.g., IE11), use hash-based routing:
 
-      ![image](https://user-images.githubusercontent.com/106906674/235601929-91775fd9-6742-4fc4-8e1d-49a334398cc8.png)
+```ts
+RouterModule.forRoot(routes, { useHash: true })
+// URLs become: /#/users instead of /users
+```
 
-      we can make canComponentDeactivated service and implnemnts on class
+---
 
-      then we can use canDeactivated method if can check here if form edited and change naviagation you can set popup message
+## T33. Redirect Blank URL
 
-      **canDeactivtedGuraed.ts**
-      ![image](https://user-images.githubusercontent.com/106906674/235602371-a6d36225-e27c-4661-8d5d-f42dda9fd75c.png)
+```ts
+{ path: '', redirectTo: '/home', pathMatch: 'full' }
+```
 
-      making a inteface for set rule implements on class and it will return component.canDeactivted method thats we have implment on out componts
+---
 
-      **appRoutingFile**
-      ![image](https://user-images.githubusercontent.com/106906674/235602672-0e3f0e28-c247-4aec-bf8a-389eb9b732ab.png)
+## T34. What is Angular?
 
-      ## passing static data on route
+Angular is a TypeScript-based framework developed and maintained by Google for building complex, client-side web applications. Key features: components, DI, routing, forms, HTTP, and RxJS.
 
-      ![image](https://user-images.githubusercontent.com/106906674/235638901-7e31c9dd-07b0-4ead-8dd2-0452368290a5.png)
+---
 
-      ![image](https://user-images.githubusercontent.com/106906674/235641731-e7b94d91-6b39-4386-81f0-5b0051a582ff.png)
+## T35. Directives — Types & Examples
 
-      you can set snapshot and router method
+**3 types:**
 
-------------------------------------------
-**# T33 dynamic data with resolve guard like parems and fragment**
+1. **Component Directives** — directives with a template (view):
 
-  by default angular on server only one page so routing url create problem old browesr but new angular follow html 5 history api .
+```ts
+@Component({ selector: 'app-my', template: '<div>My Component</div>' })
+export class MyComponent {}
+```
 
-  If a new browser supports the HTML5 history API, then using useHash in Angular is generally not necessary. The HTML5 history API provides a clean URL structure without the need for a hash symbol (#), and it is widely supported by modern browsers.
+2. **Attribute Directives** — modify element behavior/appearance:
 
-  However, it's important to keep in mind that not all users may be using the latest browsers. If your application needs to support older browsers, such as Internet Explorer 11, then using useHash may still be necessary to ensure proper navigation.
-
-  ![image](https://user-images.githubusercontent.com/106906674/235648879-6ab77ba1-15d9-4d6f-9866-32f5e8332ea8.png)
-
-------------------------------------------
-**# T34 usehash in angular router**
-
-    Answer
-
-------------------------------------------
-**# T35 when redirect blank url to page show a error so we can set**
-
-  ![image](https://user-images.githubusercontent.com/106906674/236223031-3b93f303-4dba-4bb9-8b8b-ca2d8f1bd161.png)
-
-------------------------------------------
-**# T36 What is angular or goal of angular**
-
-  The primary goal of Angular is to provide a platform for building complex, client-side web applications. Angular is a JavaScript framework developed and maintained by Google, and it has several key features that make it well-suited for this purpose:
-
-------------------------------------------
-**# T37 what is directive and how many types**
-
-    In Angular, a directive is a class that adds behavior or modifies the appearance of an element in the DOM (Document Object Model). Directives can be used to implement custom behavior, such as attaching event handlers, manipulating the DOM, or adding custom attributes to elements.
-
-    There are three types of directives in Angular:
-
-    **Component Directives:** These are the most common type of directives in Angular. Components are directives with a view. They are used to create reusable UI components that can be used throughout an application. A component directive is defined using the @Component decorator.
-
-    @Component({
-    selector: 'app-my-component',
-    template: '<div>My Component</div>'
-    })
-    export class MyComponent {}
-
-    **Attribute Directives:** Attribute directives modify the behavior or appearance of an element by changing its attributes. They are used to add behavior to an existing element. An attribute directive is defined using the @Directive decorator and is applied to an element as an attribute.
-
-    @Directive({
-    selector: '[myHighlight]'
-    })
-    export class HighlightDirective {
-    constructor(private el: ElementRef) {
+```ts
+@Directive({ selector: '[myHighlight]' })
+export class HighlightDirective {
+  constructor(private el: ElementRef) {
     el.nativeElement.style.backgroundColor = 'yellow';
-    }
-    }
+  }
+}
+```
 
-    **Structural Directives:** Structural directives modify the structure of the DOM by adding, removing, or manipulating elements. They are used to conditionally render elements or repeat a block of elements. Structural directives are defined using the @Directive decorator and are applied to an element as an attribute.
+3. **Structural Directives** — add/remove DOM elements:
 
-    @Directive({
-    selector: '[myIf]'
-    })
-    export class IfDirective {
-    constructor(private templateRef: TemplateRef<any>, private viewContainer: ViewContainerRef) {}
+```ts
+@Directive({ selector: '[myIf]' })
+export class IfDirective {
+  constructor(private templateRef: TemplateRef<any>, private viewContainer: ViewContainerRef) {}
 
-    @Input() set myIf(condition: boolean) {
-    if (condition) {
-    this.viewContainer.createEmbeddedView(this.templateRef);
-    } else {
-    this.viewContainer.clear();
-    }
-    }
-    }
+  @Input() set myIf(condition: boolean) {
+    condition ? this.viewContainer.createEmbeddedView(this.templateRef) : this.viewContainer.clear();
+  }
+}
+```
 
-------------------------------------------
-**# T38 what is data binding and it's type**
+---
 
-    Data binding is a feature in Angular that allows you to connect data in your component class to the user interface (UI) in your template. There are four types of data binding in Angular:
+## T36. Data Binding — Types
 
-    **1- Interpolation Binding:** This is a one-way data binding where the data flows from the component class to the template. Interpolation binding is denoted by double curly braces {{}} and can be used to display string literals or variable values in the template.
+| Type | Syntax | Direction |
+|---|---|---|
+| Interpolation | `{{ value }}` | Component → Template |
+| Property Binding | `[disabled]="isDisabled"` | Component → Template |
+| Event Binding | `(click)="onClick()"` | Template → Component |
+| Two-way Binding | `[(ngModel)]="name"` | Component ↔ Template |
 
-    <!-- app.component.html -->
-    <h1>{{ pageTitle }}</h1>
+---
 
-    <!-- app.component.ts -->
+## T37. Basic Building Blocks of Angular
 
-    export class AppComponent {
-    pageTitle = 'My App';
-    }
+- **Components** — UI building blocks with template + logic
+- **Templates** — HTML structure with Angular directives
+- **Services** — shared functionality via `@Injectable`
+- **Modules** — organize app into functional units
+- **Directives** — add behavior to DOM elements
+- **Pipes** — transform data for display
 
-    **2-Property Binding:** This is also a one-way data binding where the data flows from the component class to the template. Property binding is denoted by square brackets [] and can be used to set a property of an HTML element in the template.
+---
 
-    <!-- app.component.html -->
+## T38. Decorators & Metadata
 
-    <button [disabled]="isDisabled">Click me</button>
+Decorators add metadata to classes using `@` syntax. Angular reads this metadata at runtime.
 
-    <!-- app.component.ts -->
+```ts
+@Component({
+  selector: 'app-root',
+  template: '<h1>{{ title }}</h1>'
+})
+export class AppComponent {
+  title = 'My App';
+}
+```
 
-    export class AppComponent {
-    isDisabled = false;
-    }
+Built-in: `@Component`, `@Directive`, `@Injectable`, `@Pipe`, `@NgModule`
 
-    **3-Event Binding:** This is a one-way data binding where the data flows from the template to the component class. Event binding is denoted by parentheses () and can be used to bind to events raised by HTML elements in the template.
+---
 
-    <!-- app.component.html -->
+## T39. Lazy Loading
 
-    <button (click)="onClick()">Click me</button>
+Answer
 
-    <!-- app.component.ts -->
+---
 
-    export class AppComponent {
-    onClick() {
-    console.log('Button clicked!');
-    }
-    }
+## T40. Services in Angular
 
-    **4-Two-way Binding:** This is a two-way data binding where the data flows in both directions between the component class and the template. Two-way binding is denoted by square brackets and parentheses [()] and can be used to bind to both a property and an event at the same time.
+Answer
 
-    <!-- app.component.html -->
+---
 
-    <input [(ngModel)]="name">
+## T41. ng-content (Content Projection)
 
-    <!-- app.component.ts -->
+Answer
 
-    export class AppComponent {
-    name = 'John Doe';
-    }
+---
 
-    In summary, data binding is a powerful feature in Angular that allows you to connect data between the component class and the template. There are four types of data binding in Angular: interpolation binding, property binding, event binding, and two-way binding, each with its own use case and syntax.
+## T42. ViewChild vs ViewChildren
 
-------------------------------------------
-**# T39 basic component involved in angular**
+Answer
 
-    There are several basic components involved in creating an Angular application. Here are the main components:
+---
 
-    **Components:** Components are the building blocks of an Angular application. Each component defines a part of the user interface (UI) and its behavior. A component is defined by a TypeScript class with a decorator that provides metadata to Angular. A component's metadata includes its selector, template or templateUrl, and styles or styleUrls.
+## T43. ContentChild vs ContentChildren
 
-    **Templates:** Templates define the structure and layout of the UI for a component. Templates use HTML markup and can include Angular directives and expressions to provide dynamic content and behavior.
+Answer
 
-    **Services:** Services are used to provide functionality that is shared across multiple components. Services are defined by a TypeScript class with the @Injectable decorator, and they can be injected into components or other services using dependency injection.
+---
 
-    **Modules:** Modules are used to organize an Angular application into functional units. Each module declares the components, services, and other dependencies that it uses, and can be imported by other modules that depend on it.
+## T44. `{ static: true }` in ViewChild
 
-    **Directives:** Directives are used to add behavior or modify the appearance of an element in the UI. There are three types of directives in Angular: component directives, attribute directives, and structural directives.
+Answer
 
-    **Pipes:** Pipes are used to transform data in the UI. Pipes can be used to format dates and numbers, filter and sort arrays, and more.
+---
 
-    In summary, an Angular application is composed of several basic components, including components, templates, services, modules, directives, and pipes. Understanding these components is essential to building robust and maintainable Angular applications.
+## T45. Constructor vs ngOnInit
 
+Answer
 
-------------------------------------------
-**# T40 what is decorator in angular and meta data in angular?**
+---
 
-    In Angular, a decorator is a special kind of declaration that can be attached to a class declaration, method, property, parameter, or accessor. Decorators are used to add metadata to a class or its members, which can be used by Angular to provide additional functionality or to configure how a component is processed at runtime.
+## T46. HTTP in Angular
 
-    Decorators are defined using the @ symbol followed by the decorator name, and they are applied immediately before the declaration of the class or member that they decorate. Here's an example of a decorator applied to a class declaration:
+Answer
 
-    @Component({
-    selector: 'app-root',
-    template: '<h1>{{ title }}</h1>'
-    })
-    export class AppComponent {
-    title = 'My App';
-    }
-    In this example, the @Component decorator is used to define the metadata for the AppComponent class. The decorator provides the selector and template properties, which Angular uses to create the component at runtime.
+---
 
-    Angular provides several built-in decorators, such as @Component, @Directive, and @Injectable, which are used to define components, directives, and services, respectively. Developers can also create their own custom decorators to provide additional functionality or to extend existing decorators.
+## T47. Passing Data Between Components
 
-    In summary, decorators in Angular are a powerful feature that allow developers to add metadata to classes and their members, which can be used by Angular to provide additional functionality or to configure how a component is processed at runtime.
+| Method | Direction |
+|---|---|
+| `@Input` | Parent → Child |
+| `@Output` + EventEmitter | Child → Parent |
+| `@ViewChild` | Child → Parent |
+| Shared Service | Any ↔ Any |
 
-------------------------------------------
-**# T41  what is lazy loading **
+---
 
-    Answer
+## T48. @Input — Parent to Child
 
-------------------------------------------
-**# T42 services in angular**
+Answer
 
-    Answer
+---
 
-------------------------------------------
-**# T43 ng-content or content porjection in angular**
+## T49. @Output — Child to Parent
 
-    Answer
+Answer
 
-------------------------------------------
-**# T44 why we need view-child and view children**
+---
 
-    Answer
+## T50. Pipes in Angular
 
-------------------------------------------
-**# T45 what is content child and content children**
+Answer
 
-    Answer
+---
 
-------------------------------------------
-**# T46 what is {static:true} in viewChild**
+## T51. Custom Pipe
 
-    Answer
+Answer
 
-------------------------------------------
-**# T47  different between constructor and ngonInit**
+---
 
-    Answer
+## T52. Interceptors
 
-------------------------------------------
-**# T48 http in angular**
+Middleware that intercepts HTTP requests/responses.
 
-    Answer
+**Use cases:**
+- Add authentication headers
+- Cache responses
+- Handle errors globally
+- Show loading indicators
+- Log requests
 
-------------------------------------------
-**# T49 pass data in angular**
+```ts
+@Injectable()
+export class AuthInterceptor implements HttpInterceptor {
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    const authReq = req.clone({
+      headers: req.headers.set('Authorization', 'Bearer ' + token)
+    });
+    return next.handle(authReq);
+  }
+}
+```
 
-    Answer
+---
 
-------------------------------------------
-**# T50  pass data parent to child by @input**
+## T53. Pure vs Impure Pipe
 
-    Answer
+Answer
 
-------------------------------------------
-**# T51 pass data parent to child @output**
+---
 
-    Answer
+## T54. Compilation Types in Angular
 
-------------------------------------------
-**# T52 what is pipes in angular**
+Answer
 
-    Answer
+---
 
-------------------------------------------
-**# T53 create custom pipe in angular**
+## T55. Angular Animation Module
 
-    Answer
+Answer
 
-------------------------------------------
-**# T54  What are interceptors in Angular?**
+---
 
-    Interceptors in Angular are a type of middleware that intercepts incoming or outgoing HTTP requests and responses. Interceptors allow you to modify or inspect HTTP requests and responses before they are sent or received by your application.
+## T56. Dynamic Script Loading
 
-    Angular interceptors can be used for a variety of purposes, including:
+Answer
 
-    Authentication: Interceptors can add authentication headers to outgoing HTTP requests, and check for authentication errors in incoming HTTP responses.
+---
 
-    Caching: Interceptors can cache HTTP responses to improve performance and reduce server load.
+## T57. Router Events
 
-    Error handling: Interceptors can catch and handle errors that occur during HTTP requests or responses.
+Answer
 
-    Logging: Interceptors can log HTTP requests and responses for debugging purposes.
+---
 
-    Loading indicators: Interceptors can show loading indicators while HTTP requests are in progress.
+## T58. ngSwitch Directive
 
-    Interceptors in Angular are implemented as services that implement the HttpInterceptor interface. Interceptors can be registered globally or locally, depending on your needs.
+Answer
 
-    Here's an example of an interceptor that adds an authentication token to outgoing HTTP requests:
+---
 
-------------------------------------------
-**# T55 pure and impure pipe**
+## T59. Forms in Angular
 
-    Answer
+Answer
 
-------------------------------------------
-**# T56 different types of compilation in Angular**
+---
 
-    Answer
+## T60. ng-container vs ng-template
 
-------------------------------------------
-**# T57 angular animation module**
+Answer
 
-    Answer
+---
 
-------------------------------------------
-**# T58 dynamic script in angular**
+## T61. Sharing Modules Between NPM Packages
 
-    Answer
+**Repo 1 (library):**
 
-------------------------------------------
-**# T59 router event**
+```ts
+// repo1.module.ts
+@NgModule({
+  declarations: [Com1, Com2, Com3],
+  exports: [Com1, Com2, Com3]
+})
+export class Repo1Module {}
 
-    Answer
+// public-api.ts
+export * from './repo1.module';
+export * from './com1';
+export * from './com2';
+export * from './com3';
+```
 
-------------------------------------------
-**# T60 ngSwitch directive**
+**Repo 2 (consumer):**
 
-    Answer
+```ts
+// any.module.ts
+import { Repo1Module } from 'repo1-npm';
 
-------------------------------------------
-**# T61 forms in angular**
+@NgModule({
+  imports: [Repo1Module]
+})
+export class AnyModule {}
+```
 
-    Answer
+```html
+<!-- any.component.html -->
+<lib-com1></lib-com1>
+<lib-com2></lib-com2>
+<lib-com3></lib-com3>
+```
 
-------------------------------------------
-**# T62 ng-container and ng-templete**
+---
 
-    Answer
+## T62. NPM Publish Process
 
-------------------------------------------
-**# T63 one npm to other npm share module and its component**
+```bash
+ng build --prod one-jf-header
+cd dist/one-jf-header/
+npm publish
+```
 
-we have two repo repo-1,and repo2
+---
 
-    we want to share a module and component (com1,com2,com3) repo-1 => repo-2
+## T63. Data Sharing Summary
 
-    ## repo-1
+| Method | Direction |
+|---|---|
+| `@Input` | Parent → Child |
+| `@Output` + EventEmitter | Child → Parent |
+| `@ViewChild` | Child → Parent |
+| Shared Service | Unrelated components |
 
-    ### repo1.component
+---
 
-    <app-com1>
-    <app-com2>
-    <app-com3>
+## T64. Create Project in Root Directory
 
-    ### repo1.module
+```bash
+ng new my-project --directory ./
+```
 
-    html
-    import { repo1component} from './repo1.component'
-    import { com1 } from './com1';
-    import { com2 } from './com2';
-    import { com3 } from './com3';
+---
 
-    declarations: [
-    repo1component,com1,com2,com3
+## T65. Find Unused Variables
 
-    ],
+Add to `tsconfig.json`:
 
-    exports:[
-    repo1component,com1,com2,com3
-    ]
-    export class repo1.module { }
-
-    ### public-api.ts
-
-    html
-    export _ from './repo1.module';
-    export _ from './com1';
-    export _ from './com2';
-    export _ from './com3';
-
-    ## repo-2
-
-    html
-
-    ### anycomponent.module
-
-    import {repo1.module} form 'repo1Npm';
-
-    import:[
-    repo1.module
-    ]
-
-    ### anycomponent.html
-
-    <lib-com1>
-    <lib-com2>
-    <lib-com3>
-
-------------------------------------------
-**# T64 making npm process**
-
-  Npm Generate Process:
-  ng build --prod one-jf-header
-  cd dist/one-jf-header/
-  npm publish
-
-------------------------------------------
-**# T65 Data Sharing Between Angular Components**
-Parent to Child: via Input
-
-    Child to Parent: via Output() and EventEmitter
-
-    Child to Parent: via ViewChild
-
-    Unrelated Components: via a Service
-
-------------------------------------------
-**# T66  create project in root**
-
-    ng new interface-npm-one-jf-config --directory ./
-
-------------------------------------------
-**# T67 find unused var in angular project**
-
-![image](https://user-images.githubusercontent.com/106906674/230338401-82e6d173-bb0a-4c22-bcf8-e2713d045bd8.png)
-" "noUnusedLocals": true
-"
-
+```json
+{
+  "compilerOptions": {
+    "noUnusedLocals": true
+  }
+}
+```
