@@ -254,6 +254,360 @@ Ensuring web apps are usable by everyone, including users with disabilities. Key
 
 ---
 
+---
+
+# Testing
+
+---
+
+## 1. Types of Testing
+
+| Type | Scope | Purpose |
+|---|---|---|
+| **Unit Testing** | Single function/component | Test individual pieces in isolation |
+| **Integration Testing** | Multiple modules together | Test how modules interact |
+| **End-to-End (E2E)** | Full user flow | Test the entire app from UI to backend |
+
+```
+Unit → Integration → E2E
+(fast, many)    →    (slow, few)
+```
+
+---
+
+## 2. Unit Testing
+
+Test a single function or component in isolation. Mock external dependencies.
+
+**Tools:** Jest, Vitest, React Testing Library
+
+```ts
+// Example: Jest
+describe('add', () => {
+  it('should return sum of two numbers', () => {
+    expect(add(2, 3)).toBe(5);
+  });
+
+  it('should handle negative numbers', () => {
+    expect(add(-1, 1)).toBe(0);
+  });
+});
+```
+
+---
+
+## 3. Integration Testing
+
+Test how multiple units work together (e.g., component + API call + Redux store).
+
+```tsx
+// Example: React Testing Library
+render(<LoginForm />);
+fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'test@test.com' } });
+fireEvent.click(screen.getByText('Submit'));
+expect(await screen.findByText('Welcome')).toBeInTheDocument();
+```
+
+---
+
+## 4. End-to-End (E2E) Testing
+
+Simulates real user behavior in a real browser.
+
+**Tools:** Cypress, Playwright
+
+---
+
+## 5. Testing Tools Comparison
+
+| Tool | Type | Language | Browser | Speed | Best For |
+|---|---|---|---|---|---|
+| **Jest** | Unit / Integration | JS/TS | No (JSDOM) | Fast | React component & logic testing |
+| **Cypress** | E2E | JS/TS | Yes (Chromium) | Medium | Visual E2E, single browser testing |
+| **Playwright** | E2E | JS/TS/Python | Yes (Multi) | Fast | Cross-browser E2E, CI pipelines |
+
+---
+
+---
+
+# Clean Code
+
+---
+
+## 1. ESLint
+
+Static analysis tool that finds and fixes code problems.
+
+```bash
+npm install -D eslint
+npx eslint --init
+```
+
+```json
+// .eslintrc.json
+{
+  "extends": ["eslint:recommended", "plugin:react/recommended"],
+  "rules": {
+    "no-unused-vars": "warn",
+    "no-console": "warn"
+  }
+}
+```
+
+---
+
+## 2. Prettier
+
+Opinionated code formatter — formats code automatically.
+
+```bash
+npm install -D prettier
+```
+
+```json
+// .prettierrc
+{
+  "semi": true,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "trailingComma": "es5",
+  "printWidth": 100
+}
+```
+
+---
+
+## 3. Husky
+
+Git hooks manager — run scripts before commit/push.
+
+```bash
+npm install -D husky
+npx husky install
+npx husky add .husky/pre-commit "npx lint-staged"
+```
+
+---
+
+## 4. Commitlint
+
+Enforce commit message conventions (e.g., Conventional Commits).
+
+```bash
+npm install -D @commitlint/cli @commitlint/config-conventional
+```
+
+```js
+// commitlint.config.js
+module.exports = { extends: ['@commitlint/config-conventional'] };
+```
+
+**Valid formats:**
+
+```
+feat: add login page
+fix: resolve cart total bug
+docs: update README
+chore: upgrade dependencies
+```
+
+---
+
+## 5. Full Clean Code Pipeline
+
+```json
+// package.json
+{
+  "lint-staged": {
+    "*.{ts,tsx}": ["eslint --fix", "prettier --write"],
+    "*.{css,md,json}": ["prettier --write"]
+  }
+}
+```
+
+```
+Developer commits → Husky runs pre-commit hook → lint-staged runs ESLint + Prettier → Commitlint checks message → ✅ Commit passes
+```
+
+---
+
+---
+
+# Security
+
+---
+
+## 1. Web Attacks
+
+### XSS (Cross-Site Scripting)
+
+Attacker injects malicious scripts into web pages viewed by other users.
+
+| Type | How |
+|---|---|
+| **Stored XSS** | Script saved in DB, served to all users |
+| **Reflected XSS** | Script in URL params, reflected in response |
+| **DOM-based XSS** | Script manipulates DOM directly |
+
+**Prevention:**
+- Escape/sanitize user input
+- Use `Content-Security-Policy` headers
+- React auto-escapes JSX (avoid `dangerouslySetInnerHTML`)
+
+---
+
+### CSRF (Cross-Site Request Forgery)
+
+Attacker tricks authenticated user into making unwanted requests.
+
+**Prevention:**
+- Use CSRF tokens
+- `SameSite` cookie attribute
+- Check `Origin` / `Referer` headers
+
+---
+
+## 2. Secure Token & Authentication
+
+| Technology | Purpose |
+|---|---|
+| **JWT** | Stateless auth token (Header.Payload.Signature) |
+| **HTTPS** | Encrypted communication (TLS/SSL) |
+| **OAuth2** | Third-party auth (Google, GitHub login) |
+| **Helmet** | Express middleware — sets secure HTTP headers |
+| **bcrypt** | Hash passwords before storing in DB |
+| **scryptjs** | Alternative password hashing algorithm |
+
+**JWT flow:**
+
+```
+1. User logs in → server creates JWT → sends to client
+2. Client stores JWT (localStorage / httpOnly cookie)
+3. Client sends JWT in Authorization header on every request
+4. Server verifies JWT signature → grants access
+```
+
+---
+
+## 3. NPM Token Configuration
+
+```bash
+# Set NPM auth token
+npm config set //registry.npmjs.org/:_authToken=YOUR_NEW_TOKEN
+
+# Or edit directly
+code ~/.npmrc
+```
+
+```
+// .npmrc
+//registry.npmjs.org/:_authToken=YOUR_TOKEN
+```
+
+---
+
+---
+
+# Real-Time Communication
+
+---
+
+## 1. WebSocket vs SSE
+
+| Feature | WebSocket | SSE (Server-Sent Events) |
+|---|---|---|
+| **Direction** | Bi-directional (client ↔ server) | One-way (server → client) |
+| **Protocol** | `ws://` / `wss://` | HTTP |
+| **Reconnection** | Manual | Auto-reconnect built-in |
+| **Data format** | Text + Binary | Text only |
+| **Use case** | Chat, gaming, live collaboration | Notifications, live feeds, stock prices |
+
+---
+
+## 2. Polling vs Push
+
+| | Short Polling | Long Polling | Push (WebSocket/SSE) |
+|---|---|---|---|
+| **How** | Client requests every N seconds | Client waits, server responds when data ready | Server pushes instantly |
+| **Latency** | High (depends on interval) | Medium | Low (real-time) |
+| **Server load** | High (many empty requests) | Medium | Low |
+| **Complexity** | Simple | Medium | Higher |
+
+---
+
+## 3. Socket.io (Node.js)
+
+Real-time bidirectional communication library built on WebSocket with fallbacks.
+
+**Server:**
+
+```js
+const io = require('socket.io')(server);
+
+io.on('connection', (socket) => {
+  console.log('User connected:', socket.id);
+
+  socket.on('message', (data) => {
+    io.emit('message', data);          // Broadcast to all
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
+  });
+});
+```
+
+**Client:**
+
+```js
+import { io } from 'socket.io-client';
+
+const socket = io('http://localhost:3000');
+
+socket.emit('message', { text: 'Hello!' });
+
+socket.on('message', (data) => {
+  console.log('Received:', data);
+});
+```
+
+---
+
+## 4. Redis (Pub/Sub)
+
+Redis Pub/Sub enables real-time messaging between services. Used to **scale WebSocket** across multiple servers.
+
+```
+Server A (Socket.io) ←→ Redis Pub/Sub ←→ Server B (Socket.io)
+```
+
+**Publisher:**
+
+```js
+const redis = require('redis');
+const publisher = redis.createClient();
+
+publisher.publish('chat', JSON.stringify({ user: 'John', text: 'Hello' }));
+```
+
+**Subscriber:**
+
+```js
+const subscriber = redis.createClient();
+
+subscriber.subscribe('chat');
+subscriber.on('message', (channel, message) => {
+  console.log(`${channel}: ${JSON.parse(message).text}`);
+});
+```
+
+**Why Redis for chat?**
+- Scale WebSocket across multiple Node.js instances
+- Message persistence (with Redis Streams)
+- Fast in-memory performance
+
+---
+
 # HLD (High Level Design)
 
 ---
