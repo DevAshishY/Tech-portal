@@ -171,6 +171,87 @@
 
 ---
 
+## 12. Logging — WinstonJS
+
+**WinstonJS** is a popular logging library for Node.js. Supports multiple transports (console, file, HTTP), custom log levels, and structured JSON logging.
+
+- https://github.com/winstonjs/winston
+
+---
+
+## 13. Load Testing & Stress Testing
+
+Tools to check if your API/infra can handle expected traffic.
+
+| Tool | Type | Notes |
+|---|---|---|
+| **JMeter** | GUI-based | Java-based, good for complex scenarios |
+| **k6** | Script-based | JS scripting, modern, developer-friendly |
+
+**Load Testing** — can the system handle expected traffic?
+**Stress Testing** — at what point does the system break?
+
+---
+
+## 14. A11y (Accessibility)
+
+Ensuring web apps are usable by everyone, including users with disabilities. Key areas:
+
+- Semantic HTML (`<button>`, `<nav>`, `<main>`)
+- ARIA attributes (`aria-label`, `role`)
+- Keyboard navigation (`tabIndex`, focus management)
+- Color contrast ratios
+- Screen reader compatibility
+- Tools: **axe DevTools**, **Lighthouse**, **WAVE**
+
+---
+
+## 15. Core Web Vitals & Lighthouse
+
+| Metric | What It Measures | Good Score |
+|---|---|---|
+| **LCP** | Largest Contentful Paint — loading speed | < 2.5s |
+| **INP** | Interaction to Next Paint — responsiveness | < 200ms |
+| **CLS** | Cumulative Layout Shift — visual stability | < 0.1 |
+
+**Lighthouse** — Chrome DevTools audit tool that scores Performance, Accessibility, SEO, and Best Practices.
+
+---
+
+## 16. Image Optimization
+
+| Technique | How |
+|---|---|
+| **HTML5 `<picture>`** | Serve different formats (WebP, AVIF) per browser |
+| **`srcset`** | Serve different sizes based on viewport width |
+| **Lazy Loading** | `loading="lazy"` — load images only when visible |
+| **Format** | Use WebP/AVIF instead of PNG/JPEG |
+| **Compression** | Tools like Squoosh, Sharp, imagemin |
+
+```html
+<picture>
+  <source srcset="image.avif" type="image/avif" />
+  <source srcset="image.webp" type="image/webp" />
+  <img src="image.jpg" loading="lazy" alt="description" />
+</picture>
+```
+
+---
+
+## 17. Build Optimization
+
+| Tool | Description |
+|---|---|
+| **Webpack** | Most popular bundler, highly configurable |
+| **Vite** | Fast dev server using ESM, Rollup for production |
+| **esbuild** | Ultra-fast Go-based bundler/minifier |
+
+**Key techniques:**
+- **Tree Shaking** — remove unused code from the bundle
+- **Bundle Caching** — use content hashes in filenames for long-term caching
+- **Code Splitting** — load only what's needed per route
+- **Minification** — compress JS/CSS for smaller payloads
+
 ---
 
 # HLD (High Level Design)
