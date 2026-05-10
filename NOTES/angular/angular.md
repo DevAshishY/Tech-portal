@@ -7,7 +7,7 @@
 - Data binding
 - Directives
 - Services / Dependency Injection
-- Routing
+- Routing 
 - Observables
 - Forms
 - Pipes
