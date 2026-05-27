@@ -62,3 +62,7 @@ Zero-code AI-powered app development platform by Vercel.
 | **Use case** | Generate UI components, full pages, and apps from text prompts |
 | **Stack** | React, Next.js, Tailwind CSS |
 | **Best for** | Rapid prototyping, UI generation, no-code development |
+
+
+## AI JAILBREAKING 
+AI jailbreaks occur when hackers exploit vulnerabilities in AI systems to bypass their ethical guidelines and perform restricted actions. They use common AI jailbreak techniques, such as prompt injection attacks and roleplay scenarios. 
