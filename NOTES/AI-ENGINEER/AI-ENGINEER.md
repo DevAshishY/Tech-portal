@@ -4,10 +4,174 @@
 
 ## 1. AI Learning & Basics
 
-| Resource | Link |
-|---|---|
-| **AI Projects Repo** | https://github.com/DevAshishY/Ai/tree/main |
-| **Best AI Tutorials** | https://www.youtube.com/@asifsyedtech/videos |
+# 🚀 AI Concepts & Workflow Guide
+
+## 📌 AI Basics
+
+### Cursor AI Options
+- AGENT
+- PLAN
+- DEBUG
+- ASK  
+- Multiple agents can think together
+
+---
+
+## 🤖 AI Roles
+
+### AI Operators
+- People/teams who develop AI systems (e.g., ChatGPT)
+
+### AI Builders
+- People who use AI (like ChatGPT) to build apps and automate tasks
+
+---
+
+## 🛠️ AI Tools
+- Gemini  
+- ChatGPT  
+- Cursor  
+- Cloud Code  
+- Gemini CLI  
+
+---
+
+## 🧠 Notebook LM
+Latest Gemini models, your research and thinking partner:
+- Audio Overview  
+- Slide Deck  
+- Video Overview  
+- Mind Map  
+- Reports  
+- Flashcards  
+- Quiz  
+- Infographic  
+- Data Table  
+
+---
+
+## 💬 ChatGPT
+- When writing prompts, always provide proper context
+
+---
+
+## 🎨 Generative AI
+
+Content Generation Types:
+- **Text**
+- **Images** → https://www.midjourney.com  
+- **Music** → https://openai.com/index/whisper/  
+- **Video** → https://openart.ai/video/t2v  
+- **Code** → GitHub Copilot  
+
+---
+
+## 🤖 AI Agents
+- Can write code  
+- Generate files  
+- Work autonomously  
+
+---
+
+## ⚙️ AI Agent Work
+- Perform tasks automatically  
+- Act like human workflows  
+
+---
+
+## 🤖 Example AI Agents
+- Manus (AI Agent)
+
+---
+
+## 🧪 DeepSeek-R1 (Model)
+- Uses Reinforcement Learning (RL)  
+- Reward-based learning  
+- ✅ Best for coding  
+
+---
+
+## 📊 Machine Learning Models
+
+### Supervised Fine-Tuning (SFT)
+- Learns from labeled data  
+- "Label data se sikhna"
+
+### Reinforcement Learning (RL)
+- Trial and error  
+- Feedback-based learning  
+
+---
+
+## 💰 Cost Note
+- Words like “please” and “sorry” increase token usage → more cost  
+
+---
+
+## ⚡ Prompt Workflow (How LLM Works)
+
+1. Tokenization  
+   - Text converts into tokens  
+   - 5 words ≠ 5 tokens (can be more)
+
+2. Vector Conversion  
+   - Tokens convert into mathematical vectors  
+
+3. Self-Attention Mechanism  
+   - Understands word relationships and context  
+
+4. Prediction  
+   - Generates next token (prediction)  
+
+5. Decoding  
+   - Converts vectors back into words  
+
+---
+
+## ⚠️ LLM Limitations
+
+Example:
+- You ask: "Schedule meeting at 7 PM with Alok"
+- Later ask: "Meeting kab hai?"
+- LLM cannot answer because:
+  - ❌ No calendar access  
+  - ❌ No memory of real-world systems  
+
+👉 This is a limitation of LLMs  
+
+### Solution:
+- Use **Agentic AI** with integrations (calendar, APIs)
+
+---
+
+## 🔄 Automation vs Autonomous
+
+### Automation
+- Fixed instructions  
+- Flow: Trigger → Action → Output  
+
+### Autonomous
+- You give only a goal  
+- AI decides everything  
+
+---
+
+## 🧩 Agent Types
+(To be defined as per use case)
+
+---
+
+## 🔗 Automation Tools
+- n8n  
+- make.com  
+
+---
+
+## 🔁 AI Workflow
+AI → Automation  
+- Trigger  
+- Action  
+- Output  
 
 ---
 
