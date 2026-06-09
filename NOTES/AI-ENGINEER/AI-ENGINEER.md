@@ -164,6 +164,7 @@ Example:
 ## 🔗 Automation Tools
 - n8n  
 - make.com  
+- Zapier 
 
 ---
 
