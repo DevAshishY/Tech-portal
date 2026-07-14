@@ -10,16 +10,33 @@ Need to handle with backend whitelist url
 
 Add proxy from frotend 
 
+### Middleware 
+
+app.use(exxpress.static('dist') 
+for serve static files 
 
 
+### Moon Modeler 
+Schema Design Tool for MongoDB and noSQL Data Modeling
 
+### mongoose 
+Elegant MongoDB object modeling for Node.js
 
+## when we make schema in mongoose , it will save on mongo db with purals 
 
+```
+const productSchema = new mongoose.Schema({
+  title: String,
+  price: Number,
+});
 
+const Product = mongoose.model("Product", productSchema);
 
+Collection created:
 
+products
 
-
+```
 
 ### Interview 
 
