@@ -41,6 +41,28 @@ products
 
 ```
 
+## nodemon 
+
+when save file restart server 
+
+## npm install -d nodemon (means its for dev dependency (-d))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ### Interview 
 
 write syntax axios and fetch 
