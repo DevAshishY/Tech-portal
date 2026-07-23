@@ -10,6 +10,9 @@ Need to handle with backend whitelist url
 
 Add proxy from frotend 
 
+<img width="908" height="596" alt="image" src="https://github.com/user-attachments/assets/06ab9299-908c-4682-b5ee-db1320a165fb" />
+
+
 ### Middleware 
 
 app.use(exxpress.static('dist') 
