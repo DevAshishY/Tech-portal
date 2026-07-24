@@ -48,9 +48,13 @@ when save file restart server
 ## npm install -d nodemon (means its for dev dependency (-d))
 
 
+## prettier 
+
+install prerttier as npm because production leabel code formating should be common
 
 
-
+## mongo db vs sqldb
+<img width="842" height="366" alt="image" src="https://github.com/user-attachments/assets/c4a954fc-fa4b-4109-88a3-ede2eb75e948" />
 
 
 
