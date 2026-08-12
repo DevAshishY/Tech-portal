@@ -1,3 +1,7 @@
+## Best resource 
+https://roadmap.sh/system-design?fl=0
+
+
 # Frontend System Design & HLD Notes
 
 ---
