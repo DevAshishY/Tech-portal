@@ -1,4 +1,4 @@
-# MERN Backend Notes — Node.js, Express.js & MongoDB
+#   Node.js, Express.js & MongoDB
 
 A practical, interview-friendly reference for the backend side of MERN development.
 
