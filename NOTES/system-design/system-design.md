@@ -728,3 +728,119 @@ Each shard holds a subset of the data. A **shard key** determines which shard st
 | Scales horizontally | Complex queries across shards |
 | Better performance | Rebalancing is hard |
 | Fault isolation | Shard key selection is critical |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## others topic 
+
+```
+HTTP/HTTPS
+REST
+WebSockets
+DNS
+CDN
+Reverse proxy
+Load balancer
+API Gateway
+Authentication
+Authorization
+JWT
+OAuth
+Caching
+Database indexing
+SQL vs NoSQL
+Horizontal vs vertical scaling
+https://roadmap.sh/system-design?fl=0
+Backend architecture
+
+Node.js architecture
+Express/NestJS
+Middleware
+Controllers
+Services
+Repositories
+Validation
+Error handling
+Authentication
+Authorization
+Rate limiting
+Logging
+Monitoring
+API versioning
+
+Distributed systems
+Redis
+Message queues
+Kafka basics
+RabbitMQ basics
+Event-driven architecture
+Pub/sub
+Microservices
+Database replication
+Sharding
+CAP theorem
+Eventual consistency
+Idempotency
+Distributed locks
+
+"Architecture interviews
+Finally learn how to design:"
+WhatsApp
+YouTube
+Netflix
+Uber
+Amazon
+URL shortener
+Notification system
+File upload system
+Chat application
+E-commerce
+Food delivery
+Order management system
+
+
+
+
+FRONTNED 
+Browser
+Rendering
+Caching
+State
+API
+Backend
+Database
+
+"Performance
+"
+Code splitting
+Lazy loading
+Memoization
+Virtualization
+Bundle optimization
+Tree shaking
+CDN
+Browser caching
+HTTP caching
+SSR
+CSR
+SSG
+Streaming
+component boundaries
+state boundaries
+API boundaries
+caching strategy
+error handling
+authorization
+performance strategy
+```
