@@ -47,6 +47,14 @@ Availability → Keep the system working
 Consistency → Keep the data correct/synchronized
 
 
+### Consistency Patterns
+Consistency patterns refer to the ways in which data is stored and managed in a distributed system, and how that data is made available to users and applications. There are three main types of consistency patterns:
+
+    Strong consistency
+    
+    Weak consistency
+    
+    Eventual Consistency
 
 
 
