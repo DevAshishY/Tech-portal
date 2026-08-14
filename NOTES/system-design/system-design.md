@@ -38,8 +38,13 @@ Latency is the time delay between a user's action and a system's response, usual
 
 Throughput refers to the number of requests that a system can handle at the same time.
 
-z
 
+
+## Availability & Consistency 
+
+Availability → Keep the system working
+
+Consistency → Keep the data correct/synchronized
 
 
 
