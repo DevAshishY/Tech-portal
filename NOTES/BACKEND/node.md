@@ -78,3 +78,72 @@ It allows Node.js to:
     Event Loop processes callbacks and sends responses
 
 ```
+
+## Blocking vs Non-blocking Code
+
+```
+// Blocking code example
+console.log('Start of blocking code');
+const data = fs.readFileSync('myfile.txt', 'utf8'); // Blocks here
+console.log('Blocking operation completed');
+
+// Non-blocking code example
+console.log('Start of non-blocking code');
+fs.readFile('myfile.txt', 'utf8', (err, data) => {
+  if (err) throw err;
+  console.log('Non-blocking operation completed');
+});
+console.log('This runs before the file is read');
+```
+
+Key Difference: The first example blocks the entire process until the file is read, while the second example allows other operations to continue while the file is being read.
+
+
+## What is the Event Loop
+The event loop is what makes Node.js non-blocking and efficient.
+
+It handles asynchronous operations by delegating tasks to the system and processing their results through callbacks, allowing Node.js to manage thousands of concurrent connections with a single thread.
+
+## How the Event Loop Works
+
+```
+Node.js follows these steps to handle operations:
+
+    Execute the main script (synchronous code)
+    Process any microtasks (Promises, process.nextTick)
+    Execute timers (setTimeout, setInterval)
+    Run I/O callbacks (file system, network operations)
+    Process setImmediate callbacks
+    Handle close events (like socket.on('close'))
+
+
+```
+
+### Why is the Event Loop Important?
+```
+The event loop enables Node.js to handle thousands of concurrent connections with a single thread, making it perfect for:
+
+    Real-time applications
+    APIs and microservices
+    Data streaming
+    Chat applications
+
+```
+
+### event loop phase 
+
+```
+
+
+The event loop processes different types of callbacks in this order:
+
+    Timers: setTimeout, setInterval
+    I/O Callbacks: Completed I/O operations
+    Poll: Retrieve new I/O events
+    Check: setImmediate callbacks
+    Close: Cleanup callbacks (like socket.on('close'))
+
+```
+
+**Note: Between each phase, Node.js runs microtasks (Promises) and process.nextTick callbacks.**
+
