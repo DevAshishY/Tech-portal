@@ -147,3 +147,13 @@ The event loop processes different types of callbacks in this order:
 
 **Note: Between each phase, Node.js runs microtasks (Promises) and process.nextTick callbacks.**
 
+
+### Asynchronous Programming in Node.js
+
+```
+Node.js uses an event loop for non-blocking I/O
+Modern async code uses async/await with Promises
+Always handle errors in async operations
+Use Promise.all for parallel operations
+Avoid callback hell with proper async patterns
+```
