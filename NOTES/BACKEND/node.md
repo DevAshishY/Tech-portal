@@ -157,3 +157,15 @@ Always handle errors in async operations
 Use Promise.all for parallel operations
 Avoid callback hell with proper async patterns
 ```
+### Promise States
+
+```
+
+    Pending: Initial state, operation not completed
+    Fulfilled: Operation completed successfully
+    Rejected: Operation failed
+
+Once a promise is settled (either fulfilled or rejected), its state cannot change.
+```
+
+
