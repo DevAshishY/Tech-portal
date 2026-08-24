@@ -198,3 +198,23 @@ req.on('error', (err) => {
 
 ```
 
+### Node.js supports two module systems: CommonJS (traditional) and ES Modules (ECMAScript modules).
+
+### Core Built-in Modules
+
+Node.js provides several built-in modules that are compiled into the binary.
+
+
+
+    fs - File system operations
+    http - HTTP server and client
+    path - File path utilities
+    os - Operating system utilities
+    events - Event handling
+    util - Utility functions
+    stream - Stream handling
+    crypto - Cryptographic functions
+    url - URL parsing
+    querystring - URL query string handling
+
+
