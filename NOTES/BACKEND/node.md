@@ -217,4 +217,94 @@ Node.js provides several built-in modules that are compiled into the binary.
     url - URL parsing
     querystring - URL query string handling
 
+## Enabling ES Modules
+
+1. Using the .mjs File Extension
+
+The simplest way is to use the .mjs extension for your files.
+
+Node.js will automatically treat these files as ES Modules.
+2. Setting "type": "module" in package.json
+
+To use ES Modules with regular .js files, add the following to your package.json:
+
+```
+{
+  "name": "my-package",
+  "version": "1.0.0",
+  "type": "module"
+}
+```
+
+## Export Syntax
+
+### Named Exports
+
+```
+// Multiple named exports
+export function sayHello() {
+  console.log('Hello');
+}
+
+export function sayGoodbye() {
+  console.log('Goodbye');
+}
+
+// Alternative: export list at the end
+function add(a, b) {
+  return a + b;
+}
+
+function subtract(a, b) {
+  return a - b;
+}
+
+export { add, subtract };
+```
+
+## Default Export
+
+```
+// Only one default export per module
+export default function() {
+  console.log('I am the default export');
+}
+
+// Or with a named function/class/object
+function mainFunction() {
+  return 'Main functionality';
+}
+
+export default mainFunction;
+```
+
+
+### Mixed Exports
+```
+// Combining default and named exports
+export const VERSION = '1.0.0';
+
+function main() {
+  console.log('Main function');
+}
+
+export { main as default }; // Alternative way to set default 
+```
+
+### Import Syntax    
+
+```
+// Import specific named exports
+import { sayHello, sayGoodbye } from './greetings.mjs';
+sayHello(); // Hello
+
+// Rename imports to avoid naming conflicts
+import { add as sum, subtract as minus } from './math.mjs';
+console.log(sum(5, 3)); // 8
+
+// Import all named exports as an object
+import * as math from './math.mjs';
+console.log(math.add(7, 4)); // 11 
+```
+
 
