@@ -307,4 +307,67 @@ import * as math from './math.mjs';
 console.log(math.add(7, 4)); // 11 
 ```
 
+# Node.js Dependency Management
+
+Dependency management = **install, update, remove, version, and secure packages**.
+
+## 📦 Important Files
+
+```text
+package.json       → Dependencies list
+package-lock.json  → Exact installed versions
+node_modules/      → Actual packages
+```
+
+## 🔢 SemVer
+
+```text
+MAJOR.MINOR.PATCH
+  2    .8    .1
+```
+
+* **MAJOR** → Breaking changes
+* **MINOR** → New features
+* **PATCH** → Bug fixes
+
+### Version Symbols
+
+```text
+^2.8.1 → 2.x.x
+~2.8.1 → 2.8.x
+2.8.1  → Exact version
+>=2.8.1 → 2.8.1 or higher
+```
+
+## 📂 Dependency Types
+
+```text
+dependencies          → Required to run
+devDependencies       → Development/testing
+peerDependencies      → Package compatibility
+optionalDependencies  → Optional package
+```
+
+```bash
+npm install express        # Install
+npm install express@4.18.2 # Specific version
+npm install -D jest        # Dev dependency
+npm uninstall express     # Remove
+
+npm outdated              # Check updates
+npm update                # Update
+npm audit                 # Security check
+npm audit fix             # Fix vulnerabilities
+npm ls                    # Dependency tree
+```
+
+## 🔒 Lock File
+
+**package.json** = What we need
+
+**package-lock.json** = Exact versions
+
+**node_modules** = What is installed
+
+> **Remember: package.json → lock file → node_modules**
 
