@@ -371,3 +371,80 @@ npm ls                    # Dependency tree
 
 > **Remember: package.json → lock file → node_modules**
 
+
+## Creating an HTTP Server
+
+```
+// Import the HTTP module
+const http = require('http');
+
+// Create a server object
+const server = http.createServer((req, res) => {
+  // Set the response HTTP header with HTTP status and Content type
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+
+  // Send the response body as 'Hello, World!'
+  res.end('Hello, World!\n');
+});
+
+// Define the port to listen on
+const PORT = 3000;
+
+// Start the server and listen on the specified port
+server.listen(PORT, 'localhost', () => {
+  console.log(`Server running at http://localhost:${PORT}/`);
+});
+
+
+Understanding the Code
+
+    http.createServer() - Creates a new HTTP server instance
+    The callback function is executed for each request with two parameters:
+        req - The request object (http.IncomingMessage)
+        res - The response object (http.ServerResponse)
+    res.writeHead() - Sets the response status code and headers
+    res.end() - Sends the response and ends the connection
+    server.listen() - Starts the server on the specified port
+
+```
+
+### res.writeHead()
+
+The res.writeHead() method is used to set the status code and response headers.
+
+```
+const http = require('http');
+
+const server = http.createServer((req, res) => {
+  // Set status code and multiple headers
+  res.writeHead(200, {
+    'Content-Type': 'text/html',
+    'X-Powered-By': 'Node.js',
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Set-Cookie': 'sessionid=abc123; HttpOnly'
+  });
+
+  res.end('<h1>Hello, World!</h1>');
+});
+
+server.listen(3000, () => {
+  console.log('Server running at http://localhost:3000/');
+});
+```
+
+### Common Response Headers
+
+```
+Content-Type: Specifies the media type of the content (e.g., text/html, application/json)
+Content-Length: The length of the response body in bytes
+Location: Used in redirects (with 3xx status codes)
+Set-Cookie: Sets HTTP cookies on the client
+Cache-Control: Directives for caching mechanisms
+Access-Control-Allow-Origin: For CORS support
+```
+
+### Reading Request Headers
+You can access request headers using the req.headers object:
+
+
+
