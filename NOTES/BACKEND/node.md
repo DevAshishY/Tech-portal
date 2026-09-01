@@ -679,4 +679,107 @@ HTTP : 80
 HTTPS: 443
 
 ## Node.js File System Module
+## Common Use Cases
 
+```
+File Operations
+
+    Read and write files
+    Create and delete files
+    Append to files
+    Rename and move files
+    Change file permissions
+
+Directory Operations
+
+    Create and remove directories
+    List directory contents
+    Watch for file changes
+    Get file/directory stats
+    Check file existence
+
+    Advanced Features
+
+    File streams
+    File descriptors
+    Symbolic links
+    File watching
+    Working with file permissions
+
+Performance Tip: For large files, consider using streams (fs.createReadStream and fs.createWriteStream) to avoid high memory usage.
+```
+
+## Reading Files 
+The most common method is fs.readFile().
+
+```
+const fs = require('fs');
+
+// Read file asynchronously with callback
+fs.readFile('myfile.txt', 'utf8', (err, data) => {
+  if (err) {
+    console.error('Error reading file:', err);
+    return;
+  }
+  console.log('File content:', data);
+});
+
+// For binary data (like images), omit the encoding
+fs.readFile('image.png', (err, data) => {
+  if (err) throw err;
+  // data is a Buffer containing the file content
+  console.log('Image size:', data.length, 'bytes');
+}); 
+```
+
+### Morden approch for reading file 
+
+Using fs.promises or util.promisify for cleaner async/await syntax:
+
+### Creates a new file 
+1- fs.writeFile()
+
+2- fs.appendFile()
+
+3- Using File Handles fileHandle.write('First line\n');-
+
+4. Using Streams for Large Files
+
+### File Flags: When opening files, you can specify different modes:
+```
+    'w' - Open for writing (file is created or truncated)
+    'wx' - Like 'w' but fails if the path exists
+    'w+' - Open for reading and writing (file is created or truncated)
+    'a' - Open for appending (file is created if it doesn't exist)
+    'ax' - Like 'a' but fails if the path exists
+    'r+' - Open for reading and writing (file must exist)
+```
+
+### Deleting Files and Directories
+
+1. Deleting a Single File 
+
+fs.unlink() to delete a file:
+
+2- Deleting Multiple Files 
+
+To delete multiple files, you can use Promise.all() with fs.unlink():
+
+3- Deleting Directories
+
+To delete directories, you have several options depending on your needs:
+
+4. Emptying a Directory Without Deleting It
+
+To remove all files and subdirectories within a directory but keep the directory itself:
+
+
+### Renaming and Moving Files 
+
+1. Basic File Renaming 
+
+2. Moving Files Between Directories
+
+3. Batch Renaming Files
+
+4. Atomic Rename Operations
