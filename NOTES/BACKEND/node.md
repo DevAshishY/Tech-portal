@@ -783,3 +783,18 @@ To remove all files and subdirectories within a directory but keep the directory
 3. Batch Renaming Files
 
 4. Atomic Rename Operations
+
+
+### Node.js Path Module 
+
+## path.basename
+const filename = path.basename("/user/hello.text"); //  last portion of a path
+console.log(filename);
+
+## __dirname & __filename
+In Node.js, __dirname and __filename are special variables available in CommonJS modules that provide the directory name and file name of the current module.
+
+## path.extname()
+Returns the extension of a path, from the last occurrence of the . character to the end of the string.
+
+## path.join()
