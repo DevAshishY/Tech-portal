@@ -616,3 +616,67 @@ server.listen(PORT, () => {
 });
 ```
 
+### https module 
+The HTTPS module is a core Node.js module that provides an implementation of the HTTPS protocol, which is essentially HTTP over TLS/SSL.
+
+### Why Use HTTPS?
+
+```
+HTTPS is crucial for modern web applications because it:
+
+    Encrypts Data: Protects sensitive information like passwords, credit card numbers, and personal data from eavesdropping
+    Authenticates Servers: Verifies that clients are communicating with the intended server
+    Ensures Data Integrity: Prevents data from being modified or corrupted during transfer
+    Builds Trust: Visual indicators (like the padlock icon) increase user confidence
+    Improves SEO: Search engines prioritize HTTPS websites in search results
+    Enables Modern Features: Many web APIs (like Geolocation, Service Workers) require HTTPS
+
+```
+### How HTTPS Works
+```
+Client initiates a secure connection to the server
+Server presents its SSL/TLS certificate to the client
+Client verifies the certificate with a trusted Certificate Authority (CA)
+Encrypted session is established using asymmetric encryption
+Symmetric encryption is used for the actual data transfer
+```
+### HTTPS vs HTTP API
+The main difference in usage is that HTTPS requires SSL/TLS certificates, while HTTP does not.
+
+### SSL/TLS Certificates
+
+```
+Types of Certificates
+
+    Self-Signed Certificates: For development and testing (not trusted by browsers)
+    Domain Validated (DV): Basic validation, just verifies domain ownership
+    Organization Validated (OV): Validates organization details
+    Extended Validation (EV): Highest level of validation, shows company name in browser
+    Wildcard Certificates: Secures all subdomains of a domain
+    Multi-Domain (SAN) Certificates: Secures multiple domains with one certificate
+
+```
+### HTTP/2 with Node.js
+
+HTTP/2 is a major revision of the HTTP protocol that provides significant performance improvements over HTTP/1.1. When combined with HTTPS, it offers both security and performance benefits for modern web applications.
+
+### Benefits of HTTP/2
+
+```
+Key Features of HTTP/2:
+
+    Multiplexing: Multiple requests/responses can be sent in parallel over a single connection, eliminating head-of-line blocking
+    Header Compression: Reduces overhead by compressing HTTP headers (HPACK algorithm)
+    Server Push: Server can proactively send resources to the client before they're requested
+    Binary Protocol: More efficient to parse than HTTP/1.1's text-based format
+    Stream Prioritization: More important resources can be loaded first
+    Connection Multiplexing: Multiple streams can share a single TCP connection
+
+```
+### Default Port 
+HTTP : 80
+
+HTTPS: 443
+
+## Node.js File System Module
+
