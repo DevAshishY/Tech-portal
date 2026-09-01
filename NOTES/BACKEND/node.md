@@ -446,5 +446,173 @@ Access-Control-Allow-Origin: For CORS support
 ### Reading Request Headers
 You can access request headers using the req.headers object:
 
+// Get specific headers (case-insensitive)
+  const userAgent = req.headers['user-agent'];
+  const acceptLanguage = req.headers['accept-language'];
 
+## Accessing the Request URL
+
+```
+const server = http.createServer((req, res) => {
+  // Get the URL and HTTP method
+  const { url, method } = req;
+```
+
+## Parsing URLs with the URL Module 
+
+Parsing URLs with the URL Module
+
+The url module provides utilities for URL resolution and parsing.
+
+It can parse a URL string into a URL object with properties for each part of the URL.
+
+```
+const http = require('http');
+const url = require('url');
+
+const server = http.createServer((req, res) => {
+  // Parse the URL
+  const parsedUrl = url.parse(req.url, true);
+
+  // Get different parts of the URL
+  const pathname = parsedUrl.pathname; // The path without query string
+  const query = parsedUrl.query; // The query string as an object
+
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({
+    pathname,
+    query,
+    fullUrl: req.url
+  }, null, 2));
+});
+
+server.listen(3000);
+```
+
+## Query Strings
+For more advanced query string handling, you can use the querystring module:
+```
+ const queryObj = {
+    name: 'John Doe',
+    age: 30,
+    interests: ['programming', 'music']
+  };
+  const queryStr = querystring.stringify(queryObj);
+
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({
+    path: parsedUrl.pathname,
+    params,
+    exampleQueryString: queryStr
+  }, null, 2));
+```
+
+### Common URL Parsing Methods
+
+```
+url.parse(urlString, [parseQueryString], [slashesDenoteHost]): Parse a URL string into an object
+url.format(urlObject): Format a URL object into a URL string
+url.resolve(from, to): Resolve a target URL relative to a base URL
+new URL(input, [base]): The WHATWG URL API (recommended for new code)
+querystring.parse(str, [sep], [eq], [options]): Parse a query string into an object
+querystring.stringify(obj, [sep], [eq], [options]): Stringify an object into a query string
+```
+
+### Best Practices for HTTP Methods
+
+```
+GET: Retrieve a resource or collection of resources (should be idempotent)
+POST: Create a new resource (not idempotent)
+PUT: Update an existing resource or create it if it doesn't exist (idempotent)
+PATCH: Partially update a resource
+DELETE: Remove a resource (idempotent)
+HEAD: Same as GET but without the response body
+OPTIONS: Describe the communication options for the target resource
+```
+
+### Error Handling 
+```
+200 OK - Successful GET/PUT/PATCH
+201 Created - Successful resource creation
+204 No Content - Successful DELETE
+400 Bad Request - Invalid request data
+401 Unauthorized - Authentication required
+403 Forbidden - Not enough permissions
+404 Not Found - Resource doesn't exist
+500 Internal Server Error - Server-side error
+```
+
+### Streaming Responses & Benefits of Streaming
+
+Node.js streams are powerful for handling large amounts of data efficiently. The HTTP module works well with streams for both reading request bodies and writing responses.
+
+```
+Benefits of Streaming
+
+    Memory Efficiency: Processes data in chunks instead of loading everything into memory
+    Faster Time to First Byte: Starts sending data as soon as it's available
+    Backpressure Handling: Automatically handles slow clients by pausing the read stream
+
+Common Use Cases for Streaming
+
+    File uploads/downloads
+    Real-time data processing
+    Proxying requests
+    Video/audio streaming
+    Log processing
+
+```
+
+```
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+
+const server = http.createServer((req, res) => {
+  // Get the file path from the URL
+  const filePath = path.join(__dirname, req.url);
+
+  // Check if file exists
+  fs.access(filePath, fs.constants.F_OK, (err) => {
+    if (err) {
+      res.statusCode = 404;
+      res.end('File not found');
+      return;
+    }
+
+    // Get file stats
+    fs.stat(filePath, (err, stats) => {
+      if (err) {
+        res.statusCode = 500;
+        res.end('Server error');
+        return;
+      }
+
+      // Set appropriate headers
+      res.setHeader('Content-Length', stats.size);
+      res.setHeader('Content-Type', 'application/octet-stream');
+
+      // Create read stream and pipe to response
+      const stream = fs.createReadStream(filePath);
+
+      // Handle errors
+      stream.on('error', (err) => {
+        console.error('Error reading file:', err);
+        if (!res.headersSent) {
+          res.statusCode = 500;
+          res.end('Error reading file');
+        }
+      });
+
+      // Pipe the file to the response
+      stream.pipe(res);
+    });
+  });
+});
+
+const PORT = 3000;
+server.listen(PORT, () => {
+  console.log(`File server running at http://localhost:${PORT}/`);
+});
+```
 
