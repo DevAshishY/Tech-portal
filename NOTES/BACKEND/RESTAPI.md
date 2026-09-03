@@ -152,7 +152,57 @@ Always return consistent JSON structure:
 
 ---
 
-## 8. REST API Quick Interview Cheat Sheet
+---
+
+## 8. API Authentication Methods
+
+API Authentication ensures that only authorized users or applications can access protected routes.
+
+| Method | Header Format / Strategy | Best Used For | Pros & Cons |
+|---|---|---|---|
+| **API Keys** | `x-api-key: secret_key_123` | Server-to-Server, Third-party integrations | ✅ Simple to implement<br>❌ Hard to revoke per user, insecure in public frontends |
+| **HTTP Basic Auth** | `Authorization: Basic base64(user:pass)` | Internal tools, simple microservices | ✅ Built-in browser support<br>❌ Sends credentials on every request, must use HTTPS |
+| **JWT (Bearer Token)** | `Authorization: Bearer <token>` | Modern Single Page Apps (React), Mobile Apps | ✅ Stateless, scalable, contains user payload<br>❌ Cannot easily revoke before expiration unless blacklisted |
+| **OAuth 2.0 / OIDC** | Access Token + Authorization Server | Social Login (Google, GitHub), Enterprise SSO | ✅ Standardized, delegated access<br>❌ Complex setup |
+
+### Express Middleware Example: API Key & JWT Authentication
+
+```js
+// 1. API Key Middleware (e.g. for service-to-service requests)
+const apiKeyAuth = (req, res, next) => {
+  const apiKey = req.headers['x-api-key'];
+  if (!apiKey || apiKey !== process.env.API_KEY) {
+    return res.status(401).json({ success: false, message: 'Invalid or missing API key' });
+  }
+  next();
+};
+
+// 2. JWT Bearer Token Middleware
+const jwtAuth = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ success: false, message: 'Authorization header missing or invalid format' });
+  }
+
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // Attach payload to request
+    next();
+  } catch (err) {
+    return res.status(401).json({ success: false, message: 'Token invalid or expired' });
+  }
+};
+
+// Usage
+app.get('/api/v1/protected-data', jwtAuth, (req, res) => {
+  res.json({ success: true, user: req.user });
+});
+```
+
+---
+
+## 9. REST API Quick Interview Cheat Sheet
 
 | Question | Quick Answer |
 |---|---|
@@ -163,3 +213,5 @@ Always return consistent JSON structure:
 | Why use Plural Nouns for URLs? | Represents a collection of resources (e.g., `/users` vs `/getUser`). |
 | What status code is returned for Creation? | `201 Created`. |
 | What status code is returned for Validation Failures? | `400 Bad Request` or `422 Unprocessable Content`. |
+| API Key vs JWT? | API Keys authenticate an *application/client*; JWT authenticates a *user/session* statelessly. |
+| What header is used for JWT? | `Authorization: Bearer <token>` |
