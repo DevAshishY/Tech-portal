@@ -125,24 +125,67 @@ app.delete('/users/:id', deleteUser);
 
 ## 6. Express Middleware
 
-Runs **between** request arriving and final response being sent.
+Middleware functions run **between** the incoming request arriving and the final response being sent.
 
 ```js
-// Structure
+// Basic Middleware Structure
 (req, res, next) => {
-  // do something
-  next();
+  // logic here
+  next(); // Pass control to the next middleware
 }
 ```
 
-Can: validate, authenticate, log, parse body, handle CORS, upload files, handle errors.
+Can: execute code, modify `req`/`res` objects, end request-response cycle, call next middleware.
 
-> ⚠️ **Order matters** — middleware executes in registration order.
+> ⚠️ **Order matters** — middleware executes strictly in registration order (`app.use()`).
 
 ```js
 app.use(express.json());           // 1. parse body
 app.use(authMiddleware);           // 2. auth check
 app.use('/api/users', userRouter); // 3. routes
+```
+
+### 5 Types of Express Middleware (W3Schools Reference)
+
+| Middleware Type | Description & Syntax | Example / Use Case |
+|---|---|---|
+| **1. Application-Level** | Bound to `app` instance using `app.use()` or `app.METHOD()` | Global logging, auth checks (`app.use(logger)`) |
+| **2. Router-Level** | Bound to `express.Router()` instance using `router.use()` | Sub-router auth, modular routing (`router.use(auth)`) |
+| **3. Built-in** | Provided out-of-the-box by Express | `express.json()`, `express.static()`, `express.urlencoded()` |
+| **4. Third-Party** | Installed via npm, imported, and passed to `app.use()` | `cors()`, `morgan()`, `helmet()`, `cookieParser()` |
+| **5. Error-Handling** | Must have **4 arguments**: `(err, req, res, next)` | Catching & formatting API errors (placed **last**) |
+
+#### Code Examples for Types of Middleware
+
+```js
+// 1. Application-Level
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
+
+// 2. Router-Level
+const router = express.Router();
+router.use((req, res, next) => {
+  if (!req.headers['x-api-key']) return res.status(400).send('API Key Missing');
+  next();
+});
+
+// 3. Built-in
+app.use(express.json());
+app.use(express.static('public'));
+
+// 4. Third-Party
+const cors = require('cors');
+const morgan = require('morgan');
+app.use(cors());
+app.use(morgan('dev'));
+
+// 5. Error-Handling (Must be registered LAST)
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ success: false, error: err.message });
+});
 ```
 
 ---
