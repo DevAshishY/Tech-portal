@@ -1,4 +1,3 @@
-
 # MongoDB & Mongoose Notes
 
 A practical, interview-friendly reference for MongoDB and Mongoose in MERN stack development.
@@ -50,6 +49,86 @@ MongoDB stores data internally as BSON. It extends JSON by adding extra data typ
 - `Date`
 - `Binary data`
 - `Decimal128` / `Int32` / `Int64`
+
+---
+
+## 3.1. Native MongoDB Driver Cheat Sheet (W3Schools Reference)
+
+> In Node.js, you can connect directly using the official `mongodb` driver (`MongoClient`) without Mongoose.
+
+### 1. Connect & Create Database
+```js
+const { MongoClient } = require('mongodb');
+const client = new MongoClient('mongodb://localhost:27017');
+
+async function run() {
+  await client.connect();
+  const db = client.db('mydb'); // Creates/selects DB
+}
+```
+
+### 2. Create Collection & Drop Collection
+```js
+await db.createCollection('customers'); // Create collection
+await db.collection('customers').drop(); // Drop collection
+```
+
+### 3. Insert (One & Many)
+```js
+// insertOne
+await db.collection('customers').insertOne({ name: 'Ashish', address: 'Gurgaon' });
+
+// insertMany
+await db.collection('customers').insertMany([
+  { name: 'John', address: 'Delhi' },
+  { name: 'Peter', address: 'Noida' }
+]);
+```
+
+### 4. Find & Query
+```js
+// findOne
+const user = await db.collection('customers').findOne({});
+
+// find all -> toArray()
+const users = await db.collection('customers').find({}).toArray();
+
+// Query filter
+const result = await db.collection('customers').find({ address: 'Delhi' }).toArray();
+const regexResult = await db.collection('customers').find({ address: /^D/ }).toArray(); // Starts with D
+```
+
+### 5. Sort, Limit & Update
+```js
+// Sort (1 = Ascending, -1 = Descending)
+const sorted = await db.collection('customers').find().sort({ name: 1 }).toArray();
+
+// Limit (fetch first N records)
+const limited = await db.collection('customers').find().limit(5).toArray();
+
+// Update One & Update Many
+await db.collection('customers').updateOne({ name: 'Ashish' }, { $set: { address: 'Delhi' } });
+await db.collection('customers').updateMany({ address: 'Delhi' }, { $set: { status: 'active' } });
+```
+
+### 6. Delete (One & Many)
+```js
+await db.collection('customers').deleteOne({ name: 'Peter' }); // Delete 1
+await db.collection('customers').deleteMany({ address: 'Noida' }); // Delete all matching
+```
+
+### Quick Method Summary
+
+| Operation | Native `mongodb` Driver Method | Mongoose Equivalent |
+|---|---|---|
+| Connect | `MongoClient.connect()` | `mongoose.connect()` |
+| Insert One | `collection.insertOne()` | `Model.create()` or `doc.save()` |
+| Insert Many | `collection.insertMany()` | `Model.insertMany()` |
+| Find One | `collection.findOne()` | `Model.findOne()` / `Model.findById()` |
+| Find All | `collection.find().toArray()` | `Model.find()` |
+| Update One | `collection.updateOne(filter, { $set: data })` | `Model.updateOne()` / `findByIdAndUpdate()` |
+| Delete One | `collection.deleteOne(filter)` | `Model.deleteOne()` / `findByIdAndDelete()` |
+| Drop Table | `collection.drop()` | `Model.collection.drop()` |
 
 ---
 
