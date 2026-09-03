@@ -1021,3 +1021,104 @@ Answer
 ### P65. Fibonacci Sequence up to N
 
 Answer
+
+---
+
+---
+
+## Quick Reference Cheat-Sheet (merged from 200-Questions notes)
+
+*One-line facts for fast recall. Skip if already memorized above.*
+
+### Variables & Types
+
+| Topic | Key Point |
+|---|---|
+| var / let / const | var: function-scoped, hoisted as `undefined`, redeclarable · let: block-scoped, no redeclare · const: block-scoped, no reassign |
+| Primitive types | number, string, boolean, null, undefined, symbol, bigint — stored by **value**, immutable |
+| Non-primitive types | object, array, function — stored by **reference**, mutable |
+| typeof | returns type as string; `typeof null === "object"` (JS quirk) |
+| Type coercion | auto type conversion, e.g. `"5" + 1 = "51"`, `"5" - 1 = 4` |
+| Short-circuit eval | `&&`/`||` stop as soon as result is known |
+| Operator precedence | Brackets → unary → mul/div → add/sub → comparison → logical → assignment |
+| Spread `...` | expands iterable into elements (copy/merge arrays, pass args) |
+| Rest `...` | collects remaining function args into an array |
+
+### Arrays
+
+| Method / Concept | Key Point |
+|---|---|
+| find vs filter | find → first match · filter → array of all matches |
+| push vs concat | push mutates original · concat returns new array |
+| pop vs shift | pop removes last · shift removes first (both mutate) |
+| slice vs splice | slice → copy, no mutation · splice → add/remove/replace, mutates |
+| map vs forEach | map returns new array · forEach just iterates, returns undefined |
+| Array destructuring | `const [a, b] = arr;` |
+| Array-like objects | have index+length but no array methods (`arguments`, NodeList, strings) → convert via `Array.from()` or `[...obj]` |
+
+### Loops
+
+| Loop | Use |
+|---|---|
+| for / while / do-while | do-while runs body at least once even if condition false |
+| for...of | iterates **values** (arrays, strings) |
+| for...in | iterates **keys/properties** (objects) |
+| break / continue | break exits loop · continue skips current iteration |
+
+### Functions
+
+| Concept | Key Point |
+|---|---|
+| Function types | named, anonymous, expression, arrow, IIFE, callback, higher-order |
+| Higher-order function | takes a function as arg and/or returns a function |
+| First-class functions | functions can be assigned, passed as args, returned like variables |
+| Default parameters | `function greet(name = "Guest") {}` |
+| `arguments` object | array-like object of all args passed to a non-arrow function |
+
+### Objects
+
+| Concept | Key Point |
+|---|---|
+| Ways to create | literal, `new Object()`, `Object.create()`, constructor function, class |
+| Dot vs bracket notation | bracket needed for dynamic/variable keys |
+| Iterate object | `for...in`, `Object.keys/values/entries().forEach()` |
+| Check property exists | `'key' in obj`, `obj.hasOwnProperty('key')` |
+| Clone object | `{...obj}` / `Object.assign({}, obj)` → shallow · `JSON.parse(JSON.stringify(obj))` → deep (loses functions) |
+| Map vs Object | Map: any key type, keeps insertion order · Object: string/symbol keys only |
+| Set | stores unique values only — good for de-duping arrays |
+
+### Strings
+
+| Concept | Key Point |
+|---|---|
+| Template literals | `` `Hello ${name}` `` — interpolation + multiline |
+| String immutability | strings never change in place; every op returns a new string |
+
+### DOM
+
+| Method | Key Point |
+|---|---|
+| getElementById | single element |
+| getElementsByClassName / TagName | live HTMLCollection (multiple) |
+| querySelector / querySelectorAll | first match / static NodeList of all matches (CSS selectors) |
+| innerHTML vs textContent | innerHTML parses HTML (XSS risk) · textContent sets plain text (safe) |
+| createElement vs cloneNode vs createTextNode | new empty element · copy existing element+attrs · new text node |
+
+### Modules (ES6)
+
+| Concept | Key Point |
+|---|---|
+| export/import | split code into reusable files |
+| Named vs default export | named: multiple per file, `{ }` import · default: one per file, any import name |
+| Static vs dynamic import | static: top of file, fixed · `import()`: conditional, returns a Promise |
+| Module bundlers | Webpack, Rollup, Parcel — combine files into one optimized bundle |
+
+### Security & Performance
+
+| Topic | Key Point |
+|---|---|
+| XSS | attacker injects malicious `<script>` via input → sanitize input, avoid raw `innerHTML` from user data |
+| SQL Injection | malicious SQL via input fields → use parameterized queries |
+| eval() | executes a string as JS — avoid, security risk |
+| Performance tips | minimize HTTP requests (bundle/minify), use async ops, minimize DOM manipulation, remove unused listeners (memory leaks), cache data, lazy-load, optimize images |
+| Event object | auto-passed to handler; has `.type`, `.target`, `.preventDefault()`, `.stopPropagation()` |
