@@ -1,3 +1,19 @@
+# ALL AI-ENGINEER NOTES — Merged
+
+Generated on: 2026-09-05
+
+Sources
+- [NOTES/AI-ENGINEER/AI-ENGINEER.md](NOTES/AI-ENGINEER/AI-ENGINEER.md)
+- [NOTES/AI-ENGINEER/AI ENGINEER 360° Roadmap.pdf](NOTES/AI-ENGINEER/AI%20ENGINEER%20360%C2%B0%20Roadmap.pdf)
+- [NOTES/AI-ENGINEER/Generative AI.pdf](NOTES/AI-ENGINEER/Generative%20AI.pdf)
+- [NOTES/AI-ENGINEER/AI ENGINEER 360° Introduction.pdf](NOTES/AI-ENGINEER/AI%20ENGINEER%20360%C2%B0%20Introduction.pdf)
+
+---
+
+1) Full reference — `AI-ENGINEER.md`
+
+<!-- BEGIN: content copied from AI-ENGINEER.md -->
+
 # AI Tools & Resources
 
 ---
@@ -164,7 +180,7 @@ Example:
 ## 🔗 Automation Tools
 - n8n  
 - make.com  
-- Zapier 
+- Zapier  
 
 ---
 
@@ -230,4 +246,43 @@ Zero-code AI-powered app development platform by Vercel.
 
 
 ## AI JAILBREAKING 
-AI jailbreaks occur when hackers exploit vulnerabilities in AI systems to bypass their ethical guidelines and perform restricted actions. They use common AI jailbreak techniques, such as prompt injection attacks and roleplay scenarios. 
+AI jailbreaks occur when hackers exploit vulnerabilities in AI systems to bypass their ethical guidelines and perform restricted actions. They use common AI jailbreak techniques, such as prompt injection attacks and roleplay scenarios.
+
+<!-- END: content copied from AI-ENGINEER.md -->
+
+---
+
+2) AI ENGINEER 360° Roadmap — condensed summary
+
+- Vision: Build end-to-end AI applications with safe, repeatable pipelines.
+- Milestones: learn fundamentals → build prototypes → productionize with monitoring.
+- Skills: prompt engineering, fine-tuning, agent orchestration, cloud deployment (Docker/GCP), API integrations, observability.
+- Suggested projects: RAG assistant, n8n automation flows, voice narration with ElevenLabs, UI prototypes with v0.dev.
+
+See original PDF for full roadmap details: [NOTES/AI-ENGINEER/AI ENGINEER 360° Roadmap.pdf](NOTES/AI-ENGINEER/AI%20ENGINEER%20360%C2%B0%20Roadmap.pdf)
+
+---
+
+3) Generative AI — condensed summary
+
+- Definition: Models that create new content (text, images, audio, video, code).
+- Use-cases: content generation, creative tools, data augmentation, coding assistants.
+- Best practices: grounding with retrieval, human-in-the-loop review, ethical checks, and watermarking where appropriate.
+
+See original PDF: [NOTES/AI-ENGINEER/Generative AI.pdf](NOTES/AI-ENGINEER/Generative%20AI.pdf)
+
+---
+
+4) AI ENGINEER 360° Introduction — condensed summary
+
+- Overview of the AI Engineer role and core responsibilities.
+- Emphasis on workflows, toolchains, collaboration between AI Operators and AI Builders.
+- Intro guidance: start small, validate with prototypes, iterate toward production.
+
+See original PDF: [NOTES/AI-ENGINEER/AI ENGINEER 360° Introduction.pdf](NOTES/AI-ENGINEER/AI%20ENGINEER%20360%C2%B0%20Introduction.pdf)
+
+---
+
+Next steps (optional)
+- Expand the Roadmap section into a milestone-based project plan.
+- Create separate cheat-sheets: `prompts.md`, `deployments.md`, `tools.md`.
