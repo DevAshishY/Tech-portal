@@ -26,6 +26,32 @@ NODE_ENV=production node app.js  # With env variable
 ### Flow:
 > Request → Event Queue → Event Loop → (simple: main thread) OR (complex: Thread Pool) → Callback Queue → Response
 
+
+```
+const fs = require('fs');
+
+console.log('1 sync: start');
+
+setTimeout(() => console.log('timer (macrotask)'), 0);
+setImmediate(() => console.log('immediate (check phase)'));
+fs.readFile(__filename, () => console.log('file I/O (thread pool -> poll)'));
+
+Promise.resolve().then(() => console.log('4 microtask: promise'));
+process.nextTick(() => console.log('3 microtask: nextTick'));
+
+console.log('2 sync: end');
+```
+
+```op:
+1 sync: start
+2 sync: end
+3 microtask: nextTick
+4 microtask: promise
+timer (macrotask)
+immediate (check phase)
+file I/O (thread pool -> poll)
+
+````
 ---
 
 ## 3. Blocking vs Non-blocking
