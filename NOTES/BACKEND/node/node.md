@@ -23,7 +23,7 @@ NODE_ENV=production node app.js  # With env variable
 - **Single-threaded**, **non-blocking**, **event-driven**
 - Great for: REST APIs, real-time apps, microservices, chat apps
 
-### Flow:
+### Event Loop Flow:
 > Request → Event Queue → Event Loop → (simple: main thread) OR (complex: Thread Pool) → Callback Queue → Response
 
 
@@ -65,19 +65,7 @@ file I/O (thread pool -> poll)
 
 ---
 
-## 4. Event Loop
 
-Processes in this order:
-1. **Sync code** (main script)
-2. **Microtasks** — `Promise`, `process.nextTick`
-3. **Timers** — `setTimeout`, `setInterval`
-4. **I/O Callbacks** — file system, network
-5. **`setImmediate`**
-6. **Close events** — `socket.on('close')`
-
-> Between each phase → microtasks run again.
-
----
 
 ## 5. Promises
 
