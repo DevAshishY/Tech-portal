@@ -200,16 +200,23 @@ server.listen(3000, () => console.log('Server on port 3000'));
 | OPTIONS | Describe options | ✅ |
 
 ### Status Codes
-| Code | Meaning |
-|---|---|
-| 200 | OK |
-| 201 | Created |
-| 204 | No Content |
-| 400 | Bad Request |
-| 401 | Unauthorized |
-| 403 | Forbidden |
-| 404 | Not Found |
-| 500 | Server Error |
+```
+## status code 
+
+2xx → SUCCESS ✅
+200 → OK / I did it
+201 → Created / I created it
+204 → No Content / I did it, nothing to return
+
+4xx → CLIENT ERROR ❌
+400 → Bad Request / Your request is wrong
+401 → Unauthorized / Who are you? 🔐
+403 → Forbidden / I know you, but you're not allowed
+404 → Not Found / I can't find it 🔍
+
+5xx → SERVER ERROR 💥
+500 → Server Error / Server problem
+```
 
 ### Default Ports
 - HTTP → **80**
