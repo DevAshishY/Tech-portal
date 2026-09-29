@@ -1,6 +1,21 @@
 # JavaScript Interview Guide — Complete Reference
 
-A reorganized, filled-in version of your notes: every theory topic has a short explanation **+ a runnable example**, and every coding question has a working solution with complexity noted where relevant.
+A reorganized, filled-in version of your notes: every theory topic has a short explanation **+ a runnable example**, and every coding question has a working solution with complexity noted where relevant. Part 11 covers the Aazam Sheet Top 50 coding questions.
+
+## Contents
+
+- [Part 1 — Functions & `this`](#part-1--functions--this)
+- [Part 2 — Scope, Closures & Hoisting](#part-2--scope-closures--hoisting)
+- [Part 3 — Objects & Prototypes](#part-3--objects--prototypes)
+- [Part 4 — Async JavaScript](#part-4--async-javascript)
+- [Part 5 — DOM & Events](#part-5--dom--events)
+- [Part 6 — Storage, Auth & Security](#part-6--storage-auth--security)
+- [Part 7 — Types, Coercion & Comparisons](#part-7--types-coercion--comparisons)
+- [Part 8 — Performance & Web Metrics](#part-8--performance--web-metrics)
+- [Part 9 — Modules, HTTP & APIs](#part-9--modules-http--apis)
+- [Part 10 — Coding Practice (with solutions)](#part-10--coding-practice-with-solutions)
+- [Part 11 — Top 50 Coding Questions (Aazam Sheet)](#part-11--top-50-coding-questions-aazam-sheet)
+- [Quick Reference Cheat-Sheet](#quick-reference-cheat-sheet)
 
 ---
 
@@ -22,7 +37,7 @@ bound('!');
 ```
 - `call`/`apply` invoke immediately. `bind` returns a new function for later use (common in React class components, event handlers, partial application).
 
-### 9. Normal vs Arrow Functions
+### 2. Normal vs Arrow Functions
 | | Normal function | Arrow function |
 |---|---|---|
 | `this` | dynamic — depends on how it's *called* | lexical — inherited from enclosing scope, fixed forever |
@@ -39,7 +54,7 @@ obj.normal();
 obj.arrow();
 ```
 
-### 41 (P41). Fixing arrow-function `this` in an object
+### 3. Fixing arrow-function `this` in an object
 ```js
 const user = {
   email: 'my@email.com',
@@ -57,7 +72,7 @@ user2.updateEmail('new@email.com');
 console.log(user2.email); // 'new@email.com'
 ```
 
-### 51. Pure vs Impure, Declaration vs Expression
+### 4. Pure vs Impure, Declaration vs Expression
 ```js
 // Pure — same input always gives same output, no side effects
 const add = (a, b) => a + b;
@@ -73,7 +88,7 @@ function foo() {}
 const bar = function () {};
 ```
 
-### 52. IIFE (Immediately Invoked Function Expression)
+### 5. IIFE (Immediately Invoked Function Expression)
 ```js
 (function () {
   const secret = 'hidden from global scope';
@@ -83,7 +98,7 @@ const bar = function () {};
 // Common pre-ES6 module pattern to avoid polluting global scope
 ```
 
-### 8. Currying (also P36)
+### 6. Currying
 ```js
 function sum(a) {
   return function (b) {
@@ -105,7 +120,7 @@ const add3 = curry((a, b, c) => a + b + c);
 console.log(add3(1)(2)(3), add3(1, 2)(3), add3(1, 2, 3)); // 6 6 6
 ```
 
-### 18. Memoization
+### 7. Memoization
 ```js
 function memoize(fn) {
   const cache = new Map();
@@ -127,10 +142,10 @@ fastSquare(5); // returned from cache instantly
 
 ## Part 2 — Scope, Closures & Hoisting
 
-### 6. Lexical Scope
+### 8. Lexical Scope
 A function can access variables defined in the scope where it was *written*, not where it's called from.
 
-### 7. Closure
+### 9. Closure
 A function "remembers" its outer scope's variables even after the outer function has returned.
 
 ```js
@@ -142,7 +157,7 @@ const increment = counter();
 console.log(increment(), increment(), increment()); // 1 2 3
 ```
 
-### 24 / 27. var vs let vs const, and why avoid `var`
+### 10. var vs let vs const, and why avoid `var`
 ```js
 console.log(a); // undefined (hoisted, initialized as undefined)
 var a = 1;
@@ -154,7 +169,7 @@ let b = 2;
 - `let`/`const`: block-scoped, hoisted but **not** initialized (Temporal Dead Zone), cannot redeclare.
 - `const`: same as `let` but cannot be reassigned (object/array *contents* can still be mutated).
 
-### 25. TDZ (Temporal Dead Zone)
+### 11. TDZ (Temporal Dead Zone)
 ```js
 {
   console.log(x); // ReferenceError: Cannot access 'x' before initialization
@@ -163,7 +178,7 @@ let b = 2;
 ```
 The variable exists (hoisted) but is inaccessible until its declaration line runs.
 
-### P43. var leaking out of a block
+### 12. var leaking out of a block
 ```js
 let fruit = 'apple';
 if (true) {
@@ -173,7 +188,7 @@ if (true) {
 console.log(fruit);     // 'orange'
 ```
 
-### P44. Block scoping with `let`
+### 13. Block scoping with `let`
 ```js
 let a = 'Hello';
 function x() {
@@ -188,14 +203,14 @@ function x() {
 x();
 ```
 
-### 26. "use strict"
+### 14. "use strict"
 Opts into a stricter parsing/execution mode: disallows implicit globals, silent failures become errors, `this` is `undefined` in plain function calls instead of the global object.
 ```js
 'use strict';
 x = 10; // ReferenceError: x is not defined
 ```
 
-### P35. Make `i === 1 && i === 2 && i === 3` print "yes"
+### 15. Make `i === 1 && i === 2 && i === 3` print "yes"
 Trick: override `==`/`===` behavior via a getter with an internal counter (works because `===` on an object triggers `valueOf`/`Symbol.toPrimitive`, not on primitives — but with a plain number it never works for `===`; the classic trick uses `==` with `valueOf`):
 ```js
 let i = {
@@ -213,7 +228,7 @@ if (i == 1 && i == 2 && i == 3) console.log('yes'); // works with == (loose)
 
 ## Part 3 — Objects & Prototypes
 
-### 20–22. Prototype, Prototype Chain, `__proto__` vs `prototype`
+### 16. Prototype, Prototype Chain, `__proto__` vs `prototype`
 - Every **function** has a `.prototype` object — used as the `__proto__` of instances created via `new`.
 - Every **object** has an internal `[[Prototype]]`, exposed via `__proto__`, that JS walks up when a property isn't found directly on the object (the "prototype chain").
 
@@ -233,7 +248,7 @@ console.log(p.greet());          // 'Hi, Ash'
 console.log(p.__proto__ === Person.prototype); // true
 ```
 
-### 5. Shallow vs Deep Copy
+### 17. Shallow vs Deep Copy
 ```js
 const original = { a: 1, nested: { b: 2 } };
 
@@ -249,7 +264,7 @@ deep1.nested.b = 5;
 console.log(original.nested.b); // still 99, unaffected
 ```
 
-### 48. Ways to Create an Object
+### 18. Ways to Create an Object
 ```js
 const a = { x: 1 };                       // literal
 const b = new Object({ x: 1 });           // constructor
@@ -261,7 +276,7 @@ const e = factory(1);                     // factory function
 const f = Object.assign({}, { x: 1 });    // merge/copy
 ```
 
-### 34–35. Classes, Getters & Setters
+### 19. Classes, Getters & Setters
 ```js
 class BankAccount {
   #balance = 0; // private field
@@ -281,7 +296,7 @@ acc.balance = 100;      // calls setter
 console.log(acc.balance); // '$100' — calls getter
 ```
 
-### 36. OOP Concepts
+### 20. OOP Concepts
 ```js
 // Method Overriding (polymorphism via inheritance)
 class Animal { speak() { return 'Some sound'; } }
@@ -293,7 +308,7 @@ console.log(new Dog().speak()); // 'Woof'
 function area(a, b) { return b ? a * b : a * a; }
 ```
 
-### Polyfills (37/45)
+### 21. Polyfills
 ```js
 // bind polyfill
 Function.prototype.myBind = function (context, ...boundArgs) {
@@ -354,7 +369,7 @@ function deepEqual(a, b) {
 
 ## Part 4 — Async JavaScript
 
-### 10–11. Sync vs Async, Callbacks & Callback Hell
+### 22. Sync vs Async, Callbacks & Callback Hell
 ```js
 // Callback hell — nested, hard to read/maintain
 getUser(id, (user) => {
@@ -366,7 +381,7 @@ getUser(id, (user) => {
 });
 ```
 
-### 12. Promises & Chaining, all / race / any / allSettled
+### 23. Promises & Chaining, all / race / any / allSettled
 ```js
 const p1 = new Promise((resolve) => setTimeout(() => resolve('one'), 100));
 const p2 = new Promise((resolve) => setTimeout(() => resolve('two'), 200));
@@ -384,7 +399,7 @@ fetchUser()
   .catch(err => console.error(err));
 ```
 
-### 13. async/await + try/catch
+### 24. async/await + try/catch
 ```js
 async function loadData() {
   try {
@@ -399,12 +414,12 @@ async function loadData() {
 }
 ```
 
-### 30–31. Event Loop, Microtask vs Macrotask Queue
+### 25. Event Loop, Microtask vs Macrotask Queue
 - Call stack runs synchronous code first.
 - **Microtasks** (Promise `.then`, `queueMicrotask`, `async/await` continuations) run right after the current stack empties, **before** the next macrotask, and the microtask queue is fully drained each cycle.
 - **Macrotasks** (`setTimeout`, `setInterval`, I/O, UI rendering) run one at a time, once the microtask queue is empty.
 
-### P42. Event loop order
+### 26. Event loop order
 ```js
 // Example 1
 setTimeout(() => console.log(1), 0);
@@ -424,7 +439,7 @@ console.log(4);
 //  is queued as a microtask only after the first setTimeout's callback runs)
 ```
 
-### 14. process.nextTick() vs setImmediate() (Node.js)
+### 27. process.nextTick() vs setImmediate() (Node.js)
 - `process.nextTick()` — runs at the very end of the current operation, **before** the event loop continues (higher priority than Promises even).
 - `setImmediate()` — runs in the "check" phase of the event loop, after I/O callbacks.
 ```js
@@ -435,7 +450,7 @@ console.log('end');
 // Output: start, end, nextTick, setImmediate
 ```
 
-### 16–17. fetch / axios / ajax, Abort a fetch request
+### 28. fetch / axios / ajax, Abort a fetch request
 ```js
 const controller = new AbortController();
 const signal = controller.signal;
@@ -451,7 +466,7 @@ fetch('/api/data', { signal })
 setTimeout(() => controller.abort(), 3000);
 ```
 
-### P6. `setTimeout` inside a `var` loop — classic closure bug
+### 29. `setTimeout` inside a `var` loop — classic closure bug
 ```js
 const arr = [10, 12, 15, 21];
 for (var i = 0; i < arr.length; i++) {
@@ -476,7 +491,7 @@ for (var i = 0; i < arr.length; i++) {
 }
 ```
 
-### P19 (P1). Debounce & Throttle
+### 30. Debounce & Throttle
 ```js
 // Debounce — waits for a pause in calls before executing (e.g. search input)
 function debounce(fn, delay) {
@@ -504,7 +519,7 @@ function throttle(fn, limit) {
 
 ## Part 5 — DOM & Events
 
-### 2–3. Event Bubbling, Capturing, Delegation, stopPropagation
+### 31. Event Bubbling, Capturing, Delegation, stopPropagation
 ```html
 <div id="parent"><button id="child">Click me</button></div>
 ```
@@ -525,7 +540,7 @@ document.getElementById('parent').addEventListener('click', (e) => {
 });
 ```
 
-### 4. preventDefault, `return false`, `javascript:void(0)`
+### 32. preventDefault, `return false`, `javascript:void(0)`
 ```js
 document.querySelector('a').addEventListener('click', function (e) {
   e.preventDefault(); // stops the link navigation, but event still bubbles
@@ -534,7 +549,7 @@ document.querySelector('a').addEventListener('click', function (e) {
 // `javascript:void(0)` in href="" just evaluates to undefined so the link does nothing
 ```
 
-### 59. addEventListener vs onclick
+### 33. addEventListener vs onclick
 ```js
 el.onclick = () => console.log('first');
 el.onclick = () => console.log('second'); // overwrites the first — only 'second' runs
@@ -543,7 +558,7 @@ el.addEventListener('click', () => console.log('A')); // both run
 el.addEventListener('click', () => console.log('B'));
 ```
 
-### DOM selection & manipulation (from cheat-sheet)
+### 34. DOM selection & manipulation (from cheat-sheet)
 ```js
 document.getElementById('id');                 // single element
 document.getElementsByClassName('cls');         // live HTMLCollection
@@ -560,7 +575,7 @@ const clone = el.cloneNode(true); // deep clone including children
 
 ## Part 6 — Storage, Auth & Security
 
-### 23. localStorage vs sessionStorage vs Cookies
+### 35. localStorage vs sessionStorage vs Cookies
 | | localStorage | sessionStorage | Cookies |
 |---|---|---|---|
 | Capacity | ~5MB | ~5MB | ~4KB |
@@ -576,22 +591,22 @@ localStorage.removeItem('theme');
 document.cookie = 'user=ash; max-age=3600; path=/';
 ```
 
-### 37. JWT vs Session ID
+### 36. JWT vs Session ID
 - **JWT**: `header.payload.signature` — self-contained, stateless, no server-side storage needed, but can't be revoked early without extra tracking.
 - **Session ID**: opaque token mapped to server-stored session data — easy to revoke, but requires server memory/DB lookups.
 
-### 38. Authentication vs Authorization
+### 37. Authentication vs Authorization
 - **Authentication** = *who are you* (login, password, MFA).
 - **Authorization** = *what can you do* (roles, permissions — checked after authentication).
 
-### 39. CORS
+### 38. CORS
 Browsers block cross-origin requests by default. Server must respond with headers like:
 ```
 Access-Control-Allow-Origin: https://yourapp.com
 Access-Control-Allow-Methods: GET, POST
 ```
 
-### Security notes
+### 39. Security notes
 ```js
 // XSS — never inject raw user input into innerHTML
 el.innerHTML = userInput; // BAD
@@ -605,7 +620,7 @@ eval(userInput); // BAD, huge security risk
 
 ## Part 7 — Types, Coercion & Comparisons
 
-### 54, 57, 58, 61. null vs undefined, isNaN, `==` vs `===`, Data Types
+### 40. null vs undefined, isNaN, `==` vs `===`, Data Types
 ```js
 let x;              // undefined — declared, not assigned
 let y = null;        // null — explicitly "no value"
@@ -624,7 +639,7 @@ Number.isNaN('Hello'); // false — no coercion, stricter check
 ```
 **Types:** `number`, `bigint`, `string`, `boolean`, `null`, `undefined`, `symbol` (primitives, immutable, compared by value) and `object`/`array`/`function` (reference types, mutable, compared by reference).
 
-### P4–P5, P40. Coercion Gotchas
+### 41. Coercion Gotchas
 ```js
 0.1 + 0.2 === 0.3;   // false — floating point precision error
 console.log(0.1 + 0.2); // 0.30000000000000004
@@ -638,27 +653,27 @@ n = n + '1'; // '101' (string concatenation)
 n = n - '1'; // 100   (numeric subtraction, '101' - 1)
 ```
 
-### 40. Compiled or Interpreted?
+### 42. Compiled or Interpreted?
 JavaScript is generally described as **interpreted / JIT-compiled** — V8 (and other engines) parse and interpret code, then compile "hot" code paths to optimized machine code on the fly.
 
 ---
 
 ## Part 8 — Performance & Web Metrics
 
-### 62. Cumulative Layout Shift (CLS)
+### 43. Cumulative Layout Shift (CLS)
 A Core Web Vital measuring unexpected layout shifts (e.g. custom font swapping in after a fallback font, images without reserved dimensions). Fix by setting `width`/`height` on images and using `font-display: optional/swap` carefully.
 
-### 46. Browser freezing during a long `for` loop
+### 44. Browser freezing during a long `for` loop
 JS is single-threaded — a long synchronous loop blocks rendering and user input.
 **Fixes:** break work into chunks with `setTimeout`/`requestIdleCallback`, use a **Web Worker** to run it off the main thread, or virtualize/paginate the data being processed.
 
-### 47. Service Worker
+### 45. Service Worker
 A background script that intercepts network requests, enabling offline caching, push notifications, and PWA functionality — runs independently of the page.
 ```js
 navigator.serviceWorker.register('/sw.js');
 ```
 
-### 33. SSR vs CSR
+### 46. SSR vs CSR
 - **CSR** (Client-Side Rendering): browser downloads a near-empty HTML + JS bundle, JS renders the page — slower first paint, better subsequent navigation (SPA feel).
 - **SSR** (Server-Side Rendering): server sends fully-rendered HTML — faster first paint & better SEO, but more server load per request.
 
@@ -666,7 +681,7 @@ navigator.serviceWorker.register('/sw.js');
 
 ## Part 9 — Modules, HTTP & APIs
 
-### 44 / 49. Modular JS & ES6 Features
+### 47. Modular JS & ES6 Features
 ```js
 // math.js
 export const add = (a, b) => a + b;
@@ -684,7 +699,7 @@ const merged = { ...obj1, ...obj2 };
 function sum(...nums) { return nums.reduce((a, b) => a + b, 0); }
 ```
 
-### 15, 41. HTTP Methods & Status Codes
+### 48. HTTP Methods & Status Codes
 | Method | Use |
 |---|---|
 | GET | Read data |
@@ -701,11 +716,11 @@ function sum(...nums) { return nums.reduce((a, b) => a + b, 0); }
 | 4xx | Client error (400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found) |
 | 5xx | Server error (500 Internal Server Error, 503 Unavailable) |
 
-### 53. GraphQL vs REST
+### 49. GraphQL vs REST
 - **REST**: multiple fixed endpoints, can over/under-fetch data.
 - **GraphQL**: single endpoint, client specifies exactly the fields it needs, strongly typed schema.
 
-### 63–64. slice vs substring, JSON.parse vs response.json()
+### 50. slice vs substring, JSON.parse vs response.json()
 ```js
 'hello'.slice(1, 3);      // 'el' — supports negative indices
 'hello'.substring(1, 3);  // 'el' — negative treated as 0, swaps if start > end
@@ -715,7 +730,7 @@ fetch(url).then(res => res.json()); // ASYNC helper that reads the Response body
                                      // and JSON.parse()s it — returns a Promise
 ```
 
-### 65. Date handling
+### 51. Date handling
 ```js
 const d = new Date();
 d.toISOString();     // '2026-09-16T10:00:00.000Z'
@@ -723,7 +738,7 @@ d.getTime();          // ms since epoch
 new Date('2026-09-16').toLocaleDateString('en-US'); // '9/16/2026'
 ```
 
-### 55–56. Web Components, Set
+### 52. Web Components, Set
 ```js
 class MyBadge extends HTMLElement {
   connectedCallback() { this.innerHTML = `<span>Custom!</span>`; }
@@ -734,10 +749,10 @@ const set = new Set([1, 2, 2, 3]);
 console.log([...set]); // [1, 2, 3] — unique values only
 ```
 
-### 60. Error Types
+### 53. Error Types
 `SyntaxError`, `ReferenceError`, `TypeError`, `RangeError`, `URIError`, `EvalError`, `InternalError`.
 
-### 28–29. defer, async, script placement
+### 54. defer, async, script placement
 ```html
 <script src="a.js" defer></script> <!-- downloads in parallel, runs after HTML parsed, in order -->
 <script src="b.js" async></script> <!-- downloads in parallel, runs ASAP (order not guaranteed) -->
@@ -749,22 +764,7 @@ console.log([...set]); // [1, 2, 3] — unique values only
 
 ## Part 10 — Coding Practice (with solutions)
 
-### P2. Two Sum
-```js
-function twoSum(nums, target) {
-  const map = new Map(); // value -> index
-  for (let i = 0; i < nums.length; i++) {
-    const complement = target - nums[i];
-    if (map.has(complement)) return [map.get(complement), i];
-    map.set(nums[i], i);
-  }
-  return [];
-}
-console.log(twoSum([10, 20, 30, 40], 50)); // [0, 2]  -> 10 + 30 wait check
-// Time: O(n), Space: O(n) — one pass with a hash map (vs O(n²) brute force)
-```
-
-### P3. Cart Total
+### 55. Cart Total
 ```js
 const cart = [
   { product: 'milk', quantity: 10, price: 10.2 },
@@ -774,7 +774,7 @@ const total = cart.reduce((sum, item) => sum + item.quantity * item.price, 0);
 console.log(total); // 119.5
 ```
 
-### P7–P8. Object reference & reduce
+### 56. Object reference & reduce
 ```js
 let a = { x: 1 }, b = a;
 b.x = 2;
@@ -783,7 +783,7 @@ console.log(a.x); // 2 — objects are copied by reference
 [1, 2, 3, 4].reduce((res, cur) => res + cur, 0); // 10
 ```
 
-### P9. Destructuring
+### 57. Destructuring
 ```js
 const employee = { name: 'Alice', age: 30, position: 'Developer' };
 const { name, age } = employee;
@@ -791,30 +791,13 @@ const [c1, c2] = ['red', 'blue', 'green'];
 console.log(name, age, c1, c2); // Alice 30 red blue
 ```
 
-### P10 / P62. Reverse words in a sentence (without split/reverse)
-```js
-function reverseWords(sentence) {
-  let word = '', result = '';
-  for (let i = 0; i <= sentence.length; i++) {
-    if (sentence[i] === ' ' || i === sentence.length) {
-      result = (result ? word + ' ' + result : word);
-      word = '';
-    } else {
-      word += sentence[i];
-    }
-  }
-  return result;
-}
-console.log(reverseWords('the sky is blue')); // 'blue is sky the'
-```
-
-### P11. Sort array of objects by property
+### 58. Sort array of objects by property
 ```js
 const users = [{ name: 'B', age: 30 }, { name: 'A', age: 25 }];
 users.sort((a, b) => a.age - b.age); // ascending by age
 ```
 
-### P12. Longest Common Subsequence
+### 59. Longest Common Subsequence
 ```js
 function lcs(a, b) {
   const dp = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
@@ -827,7 +810,7 @@ console.log(lcs('abcde', 'ace')); // 3
 // Time: O(m*n), Space: O(m*n)
 ```
 
-### P13. First non-repeating character
+### 60. First non-repeating character
 ```js
 function firstNonRepeating(str) {
   const counts = {};
@@ -837,7 +820,7 @@ function firstNonRepeating(str) {
 console.log(firstNonRepeating('swiss')); // 'w'
 ```
 
-### P14–P15. Valid Parentheses
+### 61. Valid Parentheses
 ```js
 // Single type
 function isValidSimple(s) {
@@ -864,7 +847,7 @@ console.log(isValid('{[()]}')); // true
 console.log(isValid('{[(])}')); // false
 ```
 
-### P16. Rotate matrix 90° clockwise
+### 62. Rotate matrix 90° clockwise
 ```js
 function rotate(matrix) {
   matrix.reverse(); // reverse rows
@@ -877,7 +860,7 @@ console.log(rotate([[1,2,3],[4,5,6],[7,8,9]]));
 // [[7,4,1],[8,5,2],[9,6,3]]
 ```
 
-### P17. Flatten a nested object
+### 63. Flatten a nested object
 ```js
 function flattenObject(obj, prefix = '') {
   let result = {};
@@ -895,19 +878,7 @@ console.log(flattenObject({ a: 1, b: { c: 2, d: { e: 3 } } }));
 // { a: 1, 'b.c': 2, 'b.d.e': 3 }
 ```
 
-### P18. Find missing number in consecutive array
-```js
-function findMissing(arr) {
-  const n = arr.length + 1;
-  const expectedSum = (n * (arr[0] + arr[0] + n - 1)) / 2; // if starting point known, adjust
-  const expected = (Math.max(...arr) * (Math.max(...arr) + 1)) / 2 - ((Math.min(...arr) - 1) * Math.min(...arr)) / 2;
-  const actual = arr.reduce((s, n) => s + n, 0);
-  return expected - actual;
-}
-console.log(findMissing([1, 2, 4, 5, 6])); // 3
-```
-
-### P19 / P27. Even before odd / negative before positive (stable)
+### 64. Even before odd / negative before positive (stable)
 ```js
 function evensFirst(arr) {
   return [...arr.filter(n => n % 2 === 0), ...arr.filter(n => n % 2 !== 0)];
@@ -918,7 +889,7 @@ function negativesFirst(arr) {
 console.log(evensFirst([1, 2, 3, 4, 5])); // [2, 4, 1, 3, 5]
 ```
 
-### P20 / P31. Remove duplicates / remove all occurrences in-place (sorted array)
+### 65. Remove duplicates / remove all occurrences in-place (sorted array)
 ```js
 // Remove duplicates from sorted array in-place, return new length
 function removeDuplicates(nums) {
@@ -940,7 +911,7 @@ function removeElement(nums, val) {
 }
 ```
 
-### P21. All subsets (power set)
+### 66. All subsets (power set)
 ```js
 function subsets(nums) {
   const result = [[]];
@@ -953,7 +924,7 @@ function subsets(nums) {
 console.log(subsets([1, 2])); // [[], [1], [2], [1,2]]
 ```
 
-### P22. Kadane's Algorithm — max subarray sum
+### 67. Kadane's Algorithm — max subarray sum
 ```js
 function maxSubArray(nums) {
   let maxSoFar = nums[0], maxHere = nums[0];
@@ -967,7 +938,7 @@ console.log(maxSubArray([-2,1,-3,4,-1,2,1,-5,4])); // 6 -> [4,-1,2,1]
 // Time: O(n)
 ```
 
-### P23. Merge overlapping intervals
+### 68. Merge overlapping intervals
 ```js
 function mergeIntervals(intervals) {
   intervals.sort((a, b) => a[0] - b[0]);
@@ -982,7 +953,7 @@ function mergeIntervals(intervals) {
 console.log(mergeIntervals([[1,3],[2,6],[8,10],[15,18]])); // [[1,6],[8,10],[15,18]]
 ```
 
-### P24. Square root without built-ins (binary search)
+### 69. Square root without built-ins (binary search)
 ```js
 function mySqrt(x) {
   if (x < 2) return x;
@@ -996,14 +967,14 @@ function mySqrt(x) {
 }
 ```
 
-### P25. Kth smallest element
+### 70. Kth smallest element
 ```js
 function kthSmallest(arr, k) {
   return [...arr].sort((a, b) => a - b)[k - 1]; // O(n log n); use a min-heap for O(n log k)
 }
 ```
 
-### P26 / P34. Longest substring without repeats / with at most K distinct chars
+### 71. Longest substring without repeats / with at most K distinct chars
 ```js
 function lengthOfLongestSubstring(s) {
   const seen = new Map();
@@ -1033,7 +1004,7 @@ function longestKDistinct(s, k) {
 }
 ```
 
-### P28. Trailing zeros in factorial
+### 72. Trailing zeros in factorial
 ```js
 function trailingZeros(n) {
   let count = 0;
@@ -1043,7 +1014,7 @@ function trailingZeros(n) {
 console.log(trailingZeros(100)); // 24
 ```
 
-### P29 / P32. Longest palindromic substring / subsequence
+### 73. Longest palindromic substring / subsequence
 ```js
 // Substring — expand around center, O(n²)
 function longestPalindrome(s) {
@@ -1070,7 +1041,7 @@ function longestPalinSubsequence(s) {
 }
 ```
 
-### P30. Max sum of non-adjacent elements
+### 74. Max sum of non-adjacent elements
 ```js
 function maxNonAdjacentSum(arr) {
   let incl = 0, excl = 0;
@@ -1084,7 +1055,7 @@ function maxNonAdjacentSum(arr) {
 console.log(maxNonAdjacentSum([3, 2, 7, 10])); // 13 (3+10)
 ```
 
-### P33. Maximum product of three numbers
+### 75. Maximum product of three numbers
 ```js
 function maxProduct3(nums) {
   nums.sort((a, b) => a - b);
@@ -1096,10 +1067,10 @@ function maxProduct3(nums) {
 }
 ```
 
-### P37. Design a Carousel (concept)
+### 76. Design a Carousel (concept)
 Core pieces: an array of slides, an active index in state, `next()`/`prev()` that wrap with modulo (`(index + 1) % slides.length`), optional `setInterval` for autoplay (paused on hover), and CSS `transform: translateX()` transitions driven by the active index.
 
-### P38–P39. Filter & merge with uniqueness
+### 77. Filter & merge with uniqueness
 ```js
 const people = [{ name: 'A', age: 60 }, { name: 'B', age: 30 }];
 const under50 = people.filter(p => p.age < 50);
@@ -1110,58 +1081,22 @@ function mergeUnique(arr1, arr2) {
 console.log(mergeUnique([1, 2, 3], [2, 3, 4])); // [1, 2, 3, 4]
 ```
 
-### P45–P61, P63–P65. Common utility functions
+### 78. Common utility functions
 ```js
-// Reverse a string
-const reverseStr = s => [...s].reduce((rev, ch) => ch + rev, '');
-
 // Longest word in a sentence
 const longestWord = s => s.split(' ').reduce((a, b) => (b.length > a.length ? b : a));
 
-// Palindrome check
-const isPalindrome = s => { const c = s.toLowerCase().replace(/[^a-z0-9]/g, ''); return c === [...c].reverse().join(''); };
-
-// Remove duplicates
+// Remove duplicates from an array
 const uniqueArr = arr => [...new Set(arr)];
-
-// Anagram check
-const isAnagram = (a, b) => a.split('').sort().join('') === b.split('').sort().join('');
-
-// Count vowels
-const countVowels = s => (s.match(/[aeiou]/gi) || []).length;
 
 // Largest number in array
 const maxNum = arr => Math.max(...arr);
 
-// Prime check
-function isPrime(n) {
-  if (n < 2) return false;
-  for (let i = 2; i * i <= n; i++) if (n % i === 0) return false;
-  return true;
-}
-
-// Factorial (recursive)
-const factorial = n => (n <= 1 ? 1 : n * factorial(n - 1));
-
-// Remove all whitespace
-const stripSpaces = s => s.replace(/\s+/g, '');
-
-// Sum / average of array
-const sumArr = arr => arr.reduce((a, b) => a + b, 0);
-const avgArr = arr => sumArr(arr) / arr.length;
-
-// Sort ascending / check if sorted
+// Sort ascending (non-mutating)
 const sortAsc = arr => [...arr].sort((a, b) => a - b);
-const isSorted = arr => arr.every((v, i) => i === 0 || arr[i - 1] <= v);
-
-// Merge two arrays into one sorted array
-const mergeSorted = (a, b) => [...a, ...b].sort((x, y) => x - y);
 
 // Remove a specific element from array
 const removeVal = (arr, val) => arr.filter(v => v !== val);
-
-// Second largest element
-const secondLargest = arr => [...new Set(arr)].sort((a, b) => b - a)[1];
 
 // Longest common prefix
 function longestCommonPrefix(strs) {
@@ -1172,16 +1107,638 @@ function longestCommonPrefix(strs) {
   }
   return prefix;
 }
+```
+> Reverse string, palindrome, anagram, vowels, prime, factorial, fibonacci, strip spaces, sum/average, is-sorted, merge sorted, second largest and intersection now live in Part 11.
 
-// Intersection of two arrays
-const intersection = (a, b) => a.filter(x => b.includes(x));
+---
 
-// Fibonacci sequence up to N terms
+## Part 11 — Top 50 Coding Questions (Aazam Sheet)
+
+Classic beginner-to-intermediate problems, in the same order as the sheet. Each has a JS solution; practice links are in [coding-questions/README.md](coding-questions/README.md).
+
+### 79. Check Even or Odd
+```js
+const isEven = n => n % 2 === 0;
+console.log(isEven(4), isEven(7)); // true false
+
+// Bitwise alternative — last bit is 0 for even numbers
+const isEvenBit = n => (n & 1) === 0;
+```
+
+### 80. Check Prime Number
+```js
+function isPrime(n) {
+  if (n < 2) return false;
+  for (let i = 2; i * i <= n; i++) if (n % i === 0) return false;
+  return true;
+}
+console.log(isPrime(7), isPrime(12)); // true false
+// Time: O(√n) — a factor larger than √n must pair with one smaller than √n
+```
+
+### 81. Factorial of a Number
+```js
+// Iterative
+function factorial(n) {
+  let result = 1;
+  for (let i = 2; i <= n; i++) result *= i;
+  return result;
+}
+
+// Recursive
+const factorialRec = n => (n <= 1 ? 1 : n * factorialRec(n - 1));
+
+console.log(factorial(5), factorialRec(5)); // 120 120
+```
+
+### 82. Fibonacci Series (First N Terms)
+```js
 function fibonacci(n) {
   const seq = [0, 1];
   for (let i = 2; i < n; i++) seq.push(seq[i - 1] + seq[i - 2]);
   return seq.slice(0, n);
 }
+console.log(fibonacci(7)); // [0, 1, 1, 2, 3, 5, 8]
+```
+
+### 83. Reverse a Number
+```js
+function reverseNumber(n) {
+  let rev = 0, num = Math.abs(n);
+  while (num > 0) {
+    rev = rev * 10 + (num % 10); // append last digit
+    num = Math.floor(num / 10);  // drop last digit
+  }
+  return n < 0 ? -rev : rev;
+}
+console.log(reverseNumber(1234), reverseNumber(-560)); // 4321 -65
+```
+
+### 84. Check Palindrome Number
+```js
+// Uses reverseNumber from the previous question
+const isPalindromeNumber = n => n >= 0 && n === reverseNumber(n);
+console.log(isPalindromeNumber(121), isPalindromeNumber(123)); // true false
+```
+
+### 85. Armstrong Number
+A number equal to the sum of its digits, each raised to the power of the digit count (e.g. 153 = 1³ + 5³ + 3³).
+```js
+function isArmstrong(n) {
+  const digits = String(n).split('').map(Number);
+  const power = digits.length;
+  return digits.reduce((sum, d) => sum + d ** power, 0) === n;
+}
+console.log(isArmstrong(153), isArmstrong(123)); // true false
+```
+
+### 86. Sum of Digits
+```js
+function sumOfDigits(n) {
+  let sum = 0, num = Math.abs(n);
+  while (num > 0) {
+    sum += num % 10;
+    num = Math.floor(num / 10);
+  }
+  return sum;
+}
+console.log(sumOfDigits(1234)); // 10
+```
+
+### 87. Largest of Three Numbers
+```js
+function largestOfThree(a, b, c) {
+  if (a >= b && a >= c) return a;
+  if (b >= a && b >= c) return b;
+  return c;
+}
+console.log(largestOfThree(3, 9, 5)); // 9
+console.log(Math.max(3, 9, 5));       // 9 — built-in shortcut
+```
+
+### 88. GCD of Two Numbers
+```js
+// Euclid's algorithm: gcd(a, b) = gcd(b, a % b)
+function gcd(a, b) {
+  while (b !== 0) [a, b] = [b, a % b];
+  return Math.abs(a);
+}
+console.log(gcd(48, 18)); // 6
+```
+
+### 89. LCM of Two Numbers
+```js
+// Uses gcd from the previous question
+const lcm = (a, b) => Math.abs(a * b) / gcd(a, b);
+console.log(lcm(4, 6)); // 12
+```
+
+### 90. Check Leap Year
+```js
+// Divisible by 4, except centuries — unless also divisible by 400
+const isLeapYear = y => (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
+console.log(isLeapYear(2024), isLeapYear(1900), isLeapYear(2000)); // true false true
+```
+
+### 91. Count Vowels and Consonants
+```js
+function countVowelsConsonants(str) {
+  let vowels = 0, consonants = 0;
+  for (const ch of str.toLowerCase()) {
+    if ('aeiou'.includes(ch)) vowels++;
+    else if (ch >= 'a' && ch <= 'z') consonants++; // ignore digits, spaces, symbols
+  }
+  return { vowels, consonants };
+}
+console.log(countVowelsConsonants('Hello World')); // { vowels: 3, consonants: 7 }
+
+// Regex one-liner for vowels only
+const countVowels = s => (s.match(/[aeiou]/gi) || []).length;
+```
+
+### 92. Reverse a String
+```js
+// Manual loop
+function reverseString(str) {
+  let rev = '';
+  for (let i = str.length - 1; i >= 0; i--) rev += str[i];
+  return rev;
+}
+
+// Built-ins
+const reverseBuiltIn = s => s.split('').reverse().join('');
+const reverseReduce = s => [...s].reduce((rev, ch) => ch + rev, '');
+
+console.log(reverseString('hello')); // 'olleh'
+```
+
+### 93. Check Anagram
+```js
+// Sort-based — O(n log n)
+const isAnagram = (a, b) => a.split('').sort().join('') === b.split('').sort().join('');
+
+// Frequency count — O(n)
+function isAnagramFast(a, b) {
+  if (a.length !== b.length) return false;
+  const count = {};
+  for (const ch of a) count[ch] = (count[ch] || 0) + 1;
+  for (const ch of b) {
+    if (!count[ch]) return false;
+    count[ch]--;
+  }
+  return true;
+}
+console.log(isAnagramFast('listen', 'silent'), isAnagramFast('rat', 'car')); // true false
+```
+
+### 94. Remove Duplicates from String
+```js
+// Keeps the first occurrence of each character
+const removeDuplicateChars = str => [...new Set(str)].join('');
+
+// Manual version
+function removeDuplicateCharsLoop(str) {
+  const seen = new Set();
+  let result = '';
+  for (const ch of str) {
+    if (!seen.has(ch)) { seen.add(ch); result += ch; }
+  }
+  return result;
+}
+console.log(removeDuplicateChars('programming')); // 'progamin'
+```
+
+### 95. Find Second Largest in Array
+```js
+// Single pass — O(n)
+function secondLargest(arr) {
+  let first = -Infinity, second = -Infinity;
+  for (const n of arr) {
+    if (n > first) { second = first; first = n; }
+    else if (n > second && n !== first) second = n;
+  }
+  return second === -Infinity ? null : second;
+}
+console.log(secondLargest([12, 35, 1, 10, 34, 1])); // 34
+
+// One-liner — O(n log n)
+const secondLargestSort = arr => [...new Set(arr)].sort((a, b) => b - a)[1];
+```
+
+### 96. Linear Search
+```js
+function linearSearch(arr, target) {
+  for (let i = 0; i < arr.length; i++) if (arr[i] === target) return i;
+  return -1;
+}
+console.log(linearSearch([5, 3, 8, 1], 8)); // 2
+// Time: O(n)
+```
+
+### 97. Binary Search (Sorted Array)
+```js
+function binarySearch(arr, target) {
+  let lo = 0, hi = arr.length - 1;
+  while (lo <= hi) {
+    const mid = Math.floor((lo + hi) / 2);
+    if (arr[mid] === target) return mid;
+    if (arr[mid] < target) lo = mid + 1;
+    else hi = mid - 1;
+  }
+  return -1;
+}
+console.log(binarySearch([1, 3, 5, 7, 9, 11], 7)); // 3
+// Time: O(log n) — halves the search space each step
+```
+
+### 98. Bubble Sort
+```js
+function bubbleSort(arr) {
+  const a = [...arr];
+  for (let i = 0; i < a.length - 1; i++) {
+    let swapped = false;
+    for (let j = 0; j < a.length - 1 - i; j++) {
+      if (a[j] > a[j + 1]) {
+        [a[j], a[j + 1]] = [a[j + 1], a[j]];
+        swapped = true;
+      }
+    }
+    if (!swapped) break; // already sorted — early exit
+  }
+  return a;
+}
+console.log(bubbleSort([5, 1, 4, 2, 8])); // [1, 2, 4, 5, 8]
+// Time: O(n²) worst, O(n) best (already sorted)
+```
+
+### 99. Selection Sort
+```js
+function selectionSort(arr) {
+  const a = [...arr];
+  for (let i = 0; i < a.length - 1; i++) {
+    let minIdx = i;
+    for (let j = i + 1; j < a.length; j++) if (a[j] < a[minIdx]) minIdx = j;
+    if (minIdx !== i) [a[i], a[minIdx]] = [a[minIdx], a[i]];
+  }
+  return a;
+}
+console.log(selectionSort([64, 25, 12, 22, 11])); // [11, 12, 22, 25, 64]
+// Time: O(n²) always
+```
+
+### 100. Insertion Sort
+```js
+function insertionSort(arr) {
+  const a = [...arr];
+  for (let i = 1; i < a.length; i++) {
+    const key = a[i];
+    let j = i - 1;
+    while (j >= 0 && a[j] > key) {
+      a[j + 1] = a[j]; // shift bigger elements right
+      j--;
+    }
+    a[j + 1] = key;
+  }
+  return a;
+}
+console.log(insertionSort([12, 11, 13, 5, 6])); // [5, 6, 11, 12, 13]
+// Time: O(n²) worst, O(n) best — good for small or nearly sorted arrays
+```
+
+### 101. Matrix Addition
+```js
+const addMatrices = (A, B) => A.map((row, i) => row.map((val, j) => val + B[i][j]));
+console.log(addMatrices([[1, 2], [3, 4]], [[5, 6], [7, 8]])); // [[6, 8], [10, 12]]
+```
+
+### 102. Transpose of Matrix
+```js
+// Rows become columns — works for non-square matrices too
+const transpose = m => m[0].map((_, j) => m.map(row => row[j]));
+console.log(transpose([[1, 2, 3], [4, 5, 6]])); // [[1, 4], [2, 5], [3, 6]]
+```
+
+### 103. Count Frequency of Element in Array
+```js
+function frequency(arr) {
+  const freq = {};
+  for (const item of arr) freq[item] = (freq[item] || 0) + 1;
+  return freq;
+}
+console.log(frequency([1, 2, 2, 3, 3, 3])); // { '1': 1, '2': 2, '3': 3 }
+
+// Count of one specific element
+const countOf = (arr, x) => arr.filter(v => v === x).length;
+```
+
+### 104. Check if Array is Sorted
+```js
+const isSorted = arr => arr.every((v, i) => i === 0 || arr[i - 1] <= v);
+console.log(isSorted([1, 2, 2, 5]), isSorted([3, 1, 2])); // true false
+```
+
+### 105. Merge Two Arrays
+```js
+const merged = [...[1, 2], ...[3, 4]];   // [1, 2, 3, 4]
+const merged2 = [1, 2].concat([3, 4]);   // same, no spread
+
+// Merge two SORTED arrays into one sorted array — two pointers, O(n + m)
+function mergeSorted(a, b) {
+  const result = [];
+  let i = 0, j = 0;
+  while (i < a.length && j < b.length) result.push(a[i] <= b[j] ? a[i++] : b[j++]);
+  return result.concat(a.slice(i), b.slice(j));
+}
+console.log(mergeSorted([1, 4, 7], [2, 3, 8])); // [1, 2, 3, 4, 7, 8]
+```
+
+### 106. Find Missing Number (1 to N)
+```js
+// Array holds 1..N with exactly one number missing
+function findMissing(arr) {
+  const n = arr.length + 1;
+  const expected = (n * (n + 1)) / 2; // sum of 1..N
+  const actual = arr.reduce((s, x) => s + x, 0);
+  return expected - actual;
+}
+console.log(findMissing([1, 2, 4, 5, 6])); // 3
+// Time: O(n), Space: O(1)
+```
+
+### 107. Count Words in a String
+```js
+const countWords = str => (str.trim() ? str.trim().split(/\s+/).length : 0);
+console.log(countWords('  Hello   world from JS ')); // 4
+console.log(countWords('   '));                      // 0
+```
+
+### 108. Remove All Spaces from String
+```js
+const stripSpaces = s => s.replace(/\s+/g, '');
+const stripSpaces2 = s => s.split(' ').join(''); // only plain spaces, not tabs/newlines
+console.log(stripSpaces('a b  c\td')); // 'abcd'
+```
+
+### 109. Find Duplicate Elements in Array
+```js
+function findDuplicates(arr) {
+  const seen = new Set(), dupes = new Set();
+  for (const n of arr) seen.has(n) ? dupes.add(n) : seen.add(n);
+  return [...dupes];
+}
+console.log(findDuplicates([1, 2, 3, 2, 4, 1, 1])); // [2, 1]
+// Time: O(n)
+```
+
+### 110. Move All Zeros to End
+```js
+// In place, keeps order of non-zero elements
+function moveZeros(nums) {
+  let k = 0;
+  for (let i = 0; i < nums.length; i++) {
+    if (nums[i] !== 0) [nums[k++], nums[i]] = [nums[i], nums[k]];
+  }
+  return nums;
+}
+console.log(moveZeros([0, 1, 0, 3, 12])); // [1, 3, 12, 0, 0]
+```
+
+### 111. Rotate Array Right by 1 Position
+```js
+function rotateRight(arr) {
+  if (arr.length < 2) return arr;
+  const last = arr[arr.length - 1];
+  for (let i = arr.length - 1; i > 0; i--) arr[i] = arr[i - 1];
+  arr[0] = last;
+  return arr;
+}
+console.log(rotateRight([1, 2, 3, 4, 5])); // [5, 1, 2, 3, 4]
+
+// Built-in shortcut
+const arr = [1, 2, 3];
+arr.unshift(arr.pop()); // [3, 1, 2]
+```
+
+### 112. Check Palindrome String
+```js
+// Ignores case, spaces and punctuation (LeetCode "Valid Palindrome")
+function isPalindrome(s) {
+  const c = s.toLowerCase().replace(/[^a-z0-9]/g, '');
+  let l = 0, r = c.length - 1;
+  while (l < r) if (c[l++] !== c[r--]) return false;
+  return true;
+}
+console.log(isPalindrome('A man, a plan, a canal: Panama')); // true
+console.log(isPalindrome('race a car'));                     // false
+```
+
+### 113. Count Number of Digits
+```js
+function countDigits(n) {
+  let num = Math.abs(n), count = 0;
+  do { count++; num = Math.floor(num / 10); } while (num > 0); // do-while so 0 counts as 1 digit
+  return count;
+}
+console.log(countDigits(12345), countDigits(0)); // 5 1
+```
+
+### 114. Sum of Elements in Array
+```js
+const sumArr = arr => arr.reduce((a, b) => a + b, 0);
+const avgArr = arr => sumArr(arr) / arr.length;
+console.log(sumArr([1, 2, 3, 4]), avgArr([1, 2, 3, 4])); // 10 2.5
+```
+
+### 115. Find Minimum Element in Array
+```js
+function findMin(arr) {
+  let min = arr[0];
+  for (const n of arr) if (n < min) min = n;
+  return min;
+}
+console.log(findMin([7, 2, 9, -3, 5])); // -3
+console.log(Math.min(...[7, 2, 9, -3, 5])); // -3 — built-in (avoid for very large arrays)
+```
+
+### 116. Pattern Printing (Right Triangle)
+```js
+function rightTriangle(n) {
+  for (let i = 1; i <= n; i++) console.log('* '.repeat(i).trim());
+}
+rightTriangle(4);
+// *
+// * *
+// * * *
+// * * * *
+```
+
+### 117. Power of a Number
+```js
+// Fast exponentiation — O(log n), handles negative powers (LeetCode "Pow(x, n)")
+function myPow(x, n) {
+  if (n < 0) { x = 1 / x; n = -n; }
+  let result = 1;
+  while (n > 0) {
+    if (n % 2 === 1) result *= x;
+    x *= x;
+    n = Math.floor(n / 2);
+  }
+  return result;
+}
+console.log(myPow(2, 10), myPow(2, -2)); // 1024 0.25
+console.log(2 ** 10, Math.pow(2, 10));   // built-ins
+```
+
+### 118. Decimal to Binary
+```js
+function decimalToBinary(n) {
+  if (n === 0) return '0';
+  let bin = '';
+  while (n > 0) {
+    bin = (n % 2) + bin;
+    n = Math.floor(n / 2);
+  }
+  return bin;
+}
+console.log(decimalToBinary(10), (10).toString(2)); // '1010' '1010'
+```
+
+### 119. Binary to Decimal
+```js
+function binaryToDecimal(bin) {
+  let dec = 0;
+  for (const bit of bin) dec = dec * 2 + Number(bit);
+  return dec;
+}
+console.log(binaryToDecimal('1010'), parseInt('1010', 2)); // 10 10
+```
+
+### 120. Check Perfect Number
+A number equal to the sum of its proper divisors (e.g. 28 = 1 + 2 + 4 + 7 + 14).
+```js
+function isPerfect(n) {
+  if (n < 2) return false;
+  let sum = 1;
+  for (let i = 2; i * i <= n; i++) {
+    if (n % i === 0) {
+      sum += i;
+      if (i !== n / i) sum += n / i; // add the paired divisor
+    }
+  }
+  return sum === n;
+}
+console.log(isPerfect(28), isPerfect(12)); // true false
+```
+
+### 121. Strong Number
+A number equal to the sum of the factorials of its digits (e.g. 145 = 1! + 4! + 5!).
+```js
+function isStrong(n) {
+  const fact = [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880]; // 0!..9!
+  let sum = 0, num = n;
+  while (num > 0) {
+    sum += fact[num % 10];
+    num = Math.floor(num / 10);
+  }
+  return sum === n;
+}
+console.log(isStrong(145), isStrong(123)); // true false
+```
+
+### 122. Count Even and Odd Numbers in Array
+```js
+function countEvenOdd(arr) {
+  let even = 0, odd = 0;
+  for (const n of arr) n % 2 === 0 ? even++ : odd++;
+  return { even, odd };
+}
+console.log(countEvenOdd([1, 2, 3, 4, 5])); // { even: 2, odd: 3 }
+```
+
+### 123. Find Intersection of Two Arrays
+```js
+// Simple — O(n * m)
+const intersection = (a, b) => a.filter(x => b.includes(x));
+
+// Set-based, unique results — O(n + m)
+function intersectionFast(a, b) {
+  const setB = new Set(b);
+  return [...new Set(a.filter(x => setB.has(x)))];
+}
+console.log(intersectionFast([1, 2, 2, 3, 4], [2, 2, 4, 6])); // [2, 4]
+```
+
+### 124. Check Substring
+```js
+// Built-ins
+'hello world'.includes('world'); // true
+'hello world'.indexOf('world');  // 6
+
+// Manual — index of first occurrence (LeetCode "Find the Index of the First Occurrence in a String")
+function strStr(haystack, needle) {
+  for (let i = 0; i <= haystack.length - needle.length; i++) {
+    if (haystack.slice(i, i + needle.length) === needle) return i;
+  }
+  return -1;
+}
+console.log(strStr('sadbutsad', 'sad'), strStr('leetcode', 'leeto')); // 0 -1
+```
+
+### 125. Remove Specific Character from String
+```js
+const removeChar = (str, ch) => str.split(ch).join('');
+const removeChar2 = (str, ch) => str.replaceAll(ch, '');
+console.log(removeChar('banana', 'a')); // 'bnn'
+```
+
+### 126. Sum of Prime Numbers up to N
+```js
+// Sieve of Eratosthenes — O(n log log n)
+function sumPrimes(n) {
+  const isPrime = Array(n + 1).fill(true);
+  isPrime[0] = isPrime[1] = false;
+  for (let i = 2; i * i <= n; i++) {
+    if (isPrime[i]) for (let j = i * i; j <= n; j += i) isPrime[j] = false;
+  }
+  return isPrime.reduce((sum, p, i) => (p ? sum + i : sum), 0);
+}
+console.log(sumPrimes(10)); // 17 (2 + 3 + 5 + 7)
+```
+
+### 127. Reverse Words in a Sentence
+```js
+// Built-in one-liner
+const reverseWordsBuiltIn = s => s.trim().split(/\s+/).reverse().join(' ');
+
+// Without split/reverse
+function reverseWords(sentence) {
+  let word = '', result = '';
+  for (let i = 0; i <= sentence.length; i++) {
+    if (sentence[i] === ' ' || i === sentence.length) {
+      result = (result ? word + ' ' + result : word);
+      word = '';
+    } else {
+      word += sentence[i];
+    }
+  }
+  return result;
+}
+console.log(reverseWords('the sky is blue')); // 'blue is sky the'
+```
+
+### 128. Two Sum Problem
+```js
+function twoSum(nums, target) {
+  const map = new Map(); // value -> index
+  for (let i = 0; i < nums.length; i++) {
+    const complement = target - nums[i];
+    if (map.has(complement)) return [map.get(complement), i];
+    map.set(nums[i], i);
+  }
+  return [];
+}
+console.log(twoSum([10, 20, 30, 40], 50)); // [1, 2] -> 20 + 30
+// Time: O(n), Space: O(n) — one pass with a hash map (vs O(n²) brute force)
 ```
 
 ---
