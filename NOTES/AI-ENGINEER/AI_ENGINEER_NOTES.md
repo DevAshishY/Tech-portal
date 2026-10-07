@@ -1,288 +1,110 @@
-# ALL AI-ENGINEER NOTES — Merged
+# AI & Claude Notes – README
+
+Oct 7, 2026 · @ashish yadav
 
-Generated on: 2026-09-05
+> **TL;DR:** Brief Claude like a colleague → **Task + Context + Example + Format** → iterate.
 
-Sources
-- [NOTES/AI-ENGINEER/AI-ENGINEER.md](NOTES/AI-ENGINEER/AI-ENGINEER.md)
-- [NOTES/AI-ENGINEER/AI ENGINEER 360° Roadmap.pdf](NOTES/AI-ENGINEER/AI%20ENGINEER%20360%C2%B0%20Roadmap.pdf)
-- [NOTES/AI-ENGINEER/Generative AI.pdf](NOTES/AI-ENGINEER/Generative%20AI.pdf)
-- [NOTES/AI-ENGINEER/AI ENGINEER 360° Introduction.pdf](NOTES/AI-ENGINEER/AI%20ENGINEER%20360%C2%B0%20Introduction.pdf)
+## AI basics
 
----
+- **AI Operators** → build AI models (OpenAI, Anthropic, Google)
+- **AI Builders** → use AI to build apps and automate
+- **GenAI** → creates text, images, audio, video, code
+- **AI Agent** → works on its own: writes code, makes files, acts like a human workflow
+- **Automation** = fixed steps: Trigger → Action → Output
+- **Autonomous** = give only a goal, AI decides the steps
 
-1) Full reference — `AI-ENGINEER.md`
+## How an LLM works (5 steps)
 
-<!-- BEGIN: content copied from AI-ENGINEER.md -->
+1. **Tokenize** → text to tokens (5 words ≠ 5 tokens)
+2. **Vectorize** → tokens to number vectors
+3. **Self-attention** → finds context between words
+4. **Predict** → next token
+5. **Decode** → back to words
 
-# AI Tools & Resources
+- **Limit:** no live access (calendar, APIs) → fix with agents + integrations/connectors
+- **Cost:** more tokens = more cost → skip filler words
 
----
+## How models learn
 
-## 1. AI Learning & Basics
+- **SFT** → learns from labeled data
+- **RL** → trial and error with rewards (e.g. DeepSeek-R1, strong at coding)
 
-# 🚀 AI Concepts & Workflow Guide
+## Prompting: T-C-E-F
 
-## 📌 AI Basics
+- **T**ask – what you want
+- **C**ontext – who, why, constraints
+- **E**xample – show the style you like
+- **F**ormat – length, tone, layout
+- Iterate with short feedback: "shorter", "add a table"
+- Hard problem → "think step by step"
+- Unsure → "ask me questions first"
 
-### Cursor AI Options
-- AGENT
-- PLAN
-- DEBUG
-- ASK  
-- Multiple agents can think together
+## Claude features
 
----
+- **Projects** → workspace with saved files + instructions
+- **Artifacts** → deliverables: docs, apps, slides, diagrams
+- **Skills** → repeatable workflows
+- **Connectors (MCP)** → your tools' data (Drive, Gmail, Slack, M365)
+- **Enterprise search** → search all company tools at once
+- **Research** → deep, cited reports
+- **Memory** → remembers past chats
 
-## 🤖 AI Roles
+## Where Claude lives
 
-### AI Operators
-- People/teams who develop AI systems (e.g., ChatGPT)
+- Web · Desktop · Mobile
+- Claude Code → coding
+- Cowork → desktop tasks
+- Chrome · Excel · PowerPoint
+- Slack via Claude Tag (Teams coming soon)
 
-### AI Builders
-- People who use AI (like ChatGPT) to build apps and automate tasks
+## AI tools map
 
----
+| Need | Tool |
+| --- | --- |
+| Chat assistant | Claude, ChatGPT, Gemini |
+| Coding | Claude Code, Cursor (Agent / Plan / Debug / Ask), Gemini CLI, GitHub Copilot |
+| Research & study | NotebookLM → audio/video overview, mind map, flashcards, quiz |
+| Images | Midjourney |
+| Voice | ElevenLabs → text-to-speech, voice cloning |
+| Speech-to-text | Whisper (OpenAI) |
+| Video | OpenArt |
+| UI / apps from prompt | v0.dev → React, Next.js, Tailwind |
+| Live web data | SearchAPI → REST API for chatbots, RAG, n8n |
+| Automation | n8n (self-host), Make, Zapier |
+| Autonomous agent | Manus |
 
-## 🛠️ AI Tools
-- Gemini  
-- ChatGPT  
-- Cursor  
-- Cloud Code  
-- Gemini CLI  
+## n8n on Google Cloud (free)
 
----
+1. Create e2-micro VM
+2. Install Docker + Compose
+3. Run n8n via `docker-compose.yml`
+4. Add Nginx/Caddy + SSL
+5. Open on your domain
 
-## 🧠 Notebook LM
-Latest Gemini models, your research and thinking partner:
-- Audio Overview  
-- Slide Deck  
-- Video Overview  
-- Mind Map  
-- Reports  
-- Flashcards  
-- Quiz  
-- Infographic  
-- Data Table  
+## AI safety
 
----
+- **Jailbreak** → tricking AI past its rules (prompt injection, roleplay)
+- **Stay safe:** ground answers with retrieval (RAG) + human review + ethical checks
 
-## 💬 ChatGPT
-- When writing prompts, always provide proper context
+## AI Engineer roadmap
 
----
+- **Path:** fundamentals → prototypes → production with monitoring
+- **Skills:** prompting, fine-tuning, agents, Docker/GCP, APIs, observability
+- **Projects:** RAG assistant · n8n flows · ElevenLabs narration · v0.dev UI
+- **Mantra:** start small → validate → iterate
 
-## 🎨 Generative AI
+## Golden rules
 
-Content Generation Types:
-- **Text**
-- **Images** → https://www.midjourney.com  
-- **Music** → https://openai.com/index/whisper/  
-- **Video** → https://openart.ai/video/t2v  
-- **Code** → GitHub Copilot  
+1. Verify important facts
+2. Turn on web search for current info
+3. You own the output
+4. Share only data you're allowed to
+5. New topic → new chat or Project
 
----
+## Next courses
 
-## 🤖 AI Agents
-- Can write code  
-- Generate files  
-- Work autonomously  
+- AI Fluency (4D: Delegation, Description, Discernment, Diligence)
+- Introduction to Claude Cowork
+- Agent Skills
 
----
-
-## ⚙️ AI Agent Work
-- Perform tasks automatically  
-- Act like human workflows  
-
----
-
-## 🤖 Example AI Agents
-- Manus (AI Agent)
-
----
-
-## 🧪 DeepSeek-R1 (Model)
-- Uses Reinforcement Learning (RL)  
-- Reward-based learning  
-- ✅ Best for coding  
-
----
-
-## 📊 Machine Learning Models
-
-### Supervised Fine-Tuning (SFT)
-- Learns from labeled data  
-- "Label data se sikhna"
-
-### Reinforcement Learning (RL)
-- Trial and error  
-- Feedback-based learning  
-
----
-
-## 💰 Cost Note
-- Words like “please” and “sorry” increase token usage → more cost  
-
----
-
-## ⚡ Prompt Workflow (How LLM Works)
-
-1. Tokenization  
-   - Text converts into tokens  
-   - 5 words ≠ 5 tokens (can be more)
-
-2. Vector Conversion  
-   - Tokens convert into mathematical vectors  
-
-3. Self-Attention Mechanism  
-   - Understands word relationships and context  
-
-4. Prediction  
-   - Generates next token (prediction)  
-
-5. Decoding  
-   - Converts vectors back into words  
-
----
-
-## ⚠️ LLM Limitations
-
-Example:
-- You ask: "Schedule meeting at 7 PM with Alok"
-- Later ask: "Meeting kab hai?"
-- LLM cannot answer because:
-  - ❌ No calendar access  
-  - ❌ No memory of real-world systems  
-
-👉 This is a limitation of LLMs  
-
-### Solution:
-- Use **Agentic AI** with integrations (calendar, APIs)
-
----
-
-## 🔄 Automation vs Autonomous
-
-### Automation
-- Fixed instructions  
-- Flow: Trigger → Action → Output  
-
-### Autonomous
-- You give only a goal  
-- AI decides everything  
-
----
-
-## 🧩 Agent Types
-(To be defined as per use case)
-
----
-
-## 🔗 Automation Tools
-- n8n  
-- make.com  
-- Zapier  
-
----
-
-## 🔁 AI Workflow
-AI → Automation  
-- Trigger  
-- Action  
-- Output  
-
----
-
-## 2. Deploy n8n on Google Cloud (Free Tier)
-
-n8n is an open-source workflow automation tool (like Zapier but self-hosted).
-
-**Tutorials:**
-- [Video — How to Deploy n8n on Google Cloud Free Tier](https://www.youtube.com/watch?v=NNTbwOCPUww)
-- [Guide — Self-host n8n Free on Google Cloud with Docker Compose](https://aiagencyplus.com/self-host-n8n-free-google-cloud-docker-compose/)
-
-**Steps overview:**
-1. Create a Google Cloud free-tier VM (e2-micro)
-2. Install Docker & Docker Compose
-3. Set up n8n with `docker-compose.yml`
-4. Configure reverse proxy (Nginx/Caddy) with SSL
-5. Access n8n via your domain
-
----
-
-## 3. ElevenLabs — AI Voice
-
-AI-powered voice generation and cloning tool.
-
-| | Details |
-|---|---|
-| **Link** | https://elevenlabs.io/app/onboarding |
-| **Use case** | Text-to-speech, voice cloning, AI narration |
-| **Features** | Multiple voices, emotion control, multilingual support |
-
----
-
-## 4. SearchAPI — Search Latest Data
-
-API to search and retrieve latest real-time data from the web for AI applications.
-
-| | Details |
-|---|---|
-| **Link** | https://www.searchapi.io/users/sign_up |
-| **Use case** | Fetch latest web data, power AI with real-time search results |
-| **Integration** | REST API — use in n8n workflows, chatbots, or RAG pipelines |
-
----
-
-## 5. v0.dev — AI App Builder
-
-Zero-code AI-powered app development platform by Vercel.
-
-| | Details |
-|---|---|
-| **Link** | https://v0.dev |
-| **Use case** | Generate UI components, full pages, and apps from text prompts |
-| **Stack** | React, Next.js, Tailwind CSS |
-| **Best for** | Rapid prototyping, UI generation, no-code development |
-
-
-## AI JAILBREAKING 
-AI jailbreaks occur when hackers exploit vulnerabilities in AI systems to bypass their ethical guidelines and perform restricted actions. They use common AI jailbreak techniques, such as prompt injection attacks and roleplay scenarios.
-
-<!-- END: content copied from AI-ENGINEER.md -->
-
----
-
-2) AI ENGINEER 360° Roadmap — condensed summary
-
-- Vision: Build end-to-end AI applications with safe, repeatable pipelines.
-- Milestones: learn fundamentals → build prototypes → productionize with monitoring.
-- Skills: prompt engineering, fine-tuning, agent orchestration, cloud deployment (Docker/GCP), API integrations, observability.
-- Suggested projects: RAG assistant, n8n automation flows, voice narration with ElevenLabs, UI prototypes with v0.dev.
-
-See original PDF for full roadmap details: [NOTES/AI-ENGINEER/AI ENGINEER 360° Roadmap.pdf](NOTES/AI-ENGINEER/AI%20ENGINEER%20360%C2%B0%20Roadmap.pdf)
-
----
-
-3) Generative AI — condensed summary
-
-- Definition: Models that create new content (text, images, audio, video, code).
-- Use-cases: content generation, creative tools, data augmentation, coding assistants.
-- Best practices: grounding with retrieval, human-in-the-loop review, ethical checks, and watermarking where appropriate.
-
-See original PDF: [NOTES/AI-ENGINEER/Generative AI.pdf](NOTES/AI-ENGINEER/Generative%20AI.pdf)
-
----
-
-4) AI ENGINEER 360° Introduction — condensed summary
-
-- Overview of the AI Engineer role and core responsibilities.
-- Emphasis on workflows, toolchains, collaboration between AI Operators and AI Builders.
-- Intro guidance: start small, validate with prototypes, iterate toward production.
-
-See original PDF: [NOTES/AI-ENGINEER/AI ENGINEER 360° Introduction.pdf](NOTES/AI-ENGINEER/AI%20ENGINEER%20360%C2%B0%20Introduction.pdf)
-
----
-
-Next steps (optional)
-- Expand the Roadmap section into a milestone-based project plan.
-- Create separate cheat-sheets: `prompts.md`, `deployments.md`, `tools.md`.
+Source: [Claude 101 – Anthropic Academy](https://anthropic.skilljar.com/claude-101)
