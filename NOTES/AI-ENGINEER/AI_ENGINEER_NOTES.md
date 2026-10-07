@@ -86,25 +86,6 @@ Oct 7, 2026 · @ashish yadav
 - **Jailbreak** → tricking AI past its rules (prompt injection, roleplay)
 - **Stay safe:** ground answers with retrieval (RAG) + human review + ethical checks
 
-## AI Engineer roadmap
-
-- **Path:** fundamentals → prototypes → production with monitoring
-- **Skills:** prompting, fine-tuning, agents, Docker/GCP, APIs, observability
-- **Projects:** RAG assistant · n8n flows · ElevenLabs narration · v0.dev UI
-- **Mantra:** start small → validate → iterate
-
-## Golden rules
-
-1. Verify important facts
-2. Turn on web search for current info
-3. You own the output
-4. Share only data you're allowed to
-5. New topic → new chat or Project
-
-## Next courses
-
-- AI Fluency (4D: Delegation, Description, Discernment, Diligence)
-- Introduction to Claude Cowork
-- Agent Skills
+ills
 
 Source: [Claude 101 – Anthropic Academy](https://anthropic.skilljar.com/claude-101)
