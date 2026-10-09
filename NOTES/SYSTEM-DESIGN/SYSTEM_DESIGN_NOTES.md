@@ -421,3 +421,179 @@ tools=[{"type": "web_search_20250305", "name": "web_search"}]
 | **Loop check** | `stop_reason == "tool_use"` |
 | **Batch** | Fewer round trips |
 | **Built-in tools** | Schema given; text editor needs your code |
+
+
+
+# Claude API – Part 5: RAG and Agentic Search
+
+Short notes for memorization.
+
+> **Memory trick:** "**C**ut, **C**ode, **S**tore, **F**ind, **F**eed"
+> = **C**hunk → **C**onvert to embeddings → **S**tore → **F**ind similar → **F**eed to Claude
+
+---
+
+## 1. What is RAG?
+**R**etrieval **A**ugmented **G**eneration means you find the right info first, then give it to Claude.
+
+📚 It's like an **open-book exam**: Claude doesn't memorize the whole book, it looks up the right page.
+
+Why use it? Documents can be too big for one prompt, and RAG sends **only the useful parts**.
+
+## 2. Text Chunking Strategies
+Chunking means **cutting big documents into small pieces**.
+
+| Strategy | How | Example |
+|----------|-----|---------|
+| **Size-based** | Every N characters, with some **overlap** | 500 chars, 50 overlap |
+| **Structure-based** | By headings or sections | Split on `## ` |
+| **Semantic** | By sentences or meaning | Split on `.` |
+
+💡 Overlap keeps the meaning from getting **cut in half** at a chunk boundary.
+
+## 3. Text Embeddings
+An embedding turns **text into a list of numbers** that captures its **meaning**.
+```
+"dog"   → [0.21, 0.83, ...]
+"puppy" → [0.22, 0.81, ...]   ← close = similar meaning
+"car"   → [0.91, 0.05, ...]   ← far = different
+```
+- Similarity is measured with **cosine similarity**.
+- Anthropic recommends **Voyage AI** for embeddings.
+
+## 4. The Full RAG Flow
+```
+SETUP:   Document → Chunk → Embed → Store in vector DB
+ASK:     Question → Embed → Find closest chunks
+ANSWER:  Question + chunks → Claude → Answer
+```
+
+## 5. Implementing the RAG Flow
+```python
+chunks  = chunk_text(document)
+vectors = [embed(c) for c in chunks]
+db.add(chunks, vectors)
+
+q_vec   = embed(question)
+top     = db.search(q_vec, k=3)
+
+prompt  = f"<context>{top}</context>\nQuestion: {question}"
+answer  = ask_claude(prompt)
+```
+
+## 6. BM25 Lexical Search
+BM25 is **keyword search**. It matches the **exact words**, not the meaning.
+- **Rare words** get more weight (for example "INC-2023-Q4").
+- Common words like "the" and "a" barely count.
+
+🔑 Embeddings find **meaning**. BM25 finds **exact terms** such as IDs, codes, and names.
+
+## 7. Multi-Index RAG Pipeline (Hybrid)
+Run **both** searches and **merge** the results.
+```
+Question ─┬→ Semantic search (embeddings) ─┐
+          └→ BM25 search (keywords) ───────┴→ Merge (Reciprocal Rank Fusion) → Claude
+```
+✅ You get the best of both: **meaning + exact words**.
+
+---
+
+## Quick Recap
+| Term | Remember as |
+|------|-------------|
+| **RAG** | Open-book exam |
+| **Chunking** | Cut into pieces |
+| **Embedding** | Text → numbers (meaning) |
+| **Vector DB** | Stores the numbers |
+| **BM25** | Exact keyword match |
+| **Hybrid** | Meaning + keywords together |
+
+
+# Claude API – Part 6: Features of Claude
+
+Short notes for memorization.
+
+> **Memory trick:** "**T**iny **I**guanas **P**lay **C**hess, **C**limb **C**liffs"
+> = **T**hinking, **I**mages, **P**DFs, **C**itations, **C**aching, **C**ode execution
+
+---
+
+## 1. Extended Thinking 🧠
+Claude **thinks step by step before answering**, which helps with hard problems.
+You get **2 parts**: a **thinking block** (the reasoning) and a **text block** (the final answer).
+```python
+thinking={"type": "enabled", "budget_tokens": 2000}
+```
+
+## 2. Image Support 🖼️
+Send an image as **base64** with `type: "image"`.
+```python
+{"type": "image",
+ "source": {"type": "base64", "media_type": "image/png", "data": img_b64}}
+```
+
+## 3. PDF Support 📄
+It works the same as an image. **Change 2 things:**
+`type` becomes `"document"` and `media_type` becomes `"application/pdf"`.
+```python
+{"type": "document",
+ "source": {"type": "base64", "media_type": "application/pdf", "data": pdf_b64}}
+```
+Claude reads **text + charts + tables + images** in the PDF.
+
+## 4. Citations 🔗
+Citations create a **trail from the answer back to the source**, so users can verify it.
+```python
+"citations": {"enabled": True}
+```
+
+## 5. Prompt Caching ⚡
+Prompt caching **saves a big repeated prompt**, so later requests are **faster and cheaper**.
+```python
+"cache_control": {"type": "ephemeral"}
+```
+
+## 6. Rules of Prompt Caching 📏
+| Rule | Value |
+|------|-------|
+| Minimum size | **1024 tokens** (varies by model) |
+| Lifetime | **5 minutes** (refreshes on each use) |
+| Max breakpoints | **4** |
+| Cached part | **Everything before** the breakpoint |
+| Order | **tools → system → messages** |
+| Breaks if | **Anything before the breakpoint changes** |
+
+💡 If the content is below the minimum, it's just **not cached**, with **no error**.
+
+## 7. Prompt Caching in Action 🔄
+```
+Request 1 → cache WRITE (normal cost)
+Request 2 → cache READ  (much cheaper + faster)
+Request 3 → cache READ  ...
+```
+Check `usage` in the response for `cache_creation_input_tokens` and `cache_read_input_tokens`.
+
+## 8. Code Execution + Files API 🐍
+**Files API:** **upload once**, get a `file_id`, and reuse it. There's no need to resend base64.
+```python
+file = client.beta.files.upload(file=open("data.csv", "rb"))
+# use: {"type": "file", "file_id": file.id}
+```
+**Code Execution:** Claude runs **Python** on Anthropic's servers.
+- It runs in an **isolated Docker container**.
+- It has **no network access**.
+
+💡 Use them **together**: upload a file, and Claude analyzes it with code.
+
+---
+
+## Quick Recap
+| Feature | One-line rule |
+|---------|---------------|
+| **Thinking** | Reasoning + answer |
+| **Image** | `type: "image"` |
+| **PDF** | `type: "document"` + `application/pdf` |
+| **Citations** | Answer → source trail |
+| **Caching** | ≥1024 tokens, 5 min, cheaper |
+| **Files API** | Upload once, use `file_id` |
+| **Code Exec** | Python, Docker, no internet |
