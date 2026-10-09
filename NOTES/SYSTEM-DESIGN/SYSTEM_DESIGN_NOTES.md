@@ -168,3 +168,90 @@ stop_sequences=["```"]                             # stop = end
 - **Low temperature** gives consistency.
 - **Streaming** makes the app feel fast.
 - **Prefill + stop sequence** gives clean JSON.
+
+
+# Claude API – Part 2: Prompt Evaluation
+
+Short notes for memorization.
+
+> **Memory trick:** "**D**ogs **T**ake **R**ed **G**ifts **R**epeatedly" = **D**raft, **T**est data, **R**un, **G**rade, **R**epeat
+
+---
+
+## 1. Prompt Evaluation
+Prompt evaluation **measures** how well a prompt works by testing it on many inputs and giving it a score.
+- Prompt **engineering** is how you *improve* a prompt.
+- Prompt **evaluation** is how you *prove* the improvement worked.
+
+⚠️ **Risk of testing once:** real users send unexpected inputs that break the prompt.
+
+## 2. A Typical Eval Workflow
+```
+1. Draft a prompt
+2. Create a test dataset
+3. Run each input through Claude
+4. Grade the responses   ← comes right after generating
+5. Improve the prompt → repeat and compare scores
+```
+
+## 3. Generating Test Datasets
+- Write the tests by hand, or let Claude generate them.
+- Use a **fast, cheap model like Haiku**. It's a simple task and you need many tests.
+- Include **edge cases** such as typos, empty input, and odd requests.
+```python
+prompt = "Generate 10 test questions for an AWS help bot. Return as JSON array."
+# run with model="claude-haiku-..."
+```
+
+## 4. Running the Eval
+Loop through the dataset, then get a response and grade it for each input.
+```python
+results = []
+for test in dataset:
+    output = run_prompt(test)
+    score  = grade(test, output)
+    results.append(score)
+
+print("Average:", sum(results) / len(results))
+```
+
+## 5. Model-Based Grading
+**Another AI model** scores the outputs. It suits quality, tone, and helpfulness.
+
+✅ Ask for **strengths, weaknesses, and reasoning** *before* the score. Otherwise you get dull middle scores like 6/10 for everything.
+```json
+{
+  "strengths": ["Correct answer"],
+  "weaknesses": ["Missing edge case"],
+  "reasoning": "Solid but incomplete",
+  "score": 7
+}
+```
+
+## 6. Code-Based Grading
+**Code** checks the output's format and rules.
+```python
+import json
+def valid_json(output):
+    try:
+        json.loads(output)
+        return 10
+    except:
+        return 0
+```
+
+---
+
+## Grader Types
+| Grader | Who checks | Good for |
+|--------|-----------|----------|
+| **Code** | Program | JSON valid, length, keywords |
+| **Model** | AI (Claude) | Quality, clarity, tone |
+| **Human** | Person | Most accurate, but slow |
+
+## Quick Recap
+- Test **many** inputs, not one.
+- **Generate → Grade → Improve → Repeat**
+- Use **Haiku** to make test data.
+- Model grader gives **reasons first, score last**.
+- Code grader checks **format**.
