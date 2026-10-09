@@ -255,3 +255,69 @@ def valid_json(output):
 - Use **Haiku** to make test data.
 - Model grader gives **reasons first, score last**.
 - Code grader checks **format**.
+
+
+# Claude API – Part 3: Prompt Engineering Techniques
+
+Short notes for memorization.
+
+> **Memory trick:** "**C**ats **S**leep **X**tra **E**arly" = **C**lear, **S**pecific, **X**ML, **E**xamples
+
+---
+
+## 1. Prompt Engineering
+Prompt engineering means **improving a prompt** to get more reliable, higher-quality outputs.
+- It does **not** train or change the model. You only change the words you send.
+- Engineering is how you **improve** a prompt. Evaluation is how you **measure** it.
+
+## 2. Being Clear and Direct
+Start with an **action verb** and give an instruction, not a question.
+
+| ❌ Weak | ✅ Strong |
+|--------|----------|
+| "What kind of workout should I do?" | "Create a workout plan" |
+| "Do you know about exercise?" | "Write a guide to exercise" |
+
+## 3. Being Specific
+Add **details** like length, audience, format, and steps.
+```
+❌ "Create a workout plan"
+✅ "Create a 30-minute workout plan for beginners.
+    Include warm-up, 5 exercises, and cool-down.
+    No equipment needed."
+```
+
+## 4. Structure with XML Tags
+Tags **add structure and clarity**, especially around large content. They separate your instructions from the data.
+```xml
+Summarize the email below in 2 sentences.
+
+<email>
+Hi team, the meeting moved to Friday...
+</email>
+```
+⚠️ Tags do **not** make Claude faster or reduce tokens.
+
+## 5. Providing Examples (One-shot / Multi-shot)
+Give **sample input/output pairs**.
+- 1 example is **one-shot**.
+- Several examples is **multi-shot** (few-shot).
+
+This is the best fix for tricky patterns like **sarcasm**.
+```xml
+<example>
+Post: "Oh great, my flight got delayed AGAIN. Love this airline!"
+Sentiment: Negative
+</example>
+```
+Showing Claude what you want works better than telling it.
+
+---
+
+## Quick Recap
+| Technique | One-line rule |
+|-----------|---------------|
+| **Clear & Direct** | Start with a verb, not a question |
+| **Specific** | Add length, audience, format |
+| **XML Tags** | Wrap big content, separate data from instructions |
+| **Examples** | Show input → output pairs |
