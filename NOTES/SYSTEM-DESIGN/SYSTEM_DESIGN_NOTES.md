@@ -321,3 +321,103 @@ Showing Claude what you want works better than telling it.
 | **Specific** | Add length, audience, format |
 | **XML Tags** | Wrap big content, separate data from instructions |
 | **Examples** | Show input → output pairs |
+
+
+
+# Claude API – Part 4: Tool Use with Claude
+
+Short notes for memorization.
+
+> **Memory trick:** "**I**n **T**he **D**ark **F**orest" = **I**nitial Request → **T**ool Request → **D**ata Retrieval → **F**inal Response
+
+---
+
+## 1. Introducing Tool Use
+Claude only knows its **training data**. **Tools** let it get **real-time info** such as weather, databases, and APIs.
+
+## 2. Project Overview
+Build a small app where Claude calls **your functions** to answer questions it can't answer alone.
+
+## 3. Tool Functions
+A tool function is a **normal Python function** that does the real work.
+```python
+def get_weather(city):
+    return f"18°C, sunny in {city}"
+```
+
+## 4. Tool Schemas
+A **JSON schema** tells Claude the tool's **name, purpose, and arguments**.
+```python
+{
+  "name": "get_weather",
+  "description": "Get current weather for a city",
+  "input_schema": {
+    "type": "object",
+    "properties": {"city": {"type": "string"}},
+    "required": ["city"]
+  }
+}
+```
+
+## 5. Handling Message Blocks
+A tool response is a **multi-block message** containing **text + tool_use** blocks.
+```json
+"content": [
+  {"type": "text", "text": "Let me check."},
+  {"type": "tool_use", "id": "toolu_01", "name": "get_weather",
+   "input": {"city": "Paris"}}
+]
+```
+
+## 6. Sending Tool Results
+Run the tool, then send a **tool_result** with the **same id**.
+```python
+{"role": "user", "content": [
+  {"type": "tool_result", "tool_use_id": "toolu_01", "content": "18°C, sunny"}
+]}
+```
+
+## 7. Multi-Turn Conversations with Tools
+Keep **all messages** in the history, including Claude's tool_use blocks and your tool_result blocks.
+
+## 8. Implementing Multiple Turns
+Check **`stop_reason`** and loop while Claude wants tools.
+```python
+while response.stop_reason == "tool_use":
+    result = run_tool(response)
+    response = send_result_back(result)
+```
+- `"tool_use"` means run the tool.
+- `"end_turn"` means the answer is complete.
+
+## 9. Using Multiple Tools
+Pass several schemas in `tools=[...]`. Claude **picks the right one**.
+**Batch tool:** bundles several calls into **one request**, so there are **fewer round trips**.
+
+## 10. Fine-Grained Tool Calling
+Fine-grained tool calling **streams tool inputs piece by piece** as Claude writes them, so large inputs arrive sooner.
+
+⚠️ The JSON may be **incomplete or invalid**, so validate it yourself.
+
+## 11. The Text Edit Tool
+This is a **built-in** tool. Claude provides the schema, and **you implement** the file read/write.
+- Commands: `view`, `create`, `str_replace`, `insert`
+
+## 12. The Web Search Tool
+This is also **built-in**. **Anthropic runs it**, so you don't implement anything.
+```python
+tools=[{"type": "web_search_20250305", "name": "web_search"}]
+```
+
+---
+
+## Quick Recap
+| Concept | Rule |
+|---------|------|
+| **Why tools** | Real-time info beyond training data |
+| **Schema** | Tells Claude the args |
+| **Response** | Text + tool_use blocks |
+| **Result** | tool_result with same `id` |
+| **Loop check** | `stop_reason == "tool_use"` |
+| **Batch** | Fewer round trips |
+| **Built-in tools** | Schema given; text editor needs your code |
