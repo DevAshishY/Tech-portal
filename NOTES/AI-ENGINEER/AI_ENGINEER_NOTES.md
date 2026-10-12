@@ -1,66 +1,106 @@
-# AI & Claude Notes – README
+# 📘 My AI & Claude Study Notes
 
-Oct 7, 2026 · @ashish yadav
+Short, simple notes for quick revision. Each topic has everything in one place: **key points → code → quiz answers**.
 
 > **TL;DR:** Brief Claude like a colleague → **Task + Context + Example + Format** → iterate.
 
-## AI basics
+## 📚 Contents
+**Part A – AI & Claude Basics** ([Claude 101](https://anthropic.skilljar.com/claude-101))
+1. [AI Basics](#1-ai-basics)
+2. [How an LLM Works](#2-how-an-llm-works)
+3. [Claude Features & Where Claude Lives](#3-claude-features--where-claude-lives)
+4. [AI Tools Map](#4-ai-tools-map)
+5. [AI Safety](#5-ai-safety)
 
-- **AI Operators** → build AI models (OpenAI, Anthropic, Google)
-- **AI Builders** → use AI to build apps and automate
-- **GenAI** → creates text, images, audio, video, code
-- **AI Agent** → works on its own: writes code, makes files, acts like a human workflow
-- **Automation** = fixed steps: Trigger → Action → Output
-- **Autonomous** = give only a goal, AI decides the steps
+**Part B – Building with the Claude API** ([course](https://academy.claude.com/courses/building-with-the-claude-api))
+6. [API Basics](#6-api-basics)
+7. [Prompt Engineering](#7-prompt-engineering)
+8. [Prompt Evaluation](#8-prompt-evaluation)
+9. [Tool Use](#9-tool-use)
+10. [RAG (Search in Documents)](#10-rag-search-in-documents)
+11. [Claude Features (API)](#11-claude-features-api)
+12. [MCP (Model Context Protocol)](#12-mcp-model-context-protocol)
+13. [Claude Code & Computer Use](#13-claude-code--computer-use)
+14. [Agents & Workflows](#14-agents--workflows)
 
-## How an LLM works (5 steps)
+**Part C – System Design**
+15. [System Design Basics](#15-system-design-basics)
 
-1. **Tokenize** → text to tokens (5 words ≠ 5 tokens)
-2. **Vectorize** → tokens to number vectors
-3. **Self-attention** → finds context between words
-4. **Predict** → next token
-5. **Decode** → back to words
+**[⚡ One-Page Cheat Sheet](#-one-page-cheat-sheet)**
 
-- **Limit:** no live access (calendar, APIs) → fix with agents + integrations/connectors
-- **Cost:** more tokens = more cost → skip filler words
+---
 
-## How models learn
+# Part A – AI & Claude Basics
 
-- **SFT** → learns from labeled data
-- **RL** → trial and error with rewards (e.g. DeepSeek-R1, strong at coding)
+## 1. AI Basics
 
-## Prompting: T-C-E-F
+| Term | Simple meaning |
+|---|---|
+| **AI Operators** | Companies that **build** AI models (OpenAI, Anthropic, Google) |
+| **AI Builders** | People who **use** AI to build apps and automate work |
+| **GenAI** | AI that **creates** text, images, audio, video, code |
+| **AI Agent** | AI that **takes action** to reach a goal (writes code, makes files), not just a chatbot |
+| **Automation** | **Fixed steps:** Trigger → Action → Output |
+| **Autonomous** | Give only a **goal**; AI decides the steps |
 
-- **T**ask – what you want
-- **C**ontext – who, why, constraints
-- **E**xample – show the style you like
-- **F**ormat – length, tone, layout
-- Iterate with short feedback: "shorter", "add a table"
-- Hard problem → "think step by step"
-- Unsure → "ask me questions first"
+**How models learn**
+- **SFT (Supervised Fine-Tuning)** → learns from labeled examples
+- **RL (Reinforcement Learning)** → learns by trial and error with rewards (e.g. DeepSeek-R1, strong at coding)
 
-## Claude features
+---
 
-- **Projects** → workspace with saved files + instructions
-- **Artifacts** → deliverables: docs, apps, slides, diagrams
-- **Skills** → repeatable workflows
-- **Connectors (MCP)** → your tools' data (Drive, Gmail, Slack, M365)
-- **Enterprise search** → search all company tools at once
-- **Research** → deep, cited reports
-- **Memory** → remembers past chats
+## 2. How an LLM Works
 
-## Where Claude lives
+```
+Input text → Tokenize → Embed → Contextualize → Generate next word → repeat → Decode to words
+```
 
+| Step | Simple meaning |
+|---|---|
+| **1. Tokenize** | Split text into **tokens** (a word, part of a word, space or symbol). 5 words ≠ always 5 tokens. |
+| **2. Embed** | Each token → a **list of numbers** holding all its possible meanings. Example: "quantum" = physics unit, very small, quantum computing… |
+| **3. Contextualize** | Uses **nearby words** (self-attention) to pick the right meaning |
+| **4. Generate** | Calculates the probability of every next word, picks one (**probability + a bit of randomness**), adds it, and **repeats** |
+| **5. Decode** | Turns tokens back into words |
+
+**When does Claude stop?** After every token it checks:
+| Condition | Meaning |
+|---|---|
+| **Max tokens** | Hit the limit you set |
+| **End-of-sequence token** | Natural ending |
+| **Stop sequence** | Found a stop phrase you defined |
+
+**Limits & cost**
+- No live access (calendar, APIs) on its own → fix with **agents + connectors/tools**
+- **More tokens = more cost** → skip filler words
+
+---
+
+## 3. Claude Features & Where Claude Lives
+
+**Features in the Claude app**
+| Feature | Simple meaning |
+|---|---|
+| **Projects** | Workspace with saved files + instructions |
+| **Artifacts** | Finished outputs: docs, apps, slides, diagrams |
+| **Skills** | Reusable workflows for repeated tasks |
+| **Connectors (MCP)** | Bring in data from your tools (Drive, Gmail, Slack, M365) |
+| **Enterprise search** | Search all company tools at once |
+| **Research** | Deep reports with citations |
+| **Memory** | Remembers past chats |
+
+**Where Claude lives**
 - Web · Desktop · Mobile
-- Claude Code → coding
-- Cowork → desktop tasks
+- **Claude Code** → coding · **Cowork** → desktop tasks
 - Chrome · Excel · PowerPoint
-- Slack via Claude Tag (Teams coming soon)
+- Slack via **Claude Tag**
 
-## AI tools map
+---
+
+## 4. AI Tools Map
 
 | Need | Tool |
-| --- | --- |
+|---|---|
 | Chat assistant | Claude, ChatGPT, Gemini |
 | Coding | Claude Code, Cursor (Agent / Plan / Debug / Ask), Gemini CLI, GitHub Copilot |
 | Research & study | NotebookLM → audio/video overview, mind map, flashcards, quiz |
@@ -68,245 +108,491 @@ Oct 7, 2026 · @ashish yadav
 | Voice | ElevenLabs → text-to-speech, voice cloning |
 | Speech-to-text | Whisper (OpenAI) |
 | Video | OpenArt |
-| UI / apps from prompt | v0.dev → React, Next.js, Tailwind |
+| UI / apps from a prompt | v0.dev → React, Next.js, Tailwind |
 | Live web data | SearchAPI → REST API for chatbots, RAG, n8n |
 | Automation | n8n (self-host), Make, Zapier |
 | Autonomous agent | Manus |
 
-## n8n on Google Cloud (free)
-
-1. Create e2-micro VM
+**n8n on Google Cloud (free)**
+1. Create an e2-micro VM
 2. Install Docker + Compose
-3. Run n8n via `docker-compose.yml`
+3. Run n8n with `docker-compose.yml`
 4. Add Nginx/Caddy + SSL
-5. Open on your domain
+5. Open it on your domain
 
-## AI safety
+---
+
+## 5. AI Safety
 
 - **Jailbreak** → tricking AI past its rules (prompt injection, roleplay)
-- **Stay safe:** ground answers with retrieval (RAG) + human review + ethical checks
-
-ills
-
-Source: [Claude 101 – Anthropic Academy](https://anthropic.skilljar.com/claude-101)
-
-
-# Claude Code 101 — Quick Notes
-
-Short memorization notes for the [Claude Code 101](https://academy.claude.com/courses/claude-code-101) course on Claude Academy.
+- **Stay safe** → ground answers with **RAG**, add **human review** and **ethical checks**
 
 ---
 
-## 1. What is Claude Code?
+# Part B – Building with the Claude API
 
-- **AI agent** = AI that takes action to complete goals, not just a chatbot that answers.
-- **Agentic loop:** gather context → take action → verify results, repeated until the task is done.
-- **Tools** decide what Claude *can* do (read/edit files, run commands, search).
-- **Permissions** decide what it's *allowed* to do without asking.
-- **Context window** = everything Claude can "see" right now. When it fills up, Claude Code **auto-compacts** (summarizes older conversation).
+## 6. API Basics
 
-## 2. Your First Prompt
+> 🧠 **Remember:** "**K**ind **M**onkeys **M**ake **M**agic" = **K**ey, **M**odel, **M**essages, **M**ax tokens
 
-Runs in: **terminal**, **VS Code**, **JetBrains**, **Claude Desktop**, or the **web**.
-
-Three modes (cycle with `Shift+Tab`):
-
-| Mode | What it does | Oversight |
-|---|---|---|
-| Manual / approval | Asks before each edit or command | Most |
-| Auto-accept | Applies edits without asking | Less |
-| Plan Mode | Read-only; researches and proposes a plan, no changes | Review before acting |
-
-## 3. Daily Workflows
-
-### Explore → Plan → Code → Commit
-
-1. **Explore** — read relevant files and docs; no code yet.
-2. **Plan** — Claude proposes an approach; you review and adjust.
-3. **Code** — implement and verify (e.g. run tests).
-4. **Commit** — commit changes, open a PR, update docs.
-
-### Context Commands
-
-| Command | Purpose |
-|---|---|
-| `/compact` | Summarize the conversation to free space (keeps key info) |
-| `/clear` | Wipe the conversation and start fresh |
-| `/context` | Show what's using your context window |
-
-### Code Review
-
-- Check changes with your own eyes.
-- Use a **fresh-context reviewer** (new session or subagent that didn't write the code).
-
-## 4. Customizing Claude Code
-
-| Feature | What it is |
-|---|---|
-| **CLAUDE.md** | Project memory: commands, conventions, structure. Read automatically at the start of **every session**. `/init` creates a starter one. |
-| **Subagents** | Specialized helpers with their own separate context; delegate tasks and keep the main context clean. |
-| **Skills** | Reusable instructions for tasks you repeat often. |
-| **MCP servers** | Connect external tools and data sources (databases, issue trackers, APIs). |
-| **Hooks** | Scripts that run automatically at set points (e.g. before/after a tool runs). **Deterministic** control: auto-formatting, blocking commands, notifications. |
-
----
-
-# Accessing the API — Simple Notes
-
-**Course:** Building with the Claude API (Claude Academy)
-**Lesson:** 1 of 67 · Accessing the API · ~3 min
-
-> Goal: understand what happens from the moment a user clicks **Send** until Claude's reply shows on screen.
-
----
-
-## 1. The Big Picture: 5-Step Request Flow
-
+### The 5-step request flow
 ```mermaid
 sequenceDiagram
-    participant U as 👤 Client (Web / Mobile App)
+    participant U as 👤 Client App
     participant S as 🖥️ Your Server
     participant A as ☁️ Anthropic API
-    participant C as 🤖 Claude Model
-
-    U->>S: 1. Request to server (user's message)
-    S->>A: 2. Request to Anthropic API (with secret API key)
+    participant C as 🤖 Claude
+    U->>S: 1. Request to server
+    S->>A: 2. Request to API (with secret key)
     A->>C: 3. Model processing
-    C-->>A: Generated text
-    A-->>S: 4. Response to server (message + usage + stop reason)
-    S-->>U: 5. Response to client (text shown in UI)
+    A-->>S: 4. Response (message + usage + stop reason)
+    S-->>U: 5. Response to client
 ```
 
-**The 5 steps:**
-1. Request to server
-2. Request to Anthropic API
-3. Model processing
-4. Response to server
-5. Response to client
+**Why a server?** If the API key is in client code, **anyone can steal it**. So: client → **your server (holds key)** → Anthropic API.
 
----
-
-## 2. Why You Need a Server
-
-```mermaid
-flowchart LR
-    subgraph BAD["❌ Don't do this"]
-        A1[Client App<br/>API key inside 🔓] --> B1[Anthropic API]
-    end
-    subgraph GOOD["✅ Do this"]
-        A2[Client App<br/>no key] --> S2[Your Server<br/>API key stored safely 🔒] --> B2[Anthropic API]
-    end
-```
-
-- API requests need a **secret API key**.
-- If the key is in client code, **anyone can extract it** and make requests on your account.
-- So: **client → your server → Anthropic API**. Only the server holds the key.
-
----
-
-## 3. Making an API Request
-
-You can use an **official SDK** or **plain HTTP requests**.
-SDKs available: **Python, TypeScript, JavaScript, Go, Ruby**.
-
-### Every request needs 4 things
-
-| Field | What it does |
+| Topic | Simple meaning |
 |---|---|
-| **API Key** | Identifies your request to Anthropic |
-| **Model** | Which model to use (e.g. `claude-sonnet-4-5`) |
-| **Messages** | List containing the user's input text |
-| **Max Tokens** | Max number of tokens Claude can generate |
+| **SDKs** | Python, TypeScript, JavaScript, Go, Ruby (or plain HTTP) |
+| **API Key** | Secret password. Keep it **on the server** in a `.env` file |
+| **Request** | Needs 4 things: **key, model, messages, max_tokens** |
+| **Response** | **Message** (text) + **Usage** (input/output tokens) + **Stop reason** (why it ended) |
+| **Multi-turn** | Claude has **no memory**. Send the **full chat history** every time |
+| **System prompt** | Sets Claude's **role and rules** |
+| **Temperature** | **0.0** = predictable (facts, code). **1.0** = creative (stories) |
+| **Streaming** | Shows the reply **word by word** |
+| **Structured data** | Clean JSON with **prefill** (start) + **stop sequence** (end) |
 
----
+```python
+import anthropic
+client = anthropic.Anthropic()          # reads ANTHROPIC_API_KEY
 
-## 4. How Claude Works Inside (AI Workflow)
-
-```mermaid
-flowchart TD
-    IN["📝 Input text"] --> T["1. Tokenization<br/>Split text into tokens"]
-    T --> E["2. Embedding<br/>Each token → list of numbers<br/>(all possible meanings)"]
-    E --> X["3. Contextualization<br/>Use nearby words to pick<br/>the right meaning"]
-    X --> G["4. Generation<br/>Output layer gives probabilities<br/>→ pick next word"]
-    G --> CHK{"Should it stop?"}
-    CHK -- No --> ADD["Add word to sequence"] --> T
-    CHK -- Yes --> OUT["✅ Send response"]
+response = client.messages.create(
+    model="claude-sonnet-5-5",
+    max_tokens=1000,
+    system="You are a math tutor. Give hints, not answers.",
+    messages=[{"role": "user", "content": "Hi"}]
+)
+print(response.content[0].text)
 ```
 
-### The 4 stages
-
-**1. Tokenization**
-- Breaks text into small chunks called **tokens**.
-- A token can be a word, part of a word, a space, or a symbol.
-- Simple way to think: **1 word ≈ 1 token**.
-
-**2. Embedding**
-- Each token becomes an **embedding**: a long list of numbers.
-- It's like a **numerical definition** holding *all possible meanings* of the word.
-- Example — "quantum" could mean:
-  - a discrete unit of physical quantity (physics)
-  - quantum mechanics / physics concepts
-  - something extremely small
-  - quantum computing
-
-**3. Contextualization**
-- Claude adjusts each embedding based on the **surrounding words**.
-- This picks the **most likely meaning in context**.
-
-**4. Generation**
-- An **output layer** calculates the probability of every possible next word.
-- Claude doesn't always pick the top word — it mixes **probability + controlled randomness** → natural, varied replies.
-- After choosing a word, it **adds it and repeats** the whole process for the next word.
-
----
-
-## 5. When Claude Stops
-
-After **every token**, Claude checks:
-
-```mermaid
-flowchart LR
-    N["New token generated"] --> Q1{"Max tokens<br/>reached?"}
-    Q1 -- Yes --> STOP["🛑 Stop"]
-    Q1 -- No --> Q2{"End-of-sequence<br/>token?"}
-    Q2 -- Yes --> STOP
-    Q2 -- No --> Q3{"Stop sequence<br/>found?"}
-    Q3 -- Yes --> STOP
-    Q3 -- No --> CONT["➡️ Generate next token"]
+**Clean JSON trick**
+```python
+messages=[
+    {"role": "user", "content": "Give user data as JSON"},
+    {"role": "assistant", "content": "```json"}   # prefill = start
+],
+stop_sequences=["```"]                             # stop = end
 ```
 
-| Condition | Meaning |
+**✅ Quiz answers**
+- 4 things in every request → **API key, model, messages, max tokens**
+- Where to keep the API key → **On your server**, never in JavaScript, GitHub or the browser
+- Claude forgot the earlier question → **Send the whole conversation history**
+- Tutor that gives hints → **System prompt**
+- Very creative stories → **Temperature 1.0**
+
+---
+
+## 7. Prompt Engineering
+
+> 🧠 **Remember:** "**C**ats **S**leep **X**tra **E**arly" = **C**lear, **S**pecific, **X**ML, **E**xamples
+
+| Technique | Rule | Example |
+|---|---|---|
+| **Clear & Direct** | Start with an **action verb** | ❌ "What workout should I do?" ✅ "Create a workout plan" |
+| **Specific** | Add length, audience, format, steps | "30-minute plan for beginners, no equipment" |
+| **XML Tags** | Separate **data** from **instructions** | `<email>...</email>` |
+| **Examples** | Show input → output pairs (one-shot / multi-shot) | Best for tricky things like sarcasm |
+
+```xml
+Summarize the email below in 2 sentences.
+<email>
+Hi team, the meeting moved to Friday...
+</email>
+```
+
+### Everyday prompting in the Claude app: T-C-E-F
+- **T**ask – what you want
+- **C**ontext – who, why, constraints
+- **E**xample – show the style you like
+- **F**ormat – length, tone, layout
+- Iterate with short feedback: "shorter", "add a table"
+- Hard problem → "think step by step" · Unsure → "ask me questions first"
+
+⚠️ Prompt engineering does **not** train the model. XML tags do **not** make Claude faster.
+
+**✅ Quiz answers**
+- Clearest prompt → **"Write a product description for running shoes."**
+- Reviews + sales data in one prompt → **XML tags `<reviews>` and `<sales_data>`**
+
+---
+
+## 8. Prompt Evaluation
+
+> 🧠 **Remember:** "**D**ogs **T**ake **R**ed **G**ifts **R**epeatedly" = **D**raft → **T**est data → **R**un → **G**rade → **R**epeat
+
+**Engineering = improve** a prompt. **Evaluation = measure** it.
+⚠️ Testing only once is risky. Real users send unexpected inputs.
+
+```
+1. Draft a prompt
+2. Create a test dataset    ← use a cheap model like Haiku; add edge cases
+3. Run each input through Claude
+4. Grade the responses      ← right after running
+5. Improve → repeat → compare scores
+```
+
+| Grader | Who checks | Good for |
+|---|---|---|
+| **Code** | A program | Valid JSON, length, keywords |
+| **Model** | AI (Claude) | Quality, clarity, tone |
+| **Human** | A person | Most accurate, but slow |
+
+💡 Model grader: ask for **strengths, weaknesses and reasoning first, score last**.
+
+```python
+results = []
+for test in dataset:
+    output = run_prompt(test)
+    results.append(grade(test, output))
+print("Average:", sum(results) / len(results))
+```
+
+**✅ Quiz answers**
+- Measure how well a prompt works → **Prompt evaluation with automated testing**
+- Step after getting responses → **Send them to a grader**
+- Model grader → **Another AI model that scores quality**
+- After changing a prompt → **Run the eval again**
+
+---
+
+## 9. Tool Use
+
+> 🧠 **Remember:** "**I**n **T**he **D**ark **F**orest" = **I**nitial request → **T**ool request → **D**ata retrieval → **F**inal response
+
+**Why tools?** Claude only knows its training data. Tools give **real-time info** and **outside systems**.
+
+```
+Claude asks (tool_use) → Your code runs it → You send tool_result → Claude answers
+```
+
+| Part | Simple meaning |
 |---|---|
-| **Max tokens reached** | Hit the limit you set |
-| **Natural ending** | Generated an end-of-sequence token |
-| **Stop sequence** | Found a predefined stop phrase |
+| **Tool function** | A normal Python function that does the work |
+| **Tool schema** | JSON with the tool's **name, purpose, inputs** |
+| **Message blocks** | Reply can have **text + tool_use** together |
+| **tool_result** | Send back with the **same id** |
+| **Loop** | Repeat while `stop_reason == "tool_use"`; `"end_turn"` = done |
+| **Multiple tools** | Claude **picks the right one** |
+| **Batch tool** | Many calls in **one request** = fewer round trips |
+| **Fine-grained** | Streams tool inputs piece by piece (JSON may be incomplete) |
+| **Text editor tool** | Built-in schema, **you write** the file code |
+| **Web search tool** | Built-in, **Anthropic runs it** |
+
+```python
+def get_weather(city):                       # tool function
+    return f"18°C, sunny in {city}"
+
+tool_schema = {                              # tool schema
+  "name": "get_weather",
+  "description": "Get current weather for a city",
+  "input_schema": {
+    "type": "object",
+    "properties": {"city": {"type": "string"}},
+    "required": ["city"]
+  }
+}
+
+while response.stop_reason == "tool_use":    # the loop
+    result = run_tool(response)
+    response = send_result_back(result)
+```
+
+**✅ Quiz answers**
+- Purpose of tools → **Real-time info and outside systems**
+- Tool function → **A plain function run when Claude needs it**
+- Text + tool_use in one reply → **Multi-block message**
+- Batch tool → **Runs many tool calls together**
 
 ---
 
-## 6. The API Response
+## 10. RAG (Search in Documents)
 
-The API sends back:
+> 🧠 **Remember:** "**C**ut, **C**ode, **S**tore, **F**ind, **F**eed" = Chunk → Embed → Store → Find → Feed to Claude
 
-| Part | What it is |
+**RAG = open-book exam.** Give Claude only the useful parts of a big document.
+
+| Term | Simple meaning |
 |---|---|
-| **Message** | The generated text |
-| **Usage** | Number of input and output tokens |
-| **Stop Reason** | Why generation ended |
+| **Chunking** | Cut documents into pieces (by size, headings, or sentences). Use **overlap**. |
+| **Embedding** | Text → numbers capturing **meaning** ("dog" ≈ "puppy"). Compare with **cosine similarity**. |
+| **Vector DB** | Stores the embeddings |
+| **BM25** | **Keyword** search for **exact words** (IDs, codes). Rare words count more. |
+| **Hybrid search** | Embeddings + BM25 merged = **meaning + exact words** |
 
-Your server takes the text and **forwards it to the client**, where it appears in the UI.
-
----
-
-## 7. Key Takeaways
-
-Knowing this flow helps you:
-- 🔒 Design **secure architectures** that protect your API key
-- 📏 Set **sensible token limits** for your use case
-- 🔀 **Handle different stop reasons** in your app logic
-- 🐞 **Debug** by knowing where in the pipeline a problem could be
-
-> Don't memorize every detail — just get familiar with the terms and overall process.
+```
+SETUP:   Document → Chunk → Embed → Store
+ASK:     Question → Embed → Find closest chunks
+ANSWER:  Question + chunks → Claude → Answer
+```
 
 ---
 
+## 11. Claude Features (API)
 
+> 🧠 **Remember:** "**T**iny **I**guanas **P**lay **C**hess, **C**limb **C**liffs" = Thinking, Images, PDFs, Citations, Caching, Code execution
+
+| Feature | What it does | Key code |
+|---|---|---|
+| **Extended thinking** | Thinks step by step first | `thinking={"type": "enabled", "budget_tokens": 2000}` |
+| **Images** | Send an image as base64 | `"type": "image"` |
+| **PDFs** | Reads text, tables, charts, images | `"type": "document"` + `"application/pdf"` |
+| **Citations** | Links answers to the source to **verify** | `"citations": {"enabled": True}` |
+| **Prompt caching** | Saves a big repeated prompt → **faster, cheaper** | `"cache_control": {"type": "ephemeral"}` |
+| **Files API** | Upload once, reuse with `file_id` | `client.beta.files.upload(...)` |
+| **Code execution** | Runs Python in a safe container, **no internet** | — |
+
+**Caching rules**
+| Rule | Value |
+|---|---|
+| Minimum size | ~1024 tokens (varies by model). Smaller = not cached, no error |
+| Lifetime | 5 minutes (refreshes on use) |
+| Max breakpoints | 4 |
+| What's cached | Everything **before** the breakpoint (tools → system → messages) |
+| Breaks if | Anything before the breakpoint changes |
+
+**✅ Quiz answers**
+- Verify facts from documents → **Citations**
+- Same long document, many questions → **Prompt caching**
+
+---
+
+## 12. MCP (Model Context Protocol)
+
+**MCP** = a standard way to connect Claude to outside tools and data **without writing all the integration code yourself**. In the Claude app, these are called **Connectors**.
+
+```
+Your App → MCP Client → MCP Server → (tools, resources, prompts)
+```
+
+| Part | Role |
+|---|---|
+| **MCP Server** | Holds **tools, resources, prompts** |
+| **MCP Client** | The **bridge**: **your Client class + the SDK's Client Session** |
+| **Transport agnostic** | Works over **stdio** (local) or **HTTP** (remote) |
+
+**Who controls what?**
+| Primitive | Controlled by | Example |
+|---|---|---|
+| **Tools** | **Model** | Claude calls `read_doc_contents` |
+| **Resources** | **App** | App loads a document |
+| **Prompts** | **User** | User clicks "Summarize document" |
+
+- **Direct resource:** fixed URI → `docs://documents`
+- **Templated resource:** `docs://documents/{doc_id}`
+- `ListToolsRequest` = what tools exist? · `CallToolRequest` = run a tool
+
+```python
+@mcp.tool(name="read_doc_contents", description="Read a document")
+def read_document(doc_id: str = Field(description="Id of the document")):
+    return docs[doc_id]                  # SDK makes the JSON schema
+
+@mcp.resource("docs://documents/{doc_id}")
+def fetch_doc(doc_id: str) -> str:
+    return docs[doc_id]
+```
+
+**Test your server:** `mcp dev mcp_server.py` → opens the **MCP Inspector**.
+
+**✅ Quiz answers**
+- What is MCP → **Communication layer for tools and context without integration code**
+- Problem without MCP → **You write and maintain all tool code yourself**
+- Server vs client → **Server holds tools/prompts/resources; client is the bridge**
+- Transport agnostic → **HTTP or stdio**
+- Easiest way to define a tool → **`@mcp.tool()` decorator**
+- Test before building an app → **MCP Inspector**
+- Two parts of a client → **MCP Client class + Client Session**
+- Find available tools → **`ListToolsRequest`**
+- Fetch a doc by ID → **Templated resource**
+- User clicks a button to start a workflow → **Prompt**
+
+---
+
+## 13. Claude Code & Computer Use
+
+*Includes notes from the [Claude Code 101](https://academy.claude.com/courses/claude-code-101) course.*
+
+### What is Claude Code?
+An **AI coding agent** that reads, writes and edits code and runs commands.
+- **Runs in:** terminal, VS Code, JetBrains, Claude Desktop, web
+- **Agentic loop:** gather context → take action → verify → repeat until done
+- **Tools** = what Claude **can** do · **Permissions** = what it's **allowed** to do without asking
+- **Context window** = everything Claude can see now. When full, it **auto-compacts** (summarizes older chat)
+
+### Modes (switch with `Shift+Tab`)
+| Mode | What it does | Oversight |
+|---|---|---|
+| **Manual** | Asks before each edit or command | Most |
+| **Auto-accept** | Applies edits without asking | Less |
+| **Plan Mode** | Read-only: researches and proposes a plan | Review before acting |
+
+### Daily workflow: Explore → Plan → Code → Commit
+1. **Explore** – read files and docs, no code yet
+2. **Plan** – Claude proposes an approach; you review
+3. **Code** – implement and verify (run tests)
+4. **Commit** – commit, open a PR, update docs
+
+**Code review:** check changes yourself, and use a **fresh-context reviewer** (new session or subagent that didn't write the code).
+
+### Context commands
+| Command | Purpose |
+|---|---|
+| `/compact` | Summarize the chat to free space |
+| `/clear` | Start fresh |
+| `/context` | Show what's using the context window |
+| `/init` | Create a starter `CLAUDE.md` |
+
+### Customizing
+| Feature | Simple meaning |
+|---|---|
+| **CLAUDE.md** | Project memory (commands, rules, structure). Read at the start of **every session** |
+| **Subagents** | Helpers with their **own context**; keep the main context clean |
+| **Skills** | Reusable instructions for repeated tasks |
+| **MCP servers** | Connect outside tools (databases, issue trackers, APIs) |
+| **Hooks** | Scripts that run **automatically** at set points (auto-format, block commands, notify) |
+
+### Computer Use
+Claude uses a computer **like a human**: screenshots, mouse, keyboard. It gets a screenshot after every action.
+
+**✅ Quiz answers**
+- Computer Use → **Claude interacts with a desktop like a human would**
+
+---
+
+## 14. Agents & Workflows
+
+**Used for tasks Claude can't finish in one request.**
+
+| | **Workflow** | **Agent** |
+|---|---|---|
+| Steps | **Fixed**, decided by you | Claude **decides** |
+| Use when | You **know** the steps | Task is **unknown** |
+| Strength | Reliable, testable | Flexible |
+| Weakness | Less flexible | Less reliable, costs more |
+
+### Workflow patterns
+| Pattern | Simple meaning | Example | Use when |
+|---|---|---|---|
+| **Parallelization** | Split, run **at the same time**, combine | Check a part for each material at once → pick the best | Independent checks |
+| **Chaining** | Steps **one after another** | Topic → research → script → video → post | Many rules; steps depend on each other |
+| **Routing** | **Sort first**, then send to **one** special prompt | "Python functions" → Educational | Many request types |
+| **Evaluator-Optimizer** | **Make → check → fix → repeat** | Image → 3D model → compare → fix | Output must pass a quality bar |
+
+💡 **Long prompt problem (Chaining fix):** Step 1, write the article. Step 2, ask Claude **only** to fix broken rules.
+
+### Agents
+- **Goal + tools**, and Claude finds the steps
+- **Combines simple tools:** get time + add days + set reminder → "What day is it in 11 days?"
+- **Asks for missing info:** "When does my 90-day warranty end?" → asks when you bought it
+- **Keep tools general:** Claude Code uses `bash`, `read`, `write`, `edit`, `glob`, `grep`
+
+### Environment inspection
+Claude must **see the result** of each action, or it works blind.
+- Computer Use → screenshot after each click
+- Files → **read before write**
+- Video → check captions (whisper.cpp) and screenshots (FFmpeg)
+
+🔑 **Golden question:** "How will Claude know if this action worked?"
+
+**✅ Quiz answers**
+- Know the exact steps / reliability matters → **Workflow**
+- Car damage photo → repair estimate → **Workflow with fixed steps**
+- Compare many materials → **Parallelization**
+- Claude ignores rules in a long prompt → **Chaining**
+- Educational vs entertainment content → **Routing**
+- Write → check → improve → **Evaluator-Optimizer**
+- Most flexible agent tools → **Abstract tools (`read_file`, `write_file`, `run_command`)**
+- Why environment inspection → **Agent sees the results of its actions**
+
+---
+
+# Part C – System Design
+
+## 15. System Design Basics
+
+**System design** = planning the parts of a system and how they work together.
+
+**Steps:** Understand the problem → Set the scope → Study existing systems → Draw the architecture → Test, improve, document
+
+| Concept | Simple meaning |
+|---|---|
+| **Performance vs Scalability** | Fast for one user vs still works with many users |
+| **Latency vs Throughput** | Time for one response vs requests handled at once |
+| **Availability vs Consistency** | System stays up vs data is the same everywhere (strong / weak / eventual) |
+
+| Need | API pattern |
+|---|---|
+| Simple request/response | REST |
+| Fetch exactly the fields you need | GraphQL |
+| Fast, typed service-to-service | gRPC / tRPC |
+| Real-time two-way | WebSockets |
+| Server notifies you | Webhooks |
+| Simple periodic check | Polling |
+
+**Frontend performance**
+- Code splitting, tree shaking, compression
+- Lazy load on scroll or click, prefetch/preload, virtual lists
+- **Web Vitals:** LCP (load speed), INP (response to clicks), CLS (layout jumps)
+
+**Images:** WebP/AVIF, `srcset` / `<picture>`, `loading="lazy"`, CDN.
+```html
+<picture>
+  <source srcset="image-1600.webp" type="image/webp">
+  <img src="image-800.webp" alt="Description" loading="lazy" width="800">
+</picture>
+```
+
+**Testing & monitoring:** Unit → Integration → E2E. Load tests with k6 or JMeter. Logs, metrics, tracing.
+
+**Accessibility:** semantic HTML, ARIA, keyboard navigation, color contrast. Check with axe or Lighthouse.
+
+📌 **To fix:** `Frontend System Design Yatra1.png` is empty (0 bytes). Re-upload the real image.
+
+**Resources:** [System Design Roadmap](https://roadmap.sh/system-design) · [Excalidraw board](https://app.excalidraw.com/l/8lwXEYCWFUz/5BWKjqfiBK6)
+
+---
+
+# ⚡ One-Page Cheat Sheet
+
+| Question | Answer |
+|---|---|
+| Automation vs autonomous? | Fixed steps vs AI decides the steps |
+| LLM steps? | Tokenize → Embed → Contextualize → Generate → Decode |
+| When does Claude stop? | Max tokens, end token, or stop sequence |
+| Good chat prompt? | Task + Context + Example + Format |
+| Why a server? | Keep the API key secret |
+| 4 things in a request? | Key, model, messages, max_tokens |
+| What comes back? | Message + usage + stop reason |
+| Claude forgets? | Send full history |
+| Set role/rules? | System prompt |
+| Creative? / Factual? | Temp 1.0 / Temp 0.0 |
+| Clean JSON? | Prefill + stop sequence |
+| Improve vs measure a prompt? | Engineering vs Evaluation |
+| After running eval? | Grade the responses |
+| Separate data in a prompt? | XML tags |
+| Tool loop check? | `stop_reason == "tool_use"` |
+| Fewer tool round trips? | Batch tool |
+| Exact IDs in search? / Meaning? | BM25 / Embeddings |
+| Verify facts from docs? | Citations |
+| Same big doc many times? | Prompt caching |
+| Tools / Resources / Prompts controlled by? | Model / App / User |
+| Test MCP server? | `mcp dev mcp_server.py` |
+| Claude Code project memory? | `CLAUDE.md` |
+| Read-only planning mode? | Plan Mode (`Shift+Tab`) |
+| Free up context? | `/compact` (or `/clear` to restart) |
+| Auto-run scripts in Claude Code? | Hooks |
+| Known steps? / Unknown task? | Workflow / Agent |
+| Same time? / Step after step? | Parallelization / Chaining |
+| Sort first? / Make → check → fix? | Routing / Evaluator-Optimizer |
+| Agent must see results? | Environment inspection |
