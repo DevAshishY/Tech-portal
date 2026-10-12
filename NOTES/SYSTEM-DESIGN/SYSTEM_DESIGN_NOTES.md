@@ -710,3 +710,55 @@ file = client.beta.files.upload(file=open("data.csv", "rb"))
   - **Benefits** – Tracks progress, catches errors, checks quality, adapts its approach.
   - **Golden question** – "How will Claude know if this action worked?"
 - **Tip** – Use workflows when steps are known; use agents when they're not.
+
+
+
+## 📝 Quiz Revision Notes
+Quick answers to remember, based on the course quiz questions.
+
+### API Basics
+- **4 things needed in every request** – API key, model name, messages, max tokens.
+- **Where to keep the API key** – On your server (in a `.env` file), never in website JavaScript, GitHub, or the browser.
+- **Claude forgets the last question** – The API is stateless, so send the whole conversation history every time.
+- **Make Claude act like a tutor (hints, not answers)** – Use a system prompt.
+- **Very creative stories** – High temperature (1.0). Facts and code – low temperature (0.0).
+
+### Prompt Engineering
+- **Clear and direct prompt** – Start with an action verb: "Write a product description for running shoes."
+- **Separate different data (reviews + sales)** – Use XML tags like `<reviews>` and `<sales_data>`.
+- **After changing a prompt** – Run a prompt evaluation to check if it really improved.
+
+### Prompt Evaluation
+- **Measure how well a prompt works** – Prompt evaluation with automated testing.
+- **Step after getting Claude's responses** – Send them to a grader for scoring.
+- **Model grader** – Another AI model that scores quality.
+- **Code grader** – Code that checks format (JSON, syntax, keywords).
+
+### Tool Use
+- **Purpose of tools** – Let Claude get real-time info and use outside systems.
+- **Tool function** – A plain function in your code that runs when Claude asks for it.
+- **Text + tool_use in one reply** – A normal multi-block message with different content types.
+- **Batch tool** – Takes many tool calls and runs them together.
+
+### Claude Features
+- **Users need to verify facts from documents** – Citations.
+- **Same long document, different questions** – Prompt caching with cache breakpoints.
+
+### MCP
+- **What MCP is** – A communication layer that gives Claude tools and context without writing integration code yourself.
+- **Server vs client** – The server holds tools, prompts, and resources; the client is the bridge to reach them.
+- **Transport agnostic** – Works over different methods like HTTP or stdio.
+
+### Claude Code & Computer Use
+- **Computer Use** – Claude uses a computer like a human (screenshots, mouse, keyboard).
+
+### Workflows & Agents
+- **Workflow vs agent** – Know the exact steps → workflow. Unknown tasks → agent.
+- **Reliability is most important** – Workflow (more reliable and testable).
+- **Car damage photo → repair estimate (same steps every time)** – Workflow with fixed steps.
+- **Compare many materials, each with its own rules** – Parallelization.
+- **Claude ignores rules in a long prompt** – Chaining (write first, then fix in a second step).
+- **Different content types (educational vs entertainment)** – Routing.
+- **Write → check → improve until good** – Evaluator-Optimizer pattern.
+- **Most flexible agent tools** – Abstract tools like `read_file`, `write_file`, `run_command`.
+- **Why environment inspection matters** – So the agent can see the results of its actions.
