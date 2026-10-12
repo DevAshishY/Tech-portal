@@ -691,7 +691,12 @@ file = client.beta.files.upload(file=open("data.csv", "rb"))
   - **Sub-tasks can differ** – Each one can have its own prompt, tools, or rules.
   - **Benefits** – Better focus, easy to improve one prompt at a time, easy to add new options, more reliable results.
   - **When to use** – When a decision can be broken into independent checks (many options, many criteria, different areas of expertise).
-- **Chaining** – Output of one step goes into the next step.
+- **Chaining** – Break a big task into small steps done one after another. Output of one step goes into the next step.
+  - **Example (Video maker)** – Find trending topics → Claude picks the best topic → Claude researches it → Claude writes a video script → AI avatar makes the video → post it online.
+  - **Why not one big prompt?** – Claude does better when it focuses on one task at a time.
+  - **Extra benefit** – We can run normal code (not AI) between steps to check or process results.
+  - **Long prompt problem** – With many rules (no emojis, don't say "written by AI", professional tone), Claude may still break some of them.
+  - **Fix in 2 steps** – Step 1: write the article. Step 2: send the article back and ask Claude only to fix the broken rules (remove emojis, remove AI mentions, fix casual words).
+  - **When to use** – Many requirements, Claude ignoring rules in long prompts, or needing to check output between steps.
 - **Routing** – Check the input type, then send it to the right path.
 - **Tip** – Use workflows when steps are known; use agents when they're not.
-
