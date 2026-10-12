@@ -748,6 +748,14 @@ Quick answers to remember, based on the course quiz questions.
 - **What MCP is** – A communication layer that gives Claude tools and context without writing integration code yourself.
 - **Server vs client** – The server holds tools, prompts, and resources; the client is the bridge to reach them.
 - **Transport agnostic** – Works over different methods like HTTP or stdio.
+- **Main problem without MCP (GitHub example)** – You must write and maintain all the tool code yourself.
+- **Easiest way to define a tool** – Use the `@mcp.tool()` decorator on a Python function; the SDK makes the JSON schema for you.
+- **Test the server before building an app** – Use the MCP Inspector: `mcp dev mcp_server.py`.
+- **Two parts of an MCP client** – Your own MCP Client class + the SDK's Client Session.
+- **Find which tools a server has** – Send a `ListToolsRequest`. To run a tool, send a `CallToolRequest`.
+- **Fetch a document by ID (`docs://documents/{doc_id}`)** – Use a templated resource. A direct resource has a fixed URI.
+- **User clicks a button to start a workflow** – Use a Prompt.
+- **Who controls what** – Tools = model (Claude), Resources = app, Prompts = user.
 
 ### Claude Code & Computer Use
 - **Computer Use** – Claude uses a computer like a human (screenshots, mouse, keyboard).
