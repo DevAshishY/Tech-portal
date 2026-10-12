@@ -597,3 +597,78 @@ file = client.beta.files.upload(file=open("data.csv", "rb"))
 | **Caching** | ≥1024 tokens, 5 min, cheaper |
 | **Files API** | Upload once, use `file_id` |
 | **Code Exec** | Python, Docker, no internet |
+
+
+
+
+## 1. Accessing Claude with the API
+- **API key:** Created in the Anthropic Console and stored in an environment variable, never hard-coded.
+- **Making a request:** Send a list of `messages` plus `model` and `max_tokens` to the Messages API.
+- **Multi-turn conversations:** The API is stateless, so the full conversation history must be sent with every request.
+- **System prompts:** Set Claude's role, tone, and rules for the whole conversation.
+- **Temperature:** Low values give focused, predictable output; high values give more creative, varied output.
+- **Response streaming:** Show text to the user as it is generated instead of waiting for the full response.
+- **Structured data:** Get clean JSON output by giving clear format instructions and prefilling the assistant's response.
+
+## 2. Prompt Evaluation
+- **Why evaluate:** Measure prompt quality objectively instead of guessing.
+- **Eval workflow:** Write a prompt → build a test dataset → run it → grade results → improve and repeat.
+- **Test datasets:** Claude can generate realistic test cases automatically.
+- **Model-based grading:** Use Claude to score outputs on quality, accuracy, and reasoning.
+- **Code-based grading:** Use code to check things like valid JSON, syntax, or required keywords.
+
+## 3. Prompt Engineering Techniques
+- **Be clear and direct:** Start with a plain instruction of what you want.
+- **Be specific:** Add guidelines, steps, and constraints for the output.
+- **XML tags:** Wrap content in tags like `<document>` or `<data>` so Claude can separate instructions from content.
+- **Provide examples:** Show sample inputs and ideal outputs (one-shot / multi-shot prompting).
+
+## 4. Tool Use with Claude
+- **How it works:** Claude decides when to call a tool, your code runs it, and the result is sent back to Claude.
+- **Tool schemas:** Each tool is described with a name, description, and JSON Schema for its inputs.
+- **Message blocks:** Responses can contain `text` and `tool_use` blocks; results go back as `tool_result` blocks.
+- **Multi-turn tool use:** Loop until Claude stops requesting tools, allowing several tool calls in a row.
+- **Multiple tools:** Claude chooses the right tool from several options.
+- **Fine-grained tool calling:** Stream tool inputs as they are generated.
+- **Built-in tools:** The text editor tool for working with files and the web search tool for live information.
+
+## 5. RAG and Agentic Search
+- **Retrieval Augmented Generation:** Find relevant pieces of large documents and give only those to Claude.
+- **Text chunking:** Split documents by size, by structure (headings, sections), or semantically.
+- **Embeddings:** Convert text to vectors and find similar chunks using cosine similarity.
+- **BM25 lexical search:** Keyword-based search that catches exact terms embeddings may miss.
+- **Multi-index (hybrid) pipeline:** Combine semantic and keyword search results for better retrieval.
+
+## 6. Features of Claude
+- **Extended thinking:** Claude reasons step by step before answering, improving results on complex tasks.
+- **Image support:** Send images for analysis, comparison, and data extraction.
+- **PDF support:** Read text, tables, charts, and images inside PDFs.
+- **Citations:** Claude links its answers back to exact passages in the source documents.
+- **Prompt caching:** Reuse repeated prompt content (system prompts, tools, long documents) to cut cost and latency.
+- **Caching rules:** Mark cache breakpoints; cached content must be identical and meet a minimum length.
+- **Code execution & Files API:** Upload files once, then let Claude run code to analyze data and create outputs.
+
+## 7. Model Context Protocol (MCP)
+- **What MCP is:** An open standard that lets AI apps connect to external tools and data through reusable servers.
+- **Architecture:** An MCP **client** (inside your app) talks to an MCP **server** that exposes capabilities.
+- **Tools:** Actions Claude can perform, defined with simple Python decorators in the MCP SDK.
+- **Resources:** Read-only data the app can fetch and give to Claude (e.g., documents, files).
+- **Prompts:** Pre-written, tested prompt templates served by the MCP server.
+- **Server inspector:** A browser tool to test and debug an MCP server without building a full app.
+- **Client implementation:** Connect to a server, list its tools/resources/prompts, and call them.
+
+## 8. Claude Code and Computer Use
+- **Claude Code:** Anthropic's agentic coding tool that runs in the terminal and can read, write, and edit code in a project.
+- **Setup:** Install, sign in, and run it inside a project folder.
+- **In action:** Use it to explore codebases, fix bugs, add features, and run commands.
+- **Enhancing with MCP:** Connect MCP servers to give Claude Code extra tools and abilities.
+- **Computer Use:** Claude controls a computer through screenshots, mouse, and keyboard to automate UI tasks.
+
+## 9. Agents and Workflows
+- **Workflows:** Predefined steps; predictable and easy to test.
+- **Parallelization:** Split a task into independent subtasks and run them at the same time.
+- **Chaining:** Break a big task into smaller steps where each output feeds the next.
+- **Routing:** Classify the input first, then send it to the best-suited prompt or pipeline.
+- **Agents:** Claude decides its own steps using a set of tools; flexible but less predictable.
+- **Environment inspection:** Agents should check results of their actions (e.g., read files, take screenshots) before continuing.
+- **Workflows vs agents:** Prefer workflows when the steps are known; use agents when flexibility is needed.
