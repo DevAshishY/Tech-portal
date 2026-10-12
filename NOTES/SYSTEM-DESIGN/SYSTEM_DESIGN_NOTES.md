@@ -672,3 +672,19 @@ file = client.beta.files.upload(file=open("data.csv", "rb"))
 - **Agents:** Claude decides its own steps using a set of tools; flexible but less predictable.
 - **Environment inspection:** Agents should check results of their actions (e.g., read files, take screenshots) before continuing.
 - **Workflows vs agents:** Prefer workflows when the steps are known; use agents when flexibility is needed.
+
+## 9. Agents & Workflows
+- **Why needed** – For tasks Claude can't finish in one request.
+- **Workflow** – Fixed steps decided by us. Predictable. Use it when you already know the steps.
+- **Agent** – We give Claude a goal + tools, and it decides the steps by itself. Flexible. Use it when the task is not known in advance.
+- **Example (Image → 3D model workflow)**:
+  1. Claude describes the image of a metal part
+  2. Claude writes CadQuery code to make the 3D model
+  3. A rendering of the model is created
+  4. Claude compares the rendering with the original image and fixes mistakes
+- **Evaluator-Optimizer Pattern** – One step makes the output (producer), another checks it (grader). If it's not good, feedback goes back and it repeats until accepted.
+- **Workflow patterns** – Ready-made "recipes" that worked for other engineers; we still write the code ourselves.
+- **Parallelization** – Doing many tasks at the same time.
+- **Chaining** – Output of one step goes into the next step.
+- **Routing** – Check the input type, then send it to the right path.
+- **Tip** – Use workflows when steps are known; use agents when they're not.
