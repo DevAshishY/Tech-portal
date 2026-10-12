@@ -664,14 +664,6 @@ file = client.beta.files.upload(file=open("data.csv", "rb"))
 - **Enhancing with MCP:** Connect MCP servers to give Claude Code extra tools and abilities.
 - **Computer Use:** Claude controls a computer through screenshots, mouse, and keyboard to automate UI tasks.
 
-## 9. Agents and Workflows
-- **Workflows:** Predefined steps; predictable and easy to test.
-- **Parallelization:** Split a task into independent subtasks and run them at the same time.
-- **Chaining:** Break a big task into smaller steps where each output feeds the next.
-- **Routing:** Classify the input first, then send it to the best-suited prompt or pipeline.
-- **Agents:** Claude decides its own steps using a set of tools; flexible but less predictable.
-- **Environment inspection:** Agents should check results of their actions (e.g., read files, take screenshots) before continuing.
-- **Workflows vs agents:** Prefer workflows when the steps are known; use agents when flexibility is needed.
 
 ## 9. Agents & Workflows
 - **Why needed** – For tasks Claude can't finish in one request.
@@ -698,5 +690,23 @@ file = client.beta.files.upload(file=open("data.csv", "rb"))
   - **Long prompt problem** – With many rules (no emojis, don't say "written by AI", professional tone), Claude may still break some of them.
   - **Fix in 2 steps** – Step 1: write the article. Step 2: send the article back and ask Claude only to fix the broken rules (remove emojis, remove AI mentions, fix casual words).
   - **When to use** – Many requirements, Claude ignoring rules in long prompts, or needing to check output between steps.
-- **Routing** – Check the input type, then send it to the right path.
+- **Routing** – First find out what type of request it is, then send it to the right specialized prompt.
+  - **Problem** – One general prompt can't handle every topic well ("programming" needs teaching, "surfing" needs fun).
+  - **Categories** – Example video types: Entertainment, Educational, Comedy, Personal vlog, Reviews, Storytelling. Each has its own prompt.
+  - **2 steps** – Step 1: Claude picks the category. Step 2: use that category's prompt to make the content.
+  - **Example** – "Python functions" → Claude says "Educational" → use the educational prompt.
+  - **Key point** – The input goes to only ONE pipeline, not all of them.
+  - **When to use** – Many different request types with clear categories (support bots, content tools).
+- **Agents and Tools** – Give Claude a goal + tools, and it figures out the steps itself.
+  - **Combining tools** – With simple date tools (get time, add days, set reminder), Claude can answer "What day is it in 11 days?" or set a gym reminder by using them together.
+  - **Asks for missing info** – For "When does my 90-day warranty end?", Claude asks when you bought it.
+  - **Keep tools general** – Claude Code uses simple tools (bash, read, write, edit, glob, grep), not special ones like "refactor code". General tools can solve many more problems.
+  - **Combinable tools** – A video agent with bash (FFmpeg), generate image, text to speech, and post media can make videos and also ask the user for approval in between.
+  - **Trade-off** – Agents are flexible but less reliable and cost more.
+- **Environment Inspection** – Claude must be able to see the result of its actions; otherwise it works blind.
+  - **Computer use** – After each click or typing, Claude gets a screenshot to see what happened.
+  - **Read before write** – Claude reads a file before editing it so it doesn't break existing code.
+  - **Use the system prompt** – Example for a video agent: check audio with whisper.cpp captions and take screenshots with FFmpeg to verify the video.
+  - **Benefits** – Tracks progress, catches errors, checks quality, adapts its approach.
+  - **Golden question** – "How will Claude know if this action worked?"
 - **Tip** – Use workflows when steps are known; use agents when they're not.
