@@ -684,7 +684,14 @@ file = client.beta.files.upload(file=open("data.csv", "rb"))
   4. Claude compares the rendering with the original image and fixes mistakes
 - **Evaluator-Optimizer Pattern** – One step makes the output (producer), another checks it (grader). If it's not good, feedback goes back and it repeats until accepted.
 - **Workflow patterns** – Ready-made "recipes" that worked for other engineers; we still write the code ourselves.
-- **Parallelization** – Doing many tasks at the same time.
+- **Parallelization** – Split one big task into small sub-tasks, run them at the same time, then combine the results.
+  - **Problem** – One huge prompt with many rules confuses Claude and gives weaker answers.
+  - **Example (Material picker)** – Send the same part image to Claude 4 times at once, each with rules for only one material (metal, polymer, ceramic, composite). Then one final Claude call compares all results and picks the best material.
+  - **Steps** – Split → Run in parallel → Aggregate (combine).
+  - **Sub-tasks can differ** – Each one can have its own prompt, tools, or rules.
+  - **Benefits** – Better focus, easy to improve one prompt at a time, easy to add new options, more reliable results.
+  - **When to use** – When a decision can be broken into independent checks (many options, many criteria, different areas of expertise).
 - **Chaining** – Output of one step goes into the next step.
 - **Routing** – Check the input type, then send it to the right path.
 - **Tip** – Use workflows when steps are known; use agents when they're not.
+
