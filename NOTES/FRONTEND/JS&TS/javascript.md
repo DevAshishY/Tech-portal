@@ -1,3 +1,447 @@
+
+<!--
+JS-1 - call apply bind
+ -->
+
+### call
+
+runs the function right now, and the first argument becomes this, the rest are normal arguments.
+
+```
+function abc(name,lastname){
+  console.log(this.age, name,lastname)
+}
+
+const myage = {age:30}
+
+abc.call(myage,'ashish','yadav')
+```
+
+### APPLY
+
+apply runs the function right now, the first argument becomes this, and the rest go in an array.
+
+js
+fn.apply(thisObj, [arg1, arg2]);
+
+### bind
+
+bind doesn’t run the function; it returns a new function where this is fixed to the first argument, to run later.
+
+```
+function abc(name, last){
+ return this.age
+}
+
+const myage = {age:30}
+
+const newFun = abc.bind(myage)
+
+console.log(newFun())
+```
+
+## NOTE
+
+=> Modern JS replaced bind with arrow functions, apply with spread (...), and call with class/super()
+=> you can use call, apply, and bind on an arrow function, and it will run and receive arguments. But they can’t change its this. The first argument is simply ignored.
+
+## JS-2 ARROW AND NORMAL FUNCTION
+
+=> When we call a method using an object, we use a normal function because it can access the object through this. If we use an arrow function, this will be undefined because an arrow function doesn’t have its own this
+
+=> bind, call, apply can’t change this in an arrow function. They work on normal functions.
+
+=> an arrow function no this
+
+=> an arrow function no arguments if need paas (...args)
+=>, an arrow function no new. an arrow can’t create objects, so use a normal function (or a class) normal function can create object
+
+```
+function Person(name) {
+  this.name = name;
+}
+
+const p1 = new Person("Bob");
+
+```
+
+## JS-3 arguments
+
+is a hidden list of all values passed to a function.
+
+```
+function show() {
+  console.log(arguments);
+}
+
+show(10, 20, 30); // [10, 20, 30]
+```
+
+### 4. IIFE (Immediately Invoked Function Expression)
+
+```js
+(function () {
+  const secret = "hidden from global scope";
+  console.log(secret);
+})();
+
+// Common pre-ES6 module pattern to avoid polluting global scope
+```
+
+### JS-5. Pure function
+
+```js
+// Pure — same input always gives same output, no side effects
+const add = (a, b) => a + b;
+```
+
+### JS-6. impure function
+
+// Impure — depends on / mutates external state
+let total = 0;
+function addToTotal(n) {
+total += n;
+return total;
+}
+
+### JS-7 Declaration function
+
+— hoisted, can be called before definition
+
+greet(); // "Hello!" (works, even though greet is defined below)
+
+function greet() {
+console.log("Hello!");
+}
+
+### JS-8 expressions function
+
+sayHi(); // ❌ TypeError: sayHi is not a function
+var sayHi = function () { console.log("Hi"); };
+
+### JS-8 Fixing arrow-function `this` in an object
+
+```js
+const user = {
+  email: "my@email.com",
+  updateEmail: (email) => {
+    this.email = email;
+  }, // 'this' is NOT user here
+};
+user.updateEmail("new@email.com");
+console.log(user.email); // still 'my@email.com'
+
+// Fix: use a regular function so 'this' binds to the calling object
+const user2 = {
+  email: "my@email.com",
+  updateEmail(email) {
+    this.email = email;
+  }, // shorthand method syntax
+};
+user2.updateEmail("new@email.com");
+console.log(user2.email); // 'new@email.com'
+```
+
+### JS-9 Currying
+
+```js
+function sum(a) {
+  return function (b) {
+    return function (c) {
+      return a + b + c;
+    };
+  };
+}
+console.log(sum(1)(2)(3)); // 6
+```
+
+### JS-10. Memoization
+
+Memoization means remembering a function’s answer so you don’t calculate it again for the same input
+
+```js
+const cache = {};
+function double(n) {
+  if (cache[n] !== undefined) return cache[n]; // already saved → reuse
+  cache[n] = n * 2; // first time → calculate and save
+  return cache[n];
+}
+
+console.log(double(5)); // 10 (calculated)
+console.log(double(5)); // 10 (from cache)
+```
+
+## Part 2 — Scope, Closures & Hoisting
+
+### JS-11 Lexical Scope
+
+a function uses variables from where it is written, not where it is called.
+
+```js
+const fruit = "Apple";
+
+function showFruit() {
+  console.log(fruit);
+}
+
+function test() {
+  const fruit = "Mango";
+  showFruit();
+}
+
+test(); // "Apple"
+```
+
+Short description: showFruit was written next to fruit = "Apple", so it prints "Apple". The "Mango" inside test is ignored, because showFruit was only called there, not written there.
+
+### JS-12 Closure
+
+A function "remembers" its outer scope's variables even after the outer function has returned.
+
+```js
+function counter() {
+  let count = 0;
+  return function () {
+    // Inner function used outer varibale
+    return ++count;
+  };
+}
+const increment = counter();
+console.log(increment(), increment(), increment()); // 1 2 3
+```
+
+### JS-13 var vs let vs const, and why avoid `var`
+
+```js
+console.log(a); // undefined (hoisted, initialized as undefined)
+var a = 1;
+
+console.log(b); // ReferenceError (TDZ)
+let b = 2;
+```
+
+- `var`: function-scoped, hoisted & auto-initialized to `undefined`, can be redeclared → leaks out of blocks (`if`, `for`) causing bugs.
+- `let`/`const`: block-scoped, hoisted but **not** initialized (Temporal Dead Zone), cannot redeclare.
+- `const`: same as `let` but cannot be reassigned (object/array _contents_ can still be mutated).
+
+### JS-14 TDZ (Temporal Dead Zone)
+
+```js
+{
+  console.log(x); // ReferenceError: Cannot access 'x' before initialization
+  let x = 5;
+}
+```
+
+The variable exists (hoisted) but is inaccessible until its declaration line runs.
+
+### JS-15 var leaking out of a block
+
+```js
+let fruit = "apple";
+if (true) {
+  var fruit = "orange"; // var ignores block scope, overwrites outer 'fruit'
+  console.log(fruit); // 'orange'
+}
+console.log(fruit); // 'orange'
+```
+
+### JS-16 Block scoping with `let`
+
+```js
+let a = "Hello";
+function x() {
+  let b = "World";
+  console.log(a, b); // Hello World
+  if (b === "World") {
+    let c = "hello";
+    console.log(a, b, c); // Hello World hello
+  }
+  console.log(a, b, c); // ReferenceError: c is not defined (out of block scope)
+}
+x();
+```
+
+### JS-17 "use strict"
+
+Opts into a stricter parsing/execution mode: disallows implicit globals, silent failures become errors, `this` is `undefined` in plain function calls instead of the global object.
+
+```js
+"use strict";
+x = 10; // ReferenceError: x is not defined
+```
+
+### JS-18 Differet between == and ===
+
+Trick: override `==`/`===` behavior via a getter with an internal counter (works because `===` on an object triggers `valueOf`/`Symbol.toPrimitive`, not on primitives — but with a plain number it never works for `===`; the classic trick uses `==` with `valueOf`):
+
+```js
+l5 == "5"; // true   (string "5" becomes number 5)
+5 === "5"; // false  (number vs string)
+
+0 == false; // true   (false becomes 0)
+0 === false; // false  (number vs boolean)
+
+null == undefined; // true
+null === undefined; // false
+
+5 === 5; // true   (same value, same type)
+```
+
+## Part 3 — Objects & Prototypes
+
+### JS-19 Prototype
+
+If an object doesn't have a property, it **borrows it from its parent**. That parent is its **prototype**.
+
+```js
+let father = { car: "BMW" };
+let son = Object.create(father); // son's parent = father
+
+console.log(son.car); // BMW (borrowed from father)
+```
+
+### JS-20 Prototype chain
+
+JavaScript keeps looking **up through the parents** until it finds the property or reaches `null`.
+
+```
+son  →  father  →  Object.prototype  →  null
+```
+
+### JS-21 `prototype` vs `__proto__` (school example)
+
+- **`prototype`** is the **library**. It belongs to the **function** and holds the things to share.
+- **`__proto__`** is the **library card**. It belongs to the **object** and points to the library.
+
+```js
+function School() {}
+School.prototype.book = "Math Book"; // put a book in the library
+
+const student = new School();
+
+console.log(student.book); // Math Book
+console.log(student.__proto__ === School.prototype); // true
+```
+
+|             | Belongs to | Meaning                        |
+| ----------- | ---------- | ------------------------------ |
+| `prototype` | Function   | Shared things (the library)    |
+| `__proto__` | Object     | Link to `prototype` (the card) |
+
+### JS-22. Shallow vs Deep Copy
+
+Shallow: copies the top level only. Nested objects are shared.
+Deep: copies everything. Nothing is shared.
+
+```js
+const original = { nested: { b: 2 } };
+
+const shallow = { ...original };
+const deep = structuredClone(original); // JSON.parse(JSON.stringify(obj)) we have this option also
+
+shallow.nested.b = 99;
+console.log(original.nested.b); // 99 (changed by the shallow copy)
+
+deep.nested.b = 5;
+console.log(original.nested.b); // 99 (not changed by the deep copy)
+```
+
+### JS-23. Ways to Create an Object
+
+```js
+const a = { x: 1 }; // literal
+const b = new Object({ x: 1 }); // constructor
+const c = Object.create({ x: 1 }); // prototype-based
+class Foo {
+  constructor(x) {
+    this.x = x;
+  }
+}
+const d = new Foo(1); // ES6 class
+function factory(x) {
+  return { x };
+}
+const e = factory(1); // factory function
+const f = Object.assign({}, { x: 1 }); // merge/copy
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+======================================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # JavaScript Interview Guide — Complete Reference
 
 A reorganized, filled-in version of your notes: every theory topic has a short explanation **+ a runnable example**, and every coding question has a working solution with complexity noted where relevant. Part 11 covers the Aazam Sheet Top 50 coding questions.
