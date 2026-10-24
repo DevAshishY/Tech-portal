@@ -1,5 +1,317 @@
 # Node.js 
+### NODE-1. `process.argv`
 
+process.argv is an array of command-line arguments passed when running a Node.js script.
+
+```bash
+node index.js hello1 hello2
+```
+
+```js
+process.argv[0]; // node executable path
+process.argv[1]; // file path
+process.argv[2]; // hello1 (first CLI arg)
+process.argv[3]; // hello2 (second CLI arg)
+```
+
+---
+
+### NODE-2. Environment Variables
+
+```js
+process.env.DB_NAME; // read env variable
+```
+
+---
+
+### NODE-3. How Node.js Works (Event Loop Order)
+
+```
+Sync Code
+  → process.nextTick       (own queue, highest priority)
+  → Promise                (microtask)
+  → Event loop phases:
+      1. Timers   → setTimeout, setInterval
+      2. Poll     → I/O callbacks (fs, network; file work runs in the thread pool)
+      3. Check    → setImmediate
+      4. Close    → close events
+  (nextTick + Promises run again after every callback)
+```
+
+### NODE-4. Sync vs Async — `fs` Module
+
+```js
+fs.readFileSync(); // blocks, line-by-line execution
+fs.readFile(); // non-blocking, parallel code execution
+```
+
+### NODE-5 Top-level await in Promises
+
+> **Node tip:** top-level `await` works only in ES modules (`.mjs` files or `"type": "module"` in package.json). In CommonJS, put `await` inside an `async` function.
+
+### NODE-6. What is a Promise?
+
+An object for a value that will arrive later. It has 3 states: **pending**, **fulfilled** (success) or **rejected** (failure).
+
+**Real-life:** you order a pizza. Waiting = pending, pizza arrives = fulfilled, order cancelled = rejected.
+
+```js
+const order = new Promise((resolve, reject) => {
+  setTimeout(() => resolve("🍕 Pizza delivered"), 1000);
+});
+
+console.log(order); // Promise { <pending> }
+```
+
+Once fulfilled or rejected, a Promise can't change again.
+
+> **In one line:** a placeholder for a future success or failure.
+
+### NODE-7 `.then`, `.catch`, `.finally`
+
+**Real-life:** pizza comes → eat (`.then`). Cancelled → make noodles (`.catch`). Either way → wash hands (`.finally`).
+
+```js
+order
+  .then((res) => console.log(res))
+  .catch((err) => console.log(err))
+  .finally(() => console.log("Wash hands"));
+```
+
+**Output:**
+
+```
+🍕 Pizza delivered
+Wash hands
+```
+
+> **In one line:** `.then` = success, `.catch` = failure, `.finally` = always.
+
+### NODE-8. Promise chaining
+
+Each `.then` returns a new Promise, passing its result to the next.
+
+**Real-life:** making tea. Boil water, add tea, add milk. One step after another.
+
+```js
+Promise.resolve("water")
+  .then((x) => x + " + tea")
+  .then((x) => x + " + milk")
+  .then((x) => console.log("Serve:", x))
+  .catch((err) => console.log("Failed:", err));
+```
+
+**Output:**
+
+```
+Serve: water + tea + milk
+```
+
+If any step fails, it jumps straight to `.catch`.
+
+> **In one line:** steps run in order, each using the previous result.
+
+### NODE-9. async/await
+
+A cleaner way to write Promise code, like normal step-by-step code.
+
+**Real-life:** a to-do list: wait for food, eat, wash plate.
+
+```js
+async function greet() {
+  return "Hello";
+}
+
+greet().then(console.log); // Hello
+```
+
+`async` functions always return a Promise. `await` pauses only that function; the rest of the app keeps running.
+
+> **In one line:** Promise code that reads like sync code.
+
+### NODE-10. Error handling with await
+
+Use `try/catch`.
+
+**Real-life:** try the ATM. No cash? Pay by card instead.
+
+```js
+async function getMoney() {
+  try {
+    await Promise.reject("ATM out of cash");
+  } catch (err) {
+    console.log("Error:", err);
+  } finally {
+    console.log("Leaving ATM");
+  }
+}
+
+getMoney();
+```
+
+**Output:**
+
+```
+Error: ATM out of cash
+Leaving ATM
+```
+
+> **In one line:** wrap `await` in `try/catch`, or a failure stops the function.
+
+### NODE-11. `Promise.all`
+
+Runs Promises in parallel and waits for **all** to succeed. If one fails, the whole thing fails.
+
+**Real-life:** mom needs milk, bread **and** eggs for breakfast. If even one is missing, no breakfast.
+
+```js
+const results = await Promise.all([getUser(), getOrders(), getProfile()]);
+// ["User", "Orders", "Profile"], or the first error
+```
+
+> **In one line:** all results together, or fails at the first error.
+
+### NODE-12. `Promise.allSettled`
+
+Waits for **every** Promise and reports each result. It never rejects.
+
+**Real-life:** you ask 3 friends "coming to the party?" and wait for every reply, yes or no.
+
+```js
+const results = await Promise.allSettled([
+  Promise.resolve("Users"),
+  Promise.reject("Stats failed"),
+]);
+console.log(results);
+```
+
+**Output:**
+
+```js
+[
+  { status: "fulfilled", value: "Users" },
+  { status: "rejected", reason: "Stats failed" },
+];
+```
+
+> **In one line:** get every result, success or failure.
+
+### NODE-13. `Promise.race` vs `Promise.any`
+
+**Real-life:** you call 2 friends for help.
+
+- **race:** whoever picks up first, even if they say "no".
+- **any:** the first one who says "yes".
+
+```js
+const appA = new Promise((_, rej) => setTimeout(() => rej("A: no cabs"), 500));
+const appB = new Promise((res) => setTimeout(() => res("B: cab found"), 1000));
+
+Promise.race([appA, appB]).catch((e) => console.log("race:", e));
+Promise.any([appA, appB]).then((r) => console.log("any:", r));
+```
+
+**Output:**
+
+```
+race: A: no cabs
+any: B: cab found
+```
+
+Common use of `race` in Node: an API **timeout**.
+
+```js
+const timeout = new Promise((_, rej) => setTimeout(() => rej("Timeout"), 3000));
+await Promise.race([fetch("https://api.example.com/data"), timeout]);
+```
+
+> **In one line:** `race` = first to finish, `any` = first success.
+
+### NODE-14. Comparison
+
+**Real-life:** inviting 3 friends.
+
+| Method       | Like...                   | Fails when            |
+| ------------ | ------------------------- | --------------------- |
+| `all`        | Everyone must come        | Any one fails         |
+| `allSettled` | Wait for everyone's reply | Never                 |
+| `race`       | First reply decides       | First to finish fails |
+| `any`        | First friend who says yes | All fail              |
+
+### NODE-15. Sequential vs parallel await
+
+**Real-life:** eggs then toast = 10 min. Both at once = 5 min.
+
+```js
+const wait = (ms) => new Promise((res) => setTimeout(res, ms));
+
+// Sequential: ~4s
+await wait(2000);
+await wait(2000);
+
+// Parallel: ~2s
+await Promise.all([wait(2000), wait(2000)]);
+```
+
+- **Sequential:** when step 2 needs step 1's result (get user → get that user's orders).
+- **Parallel:** when tasks are independent.
+
+> **In one line:** run independent tasks with `Promise.all` to save time.
+
+### NODE-16. What's the output?
+
+**Real-life:** finish your homework (sync), then answer mom's call (Promise), then check messages (setTimeout).
+
+```js
+console.log("1");
+setTimeout(() => console.log("2"), 0);
+Promise.resolve().then(() => console.log("3"));
+console.log("4");
+```
+
+**Output:**
+
+```
+1
+4
+3
+2
+```
+
+> **In one line:** sync code → Promises (microtasks) → setTimeout (macrotasks).
+
+### NODE-17. Callback vs Promise vs async/await
+
+**Real-life:** giving directions. Callback = "call me at every turn" (messy). Promise = a written list. async/await = the same list, read out normally.
+
+```js
+// Callback: nested ("callback hell")
+getUser((user) => getOrders(user, (orders) => console.log(orders)));
+
+// Promise: flat chain
+getUser().then(getOrders).then(console.log).catch(console.log);
+
+// Async/await: cleanest
+try {
+  const orders = await getOrders(await getUser());
+  console.log(orders);
+} catch (err) {
+  console.log(err);
+}
+```
+
+|             | Readability      | Errors                  |
+| ----------- | ---------------- | ----------------------- |
+| Callback    | Nested, messy    | Check in every callback |
+| Promise     | Flat chain       | One `.catch`            |
+| async/await | Like normal code | `try/catch`             |
+
+> **In one line:** all do the same job, but async/await is easiest to read and maintain.
+
+
+
+
+===========================================================================================================================
 ---
 
 ## 1. `process.argv`
