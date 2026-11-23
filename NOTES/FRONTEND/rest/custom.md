@@ -1,416 +1,895 @@
-# REST API Interview Questions
+## Part A — API Fundamentals
 
-Oct 14, 2026 · @ashish yadav
+### API-1. What is an API?
 
-Every topic from your notes as a question with a short answer and example.
+A set of rules that lets one piece of software talk to another.
 
-## Section 1: API fundamentals
+**Real-life:** a waiter. You (client) don't go into the kitchen (server); you give your order to the waiter (API), who brings back food (response).
 
-### Q1. What is an API?
+**Example:** a weather app calls a weather API for today's forecast.
 
-A set of rules that lets one piece of software talk to another. Example: a weather app calls a weather API to get today's forecast.
+### API-2. What is a REST API?
 
-### Q2. What is a REST API?
+An architectural style that uses **HTTP methods on resources**. URLs are **nouns**, methods are the **verbs**.
 
-An architectural style that uses HTTP methods on resources. URLs are nouns, not verbs. Example: `GET /restaurants`, `POST /orders`.
+**Real-life:** a library: books have shelf numbers (URLs); you borrow, return or donate (methods).
 
-### Q3. What is the difference between REST and RESTful?
+```text
+GET  /restaurants   → list restaurants
+POST /orders        → create an order
+```
 
-REST is the style. A RESTful API is one that actually follows its principles: stateless, cacheable, correct use of HTTP methods and a uniform interface.
+### API-3. REST vs RESTful?
 
-### Q4. What does stateless mean?
+- **REST** = the style (the rules).
+- **RESTful** = an API that actually follows them: stateless, cacheable, correct HTTP methods, uniform interface.
 
-The server remembers nothing about previous requests. Each request carries everything it needs on its own, such as the auth token.
+**Real-life:** "healthy diet" is the idea; a "healthy person" actually follows it.
 
-### Q5. What are the REST constraints?
+🎯 Many "REST" APIs aren't fully RESTful (e.g. `POST /getUser`).
 
-Client-Server, Stateless, Cacheable, Uniform Interface and Layered System. Example: React frontend → Node API → database, each layer independent.
+### API-4. What does stateless mean?
 
-### Q6. What is CRUD and how does it map to HTTP?
+The server **remembers nothing** between requests. Each request carries everything it needs (e.g. the auth token).
 
-Create, Read, Update, Delete → POST, GET, PUT, DELETE.
+**Real-life:** a toll booth: you show your pass every time; the booth doesn't remember you from yesterday.
 
-### Q7. What is an endpoint?
+🎯 Stateless = any server can handle any request → easy horizontal scaling.
 
-A specific URL that exposes a resource. Example: `GET /api/accounts/{id}`.
+### API-5. What are the REST constraints?
 
-### Q8. What is idempotency?
+| Constraint | Meaning |
+|---|---|
+| Client-Server | frontend and backend separate |
+| Stateless | no session on the server |
+| Cacheable | responses say if they can be cached |
+| Uniform Interface | consistent URLs + HTTP methods |
+| Layered System | client doesn't know about proxies, gateways, DB behind |
+| Code on Demand (optional) | server can send executable code |
 
-Sending the same request many times gives the same result with no extra side effects. Payment APIs use an idempotency key so a retried request is not charged twice.
+**Example:** React frontend → Node API → database; each layer independent.
 
-### Q9. Which HTTP methods are idempotent?
+**Real-life:** a restaurant chain: same menu format everywhere (uniform), you don't see the supplier behind the kitchen (layered).
 
-| Method | Purpose | Idempotent? |
-| --- | --- | --- |
-| GET | Retrieve | Yes |
-| POST | Create | No (creates a new resource every call) |
-| PUT | Replace / update | Yes |
-| PATCH | Partial update | Not guaranteed (usually no) |
-| DELETE | Remove | Yes |
+### API-6. What is CRUD and how does it map to HTTP?
 
-### Q10. PUT vs PATCH?
+| CRUD | Method | Example | Status |
+|---|---|---|---|
+| Create | POST | `POST /users` | 201 |
+| Read | GET | `GET /users/5` | 200 |
+| Update (full) | PUT | `PUT /users/5` | 200 |
+| Update (part) | PATCH | `PATCH /users/5` | 200 |
+| Delete | DELETE | `DELETE /users/5` | 200 / 204 |
 
-PUT replaces the whole resource and is idempotent. PATCH changes only some fields and is not guaranteed to be idempotent.
+**Real-life:** a phone contacts app: add, view, edit, delete a contact.
 
-## Section 2: Request and response
+### API-7. What is an endpoint?
 
-### Q11. What is the difference between a request and a response?
+A specific URL + method that exposes a resource.
 
-The request is what the client sends: method, URL, headers and body. The response is what the server returns: a status code, headers and body.
+```text
+GET /api/accounts/{id}
+```
 
-### Q12. What is a payload?
+**Real-life:** a specific counter in a bank: "Deposits", "Loans".
 
-The actual data in the request or response body, usually JSON.
+### API-8. What is idempotency?
 
-### Q13. What are headers?
+Sending the **same request many times** gives the **same result**, with no extra side effects.
 
-Metadata about the request or response, not the data itself. Used for auth, content type, caching and client info.
+**Real-life:** pressing a lift button 5 times still calls the lift **once**.
 
-### Q14. What do Content-Type, Accept and Authorization mean?
+🎯 Payment APIs use an **`Idempotency-Key`** header so a retried request isn't charged twice.
 
-| Header | Meaning |
-| --- | --- |
-| `Content-Type` | Format of the data being **sent**, e.g. `application/json`, or `multipart/form-data` for uploads. A wrong value can break the request |
-| `Accept` | Format the client **wants back**, e.g. `application/json` vs `text/html` |
-| `Authorization` | Credentials: `Bearer <token>` or `Basic base64(user:pass)` |
+### API-9. Which HTTP methods are idempotent?
 
-### Q15. Path parameter vs query parameter?
+| Method | Purpose | Idempotent? | Safe (no changes)? |
+|---|---|---|---|
+| GET | read | ✅ | ✅ |
+| POST | create | ❌ (new resource each call) | ❌ |
+| PUT | replace | ✅ | ❌ |
+| PATCH | partial update | not guaranteed | ❌ |
+| DELETE | remove | ✅ | ❌ |
+| HEAD / OPTIONS | metadata | ✅ | ✅ |
 
-|  | Path param | Query param |
-| --- | --- | --- |
-| Purpose | Identify a specific resource | Filter, sort, search, paginate |
-| Mandatory | Yes | No |
-| Position | In the URL path | After `?` |
+⚠️ DELETE is idempotent even though the second call may return `404`: the **server state** is the same.
+
+### API-10. PUT vs PATCH?
+
+| PUT | PATCH |
+|---|---|
+| replaces the **whole** resource | changes **some** fields |
+| missing fields may be cleared | other fields untouched |
+| idempotent | not guaranteed |
+
+**Real-life:** PUT = replacing the whole form. PATCH = correcting one field with white-out.
+
+```http
+PUT   /users/5   { "name": "Asha", "email": "a@x.com", "city": "Pune" }
+PATCH /users/5   { "city": "Delhi" }
+```
+
+---
+
+## Part B — Request & Response
+
+### API-11. Request vs response?
+
+| Request (client → server) | Response (server → client) |
+|---|---|
+| method, URL, headers, body | status code, headers, body |
+
+**Real-life:** a letter you post vs the reply you receive.
+
+```http
+POST /api/orders
+Content-Type: application/json
+Authorization: Bearer eyJ...
+
+{ "productId": 7, "qty": 2 }
+```
+
+```http
+HTTP/1.1 201 Created
+Content-Type: application/json
+
+{ "id": 123, "status": "placed" }
+```
+
+### API-12. What is a payload?
+
+The **actual data** in the request or response body, usually JSON.
+
+**Real-life:** the goods inside a parcel; the address label is the headers.
+
+### API-13. What are headers?
+
+**Metadata** about the request/response: auth, content type, caching, client info.
+
+**Real-life:** the label on a parcel: sender, contents, "fragile".
+
+### API-14. Content-Type vs Accept vs Authorization?
+
+| Header | Meaning | Example |
+|---|---|---|
+| `Content-Type` | format I'm **sending** | `application/json`, `multipart/form-data` |
+| `Accept` | format I **want back** | `application/json` |
+| `Authorization` | credentials | `Bearer <token>`, `Basic base64(user:pass)` |
+
+**Real-life:** Content-Type = "this parcel contains glass"; Accept = "please reply in English".
+
+⚠️ Wrong `Content-Type` → server can't parse the body (e.g. Express `req.body` is empty).
+
+### API-15. Path param vs query param?
+
+| | Path param | Query param |
+|---|---|---|
+| Purpose | identify **which** resource | filter, sort, search, paginate |
+| Required | yes | no |
+| Position | in the path | after `?` |
 | Example | `/users/25` | `/users?role=admin&page=2` |
 
-Combined: `GET /api/users/10?active=true`.
+Combined: `GET /api/users/10?active=true`
 
-### Q16. What are the common HTTP status codes?
+**Real-life:** path = which house (house number). Query = what you want from it ("only the kitchen, please").
+
+### API-16. Common HTTP status codes?
 
 | Code | Meaning |
-| --- | --- |
+|---|---|
 | 200 | OK |
 | 201 | Created |
 | 204 | No Content |
+| 301 / 304 | Moved Permanently / Not Modified (use cache) |
 | 400 | Bad Request |
 | 401 | Unauthorized (not logged in / bad credentials) |
-| 403 | Forbidden (logged in, but no permission) |
+| 403 | Forbidden (logged in, no permission) |
 | 404 | Not Found |
-| 429 | Too Many Requests (rate limit exceeded) |
+| 409 | Conflict (e.g. email already exists) |
+| 422 | Unprocessable Content (validation failed) |
+| 429 | Too Many Requests |
 | 500 | Internal Server Error |
 | 502 | Bad Gateway |
 | 503 | Service Unavailable |
+| 504 | Gateway Timeout |
 
-### Q17. 401 vs 403?
+**Real-life:** 2xx = "done", 3xx = "go elsewhere", 4xx = "your mistake", 5xx = "our mistake".
 
-401 means the server doesn't know who you are (missing or invalid credentials). 403 means it knows who you are, but you are not allowed to do this. Example: an intern trying to view payroll gets 403.
+### API-17. 401 vs 403?
 
-## Section 3: Authentication and security
+- **401:** server **doesn't know who you are** (missing/invalid credentials).
+- **403:** server **knows you**, but you're **not allowed**.
 
-### Q18. Authentication vs authorization?
+**Real-life:** 401 = no ID card at the office gate. 403 = an intern with an ID card trying to enter the payroll room.
 
-Authentication = "who are you?" (login). Authorization = "what are you allowed to do?" (permissions after login). Example: an HR manager can view payroll; an intern gets 403.
+---
 
-### Q19. What are the common API auth methods?
+## Part C — Authentication & Security
+
+### API-18. Authentication vs authorization?
+
+| Authentication | Authorization |
+|---|---|
+| **who are you?** (login) | **what can you do?** (permissions) |
+| fails with 401 | fails with 403 |
+| always first | after authentication |
+
+**Real-life:** hotel reception checks your ID (authN); your key card opens only your room (authZ).
+
+### API-19. Common API auth methods?
 
 | Method | How | Typical use |
-| --- | --- | --- |
-| API Key | `?api_key=abc123` or a header | Public APIs (maps, weather) |
-| JWT | `Authorization: Bearer <token>` | Login-based apps, stateless auth |
-| OAuth | "Login with Google" | Third-party access without sharing a password |
-| Basic Auth | `Authorization: Basic base64(user:pass)` | Internal or legacy systems |
+|---|---|---|
+| API Key | `x-api-key: abc123` header | public/partner APIs (maps, weather) |
+| JWT | `Authorization: Bearer <token>` | login-based apps, stateless |
+| OAuth 2.0 / OIDC | "Login with Google" | third-party access, SSO |
+| Basic Auth | `Authorization: Basic base64(user:pass)` | internal / legacy |
 
-### Q20. What is a JWT and why use it?
+**Real-life:** API key = a shared door code. JWT = a visitor badge. OAuth = a valet key that only drives the car, can't open the boot. Basic = saying your password at every door.
 
-A compact, URL-safe token. It is stateless, so the server needs no session storage, which scales well in microservices.
+⚠️ Avoid API keys in the **query string** (`?api_key=`); they leak into logs and browser history. Use a header.
+⚠️ Basic Auth sends a password every request; only over HTTPS.
 
-### Q21. What is the structure of a JWT?
+### API-20. What is a JWT and why use it?
 
-`Header.Payload.Signature`. Header = algorithm and type. Payload = claims (userId, role, exp). Signature = integrity check so nobody can tamper with it.
+A compact, signed, URL-safe token. **Stateless**: no session storage on the server, scales well across microservices.
 
-### Q22. How does JWT authentication work?
+**Real-life:** a cinema ticket with your seat printed on it; any usher can check it without calling the box office.
+
+⚠️ Hard to **revoke early**; keep access tokens short-lived.
+
+### API-21. Structure of a JWT?
+
+```text
+Header.Payload.Signature
+eyJhbGciOi... . eyJ1c2VySWQiOjF9 . SflKxwRJ...
+```
+
+| Part | Contains |
+|---|---|
+| Header | algorithm + type |
+| Payload | claims: `userId`, `role`, `exp` |
+| Signature | proves nobody tampered with it |
+
+⚠️ The payload is **encoded, not encrypted**. Anyone can read it; never put passwords in it.
+
+### API-22. How does JWT auth work?
 
 1. User logs in.
-2. Server validates the credentials.
+2. Server validates credentials.
 3. Server issues a JWT.
-4. Client stores it (localStorage or cookie).
-5. Client sends it on every request.
-6. Server verifies the signature each time.
+4. Client stores it.
+5. Client sends `Authorization: Bearer <token>` on every request.
+6. Server **verifies the signature** each time.
 
-### Q23. What is a bearer token?
+⚠️ Storage: `localStorage` is readable by any XSS script. Safer: **short-lived access token in memory + refresh token in an HttpOnly cookie**.
 
-An access token sent in the `Authorization` header. Whoever "bears" it gets access, so it must be protected.
+### API-23. What is a bearer token?
 
-### Q24. What is a refresh token?
+An access token sent in the `Authorization` header. **Whoever bears it gets access**.
 
-A long-lived token (e.g. 7 days) used to get a new short-lived access token (e.g. 15 minutes) without logging in again.
+**Real-life:** a cash note: whoever holds it can spend it.
 
-### Q25. What is OAuth?
+🎯 Always over HTTPS; short expiry.
 
-A way for a third-party app to get limited access to your data without seeing your password. The provider (e.g. Google) issues an access token instead.
+### API-24. What is a refresh token?
 
-### Q26. What is CORS?
+A **long-lived** token (e.g. 7 days) used to get a new **short-lived** access token (e.g. 15 min) without logging in again.
 
-A server response header (`Access-Control-Allow-Origin`) that tells the browser which origins may call the API. It is a browser security feature, not backend business logic.
+**Real-life:** a gym membership card (refresh) that gets you a new day pass (access) at the desk.
 
-### Q27. What is the same-origin policy?
+🎯 Store in an HttpOnly cookie; **rotate** it on each use and revoke on logout.
 
-The browser blocks a page from reading data from a different origin (protocol + domain + port) unless CORS allows it.
+### API-25. What is OAuth?
 
-### Q28. What is rate limiting?
+Lets a third-party app get **limited** access to your data **without your password**. The provider (Google) issues an access token.
 
-A cap on requests per client per time window (e.g. 100 per minute) to stop abuse and DDoS. Over the limit, the API returns `429`.
+**Real-life:** a valet key: the valet can park the car but can't open the glovebox.
 
-### Q29. How do you secure an API?
+🎯 OAuth = authorization. **OpenID Connect (OIDC)** adds login/identity on top.
 
-HTTPS (TLS), authentication (JWT, OAuth, keys), role-based authorization, input validation, rate limiting, and a firewall/WAF. Example (banking app): HTTPS encrypts transactions, JWT validates the user, rate limiting blocks brute force, and validation blocks SQL injection.
+### API-26. What is CORS?
 
-### Q30. How do you prevent SQL injection?
+A server response header (`Access-Control-Allow-Origin`) telling the **browser** which origins may call the API.
 
-Validate input, use prepared statements or an ORM, and escape inputs. Never concatenate user input into a query: `"...WHERE id=" + userInput` is the classic bad example.
+**Real-life:** a guest list at the door; the guard (browser) checks it.
 
-### Q31. How do you handle file uploads in an API?
+```http
+Access-Control-Allow-Origin: https://myapp.com
+Access-Control-Allow-Methods: GET, POST
+```
 
-Send the file with `Content-Type: multipart/form-data`. Example: a profile picture upload.
+⚠️ A **browser** feature. Postman and servers ignore it, so CORS is **not** security against attackers.
+🎯 Non-simple requests (PUT, custom headers) trigger an **OPTIONS preflight** first.
 
-## Section 4: Data shaping
+### API-27. What is the same-origin policy?
 
-### Q32. What is pagination?
+The browser blocks a page from reading data from a different **origin** (protocol + domain + port) unless CORS allows it.
 
-Splitting large results into pages. Example: `GET /posts?page=2&limit=20`.
+```text
+https://app.com  →  https://api.app.com   ❌ different origin (subdomain)
+http://localhost:3000 → http://localhost:5000  ❌ different port
+```
 
-### Q33. Offset-based vs cursor-based pagination?
+**Real-life:** you can only open post addressed to your own house.
 
-Offset (`page`, `limit`) is simple but slow and can skip or repeat items when data changes. Cursor-based ("give me items after this ID") is better for large or fast-changing datasets.
+### API-28. What is rate limiting?
 
-### Q34. How do you filter results?
+A cap on requests per client per time window (e.g. 100/min). Over the limit → **`429`**.
 
-With query parameters. Example: `GET /orders?status=delivered&payment=completed`.
+**Real-life:** an ATM allowing only 3 PIN attempts.
 
-### Q35. How do you sort results?
+```http
+HTTP/1.1 429 Too Many Requests
+Retry-After: 60
+```
 
-With query parameters. Example: `GET /products?sort=price&order=asc`.
+🎯 Stops brute force, scraping and abuse. Express: `express-rate-limit`.
 
-### Q36. What is API versioning and why is it needed?
+### API-29. How do you secure an API?
 
-Keeping multiple versions alive, like `/api/v1/users` and `/api/v2/users`, so changing a response shape doesn't break old clients.
+- **HTTPS** (TLS) everywhere.
+- **Authentication** (JWT, OAuth, keys) + **role-based authorization**.
+- **Input validation** (Zod/Joi).
+- **Rate limiting**, WAF/firewall.
+- Security headers (`helmet`), CORS allow-list.
+- No secrets or stack traces in responses; patched dependencies.
 
-### Q37. What is HATEOAS?
+**Real-life (banking app):** HTTPS encrypts transactions, JWT checks the user, rate limiting blocks brute force, validation blocks injection.
 
-The response includes links to related actions, so the client discovers next steps from the API itself.
+### API-30. How do you prevent SQL injection?
+
+Never build queries by **concatenating** user input. Use **parameterised queries** or an ORM, and validate input.
+
+```js
+// ❌ "1 OR 1=1" returns every user
+db.query("SELECT * FROM users WHERE id = " + userInput);
+
+// ✅ parameterised
+db.query("SELECT * FROM users WHERE id = $1", [userInput]);
+```
+
+**Real-life:** a form with fixed boxes; you can't write a new instruction for the clerk in the "name" box.
+
+🎯 MongoDB has **NoSQL injection** too (`{ "$ne": null }` in a login body); validate types.
+
+### API-31. How do you handle file uploads?
+
+Send with `Content-Type: multipart/form-data`.
+
+**Real-life:** a parcel counter, not a letter box.
+
+```js
+app.post("/avatar", upload.single("avatar"), (req, res) => res.json({ file: req.file.filename }));
+```
+
+⚠️ Limit size and type, scan files, store in S3/Cloudinary, save only the URL in the DB.
+
+---
+
+## Part D — Data Shaping
+
+### API-32. What is pagination?
+
+Splitting large results into pages.
+
+```text
+GET /posts?page=2&limit=20
+```
+
+**Real-life:** a book split into pages instead of one endless scroll.
+
+### API-33. Offset vs cursor pagination?
+
+| Offset (`page`, `limit`) | Cursor (`after=<id>`) |
+|---|---|
+| simple, jump to any page | "next" only |
+| slow on big data | fast (uses an index) |
+| can skip/repeat items when data changes | stable |
+
+```text
+GET /posts?limit=20&after=abc123
+```
+
+**Real-life:** offset = "page 50" in a book that keeps getting new pages added at the front. Cursor = a bookmark.
+
+🎯 Cursor for feeds and infinite scroll.
+
+### API-34. How do you filter results?
+
+With query params.
+
+```text
+GET /orders?status=delivered&payment=completed
+```
+
+### API-35. How do you sort results?
+
+```text
+GET /products?sort=price&order=asc
+GET /products?sort=-createdAt          // "-" = descending (common convention)
+```
+
+⚠️ Allow-list sortable fields; don't pass user input straight to the database.
+
+### API-36. What is API versioning?
+
+Keeping several versions alive so changes don't break old clients.
+
+```text
+/api/v1/users       ← most common (URL)
+Accept: application/vnd.app.v2+json   ← header versioning
+```
+
+**Real-life:** a new phone model doesn't stop old phones working.
+
+### API-37. What is HATEOAS?
+
+The response includes **links** to next actions; the client discovers them from the API.
 
 ```json
-"links": {
-  "track": "/orders/123/track",
-  "cancel": "/orders/123/cancel"
+{
+  "id": 123,
+  "status": "placed",
+  "links": { "track": "/orders/123/track", "cancel": "/orders/123/cancel" }
 }
 ```
 
-### Q38. How do you keep an API backward compatible?
+**Real-life:** a web page with buttons for what you can do next.
 
-Never remove existing fields, add new fields as optional, create a new version for breaking changes, and publish a deprecation policy.
+🎯 Rarely fully used in practice, but it's the top level of REST maturity (Richardson model).
 
-## Section 5: Architecture and scalability
+### API-38. How do you keep an API backward compatible?
 
-### Q39. What is an API Gateway?
+- Never remove or rename existing fields.
+- Add new fields as **optional**.
+- New version for breaking changes.
+- Publish a **deprecation** policy (e.g. `Deprecation` / `Sunset` headers, migration window).
 
-A single entry point in front of many backend services. It handles auth, rate limiting, routing and logging. Flow: Client → Gateway → microservice.
+**Real-life:** adding a new lane to a road without closing the old ones.
 
-### Q40. What are microservices?
+---
 
-An app split into small independent services, each with its own API. Example (e-commerce): User, Order, Payment and Inventory services.
+## Part E — Architecture & Scalability
 
-### Q41. What is caching and why use it?
+### API-39. What is an API Gateway?
 
-Storing frequently requested data temporarily to cut latency and server load. Example: a weather app's first call is slow; repeat calls are fast.
+A single entry point in front of many services: auth, rate limiting, routing, logging.
 
-### Q42. What is load balancing?
+```text
+Client → API Gateway → User / Order / Payment services
+```
 
-Spreading incoming requests across multiple servers so no single server is overloaded. Example: Netflix traffic.
+**Real-life:** a hotel reception: guests talk to one desk, which contacts housekeeping, kitchen or maintenance.
 
-### Q43. Throttling vs rate limiting?
+Tools: Kong, AWS API Gateway, NGINX.
 
-Rate limiting is a fixed cap per client. Throttling temporarily slows or limits requests when overall server load is high. Example: Amazon during a flash sale.
+### API-40. What are microservices?
 
-### Q44. What is a retry mechanism?
+An app split into small **independent** services, each with its own API (and often its own DB).
 
-Automatically retrying a failed request, e.g. after a network blip while placing an order. Combine it with idempotency keys so retries don't create duplicates.
+**Example (e-commerce):** User, Order, Payment, Inventory services.
 
-### Q45. What is a circuit breaker?
+**Real-life:** a food court: each stall runs independently; one closing doesn't shut the court.
 
-It stops calling a failing downstream service for a while and returns a fallback instead, so one broken service doesn't bring down the whole system.
+| ✅ Pros | ❌ Cons |
+|---|---|
+| independent deploys and scaling | network calls, harder debugging |
+| team ownership | distributed data, consistency |
 
-### Q46. How do you prevent duplicate requests?
+🎯 Start with a modular monolith; split when teams and scale demand it.
 
-Idempotency keys, request hashing and unique transaction IDs. Example: stopping a double payment when a user double-clicks "Pay".
+### API-41. What is caching?
 
-### Q47. What is an event-driven API?
+Storing frequent data temporarily to cut latency and load.
 
-Communication triggered by events (order placed, user registered) instead of direct request/response. Common in microservices.
+**Real-life:** keeping milk in your fridge instead of going to the shop every time.
 
-### Q48. What is a webhook, and how is it different from a normal API call?
+| Layer | Tool |
+|---|---|
+| Browser / CDN | `Cache-Control`, `ETag` |
+| Server | Redis, in-memory |
+| DB | query cache |
 
-With a normal API the client *pulls* data. With a webhook the server *pushes* data to your URL when an event happens. Example: Stripe sends a webhook on payment success, failure or refund, and your server updates the order status.
+```http
+Cache-Control: public, max-age=300
+ETag: "abc123"        → next request: If-None-Match → 304 Not Modified
+```
 
-### Q49. What is a message queue?
+⚠️ The hard part is **invalidation**: when data changes, clear the cache.
 
-A store of messages for async processing. It improves scalability, avoids blocking and absorbs traffic spikes. Example: Amazon order processing. Tools: RabbitMQ, Kafka, AWS SQS, Redis Queue.
+### API-42. What is load balancing?
 
-### Q50. Synchronous vs asynchronous APIs?
+Spreading requests across servers so none is overloaded.
+
+**Real-life:** opening more checkout counters and sending each customer to the shortest queue.
+
+Strategies: round-robin, least connections, IP hash. Tools: NGINX, AWS ELB.
+
+🎯 Works best with **stateless** APIs.
+
+### API-43. Throttling vs rate limiting?
+
+| Rate limiting | Throttling |
+|---|---|
+| fixed cap per client | slows/queues requests when **overall** load is high |
+| rejects with 429 | delays or reduces |
+
+**Real-life:** rate limiting = "3 tickets per person". Throttling = slowing the queue during a flash sale.
+
+### API-44. What is a retry mechanism?
+
+Automatically retrying a failed request (network blip, 503).
+
+**Real-life:** redialling a busy number, but waiting a bit longer each time.
+
+🎯 Use **exponential backoff + jitter**, retry only safe/idempotent requests, and use **idempotency keys** for POST.
+
+### API-45. What is a circuit breaker?
+
+Stops calling a failing service for a while and returns a fallback, so one failure doesn't cascade.
+
+**Real-life:** a home circuit breaker trips to stop one faulty appliance burning the house.
+
+```text
+Closed (normal) → too many failures → Open (fail fast) → wait → Half-open (test) → Closed
+```
+
+### API-46. How do you prevent duplicate requests?
+
+Idempotency keys, unique transaction IDs, request hashing, DB unique constraints, and disabling the button on the frontend.
+
+**Real-life:** a shop gives each order a unique receipt number; a second scan of the same receipt is ignored.
+
+```http
+POST /payments
+Idempotency-Key: 7f3c-91ab
+```
+
+### API-47. What is an event-driven API?
+
+Services react to **events** (order placed, user registered) instead of calling each other directly.
+
+**Real-life:** a fire alarm: everyone reacts to the alarm; nobody phones each person individually.
+
+### API-48. Webhook vs normal API?
+
+| Normal API | Webhook |
+|---|---|
+| client **pulls** | server **pushes** to your URL |
+| you ask "anything new?" | "I'll call you when it happens" |
+
+**Example:** Stripe sends a webhook on payment success; your server updates the order.
+
+**Real-life:** polling = checking the door every minute. Webhook = a doorbell.
+
+⚠️ **Verify the signature**, make handlers idempotent (webhooks can repeat), and respond `200` quickly.
+
+### API-49. What is a message queue?
+
+Stores messages for **async** processing; absorbs spikes and avoids blocking.
+
+**Real-life:** a restaurant order rail: waiters pin orders, cooks take them one by one.
+
+Tools: RabbitMQ, Kafka, AWS SQS, BullMQ (Redis).
+
+### API-50. Sync vs async APIs?
 
 | Sync | Async |
-| --- | --- |
-| Client waits | Client continues |
-| Blocking | Non-blocking |
-| Slower for heavy tasks | Better for scalability |
-| Ex: fetch user profile | Ex: send email, generate report |
+|---|---|
+| client waits | client continues |
+| blocking | non-blocking |
+| quick tasks (get profile) | heavy tasks (send email, generate report) |
 
-### Q51. How do you handle concurrency?
+**Real-life:** sync = waiting at the counter for a coffee. Async = getting a buzzer that rings when it's ready.
 
-Async processing, thread pools, queues, locks and optimistic concurrency control. Example: two users trying to book the same train seat.
+🎯 Async pattern: return **`202 Accepted`** + a job ID, client polls or gets a webhook.
 
-### Q52. What is blue-green deployment?
+### API-51. How do you handle concurrency?
 
-Run the old (blue) and new (green) versions side by side, then switch traffic to green after testing. Result: zero downtime and easy rollback.
+Locks, **optimistic concurrency** (version field), transactions, queues, atomic updates.
 
-### Q53. What is a canary release?
+**Real-life:** two people booking the **same train seat**; only one can win.
 
-Roll out the new version to a small percentage of users first, to catch bugs before everyone gets it.
+```js
+// optimistic: only update if version unchanged
+await Seat.updateOne({ _id: id, version: 3 }, { $set: { bookedBy: userId }, $inc: { version: 1 } });
+// matchedCount 0 → someone else booked first → 409 Conflict
+```
 
-## Section 6: API design and error handling
+### API-52. What is blue-green deployment?
 
-### Q54. How do you design a good REST API?
+Run old (blue) and new (green) side by side, switch traffic to green after testing.
 
-Use nouns not verbs, the correct HTTP methods, versioning, proper status codes, consistent naming, pagination and filtering, and security.
+**Real-life:** setting up a new stage behind the curtain, then swapping it in one go.
 
-- Good: `GET /users`, `POST /users`, `GET /users/{id}`
-- Bad: `/getUsers`, `/createUser`
+✅ Zero downtime, instant rollback. ❌ Double infrastructure.
 
-### Q55. How do you handle errors in an API?
+### API-53. What is a canary release?
 
-Return the right status code with a clear message, log the error on the server, and never leak internal stack traces.
+Release to a **small %** of users first, watch metrics, then roll out to everyone.
+
+**Real-life:** miners used canaries to detect gas early; a few users detect bugs early.
+
+---
+
+## Part F — API Design & Error Handling
+
+### API-54. How do you design a good REST API?
+
+- Nouns, not verbs; plural resources.
+- Correct HTTP methods and status codes.
+- Versioning (`/api/v1`).
+- Consistent naming (camelCase or snake_case, pick one).
+- Pagination, filtering, sorting.
+- Security and consistent error format.
+
+```text
+✅ GET /users   POST /users   GET /users/{id}   GET /users/{id}/orders
+❌ /getUsers    /createUser   /deleteUser/5
+```
+
+**Real-life:** clear street signs: every road named the same way.
+
+### API-55. How do you handle errors?
+
+Correct status code + clear message + server-side logging. **Never leak stack traces.**
 
 ```json
-{ "error": "Invalid credentials", "code": 401 }
+{
+  "success": false,
+  "error": { "code": "INVALID_CREDENTIALS", "message": "Email or password is wrong" }
+}
 ```
 
-### Q56. What is centralized error handling?
+**Real-life:** a helpful shop sign "Closed for stock-taking, back at 2 pm", not a list of broken machines.
 
-Handling all errors in one place, such as a middleware or global handler. Benefits: cleaner code, consistent responses and easier debugging. Examples: Express error middleware, Spring Boot global exception handler.
+🎯 Use a stable **error code** clients can check; messages can change. Standard format: RFC 9457 Problem Details.
 
-### Q57. What is middleware?
+### API-56. What is centralised error handling?
 
-Code that runs between the request and the response: auth, logging, validation, rate limiting. Flow: `Request → Middleware → Controller → Response`.
+All errors handled in **one place** (middleware / global handler): consistent responses, cleaner controllers.
 
-### Q58. What is an API timeout?
+**Real-life:** one complaints desk for the whole store.
 
-The maximum time a client waits before giving up. Example: a payment API times out after 30 seconds.
+```js
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(err.status || 500).json({ success: false, message: err.expose ? err.message : "Server error" });
+});
+```
 
-### Q59. How do you handle large responses?
+Examples: Express error middleware, Spring Boot `@ControllerAdvice`.
 
-Pagination, streaming, gzip compression, caching and lazy loading. Example: downloading a bank's full transaction history.
+### API-57. What is middleware?
 
-### Q60. What is API schema validation?
+Code between request and response: auth, logging, validation, rate limiting.
 
-Checking that an incoming request matches the expected shape before processing it, to stop invalid data and crashes. Tools: Joi, Zod, JSON Schema, OpenAPI validation.
+```text
+Request → Middleware (auth, log, validate) → Controller → Response
+```
 
-### Q61. What is the API-first approach?
+**Real-life:** airport checks between check-in and the plane.
 
-Designing the API contract before building the frontend or backend. Benefits: better collaboration, parallel development and a clear contract.
+### API-58. What is an API timeout?
 
-## Section 7: Docs, testing and monitoring
+The maximum time a client waits before giving up (e.g. a payment API times out after 30 s).
 
-### Q62. Why is API documentation important?
+**Real-life:** hanging up if nobody answers after 30 rings.
 
-It explains endpoints, request and response shapes, and errors, so integrations go faster with less confusion. Good examples: Stripe and Google Maps docs.
+🎯 Set timeouts **on every outbound call**; without them one slow service ties up all your workers.
 
-### Q63. What is Swagger / OpenAPI?
+### API-59. How do you handle large responses?
 
-A standard format to describe REST APIs. It gives interactive docs (Swagger UI), lets you test requests without Postman, and can generate client SDKs. Used by Stripe, GitHub and PayPal.
+Pagination, streaming, gzip/brotli compression, caching, field selection, lazy loading, or async export (email a download link).
 
-### Q64. What is API testing?
+**Example:** a bank's full transaction history → generate a file in the background, send a link.
 
-Checking an API's functionality, performance, security and reliability, e.g. for a payment API. Tools: Postman, Swagger/OpenAPI, SoapUI.
+**Real-life:** delivering furniture in several trips instead of one overloaded van.
 
-### Q65. How do you automate API testing?
+### API-60. What is schema validation?
 
-Tools: Postman/Newman, Jest, Mocha, RestAssured. Test types: unit, integration and load tests.
+Checking incoming data matches the expected shape **before** processing.
 
-### Q66. What is contract testing?
+```js
+const schema = z.object({ email: z.string().email(), age: z.number().min(18) });
+const result = schema.safeParse(req.body);
+if (!result.success) return res.status(400).json({ errors: result.error.issues });
+```
 
-Making sure the provider and consumer agree on the same data contract. Example: the frontend expects an `email` field, so the backend must not silently drop it.
+**Real-life:** a bank checking your form before opening an account.
 
-### Q67. What is API mocking?
+Tools: Zod, Joi, JSON Schema, OpenAPI validators.
 
-Simulating API responses without a real backend, so the frontend can be built before the backend is ready. Example with json-server:
+### API-61. What is API-first?
+
+Design the API **contract** (OpenAPI) **before** building frontend or backend.
+
+**Real-life:** agreeing on the house blueprint before the builders and decorators start.
+
+✅ Parallel development (frontend uses mocks), clear contract, fewer surprises.
+
+---
+
+## Part G — Docs, Testing & Monitoring
+
+### API-62. Why is documentation important?
+
+Explains endpoints, request/response shapes and errors → faster integrations, fewer questions.
+
+**Real-life:** a furniture manual; without it, nobody assembles it correctly.
+
+🎯 Good examples: Stripe and Google Maps docs.
+
+### API-63. What is Swagger / OpenAPI?
+
+**OpenAPI** = standard format to describe REST APIs. **Swagger UI** = interactive docs to try requests in the browser. It can also generate client SDKs and server stubs.
+
+```yaml
+paths:
+  /users/{id}:
+    get:
+      responses:
+        "200": { description: User found }
+        "404": { description: Not found }
+```
+
+**Real-life:** a restaurant menu with photos and prices, where you can also place a test order.
+
+### API-64. What is API testing?
+
+Checking functionality, performance, security and reliability.
+
+Tools: Postman, Swagger UI, Insomnia, SoapUI.
+
+**Real-life:** test-driving a car before selling it.
+
+### API-65. How do you automate API tests?
+
+```js
+// Jest + Supertest
+test("GET /users returns 200", async () => {
+  const res = await request(app).get("/api/users");
+  expect(res.status).toBe(200);
+  expect(Array.isArray(res.body.data)).toBe(true);
+});
+```
+
+| Type | Checks |
+|---|---|
+| Unit | one function |
+| Integration | API + DB together |
+| Load | performance (k6, JMeter, Artillery) |
+
+Tools: Postman/Newman, Jest/Vitest + Supertest, Mocha, RestAssured.
+
+### API-66. What is contract testing?
+
+Ensures provider and consumer agree on the **same data contract**.
+
+**Example:** frontend expects `email`; contract tests fail if the backend drops it.
+
+**Real-life:** both sides sign the same agreement; any change must be re-signed.
+
+Tool: Pact.
+
+### API-67. What is API mocking?
+
+Fake API responses so the frontend works before the backend is ready.
 
 ```bash
-npm install -f json-server
-json-server --watch db.json
+npx json-server db.json   # fake REST API from db.json on port 3000
 ```
 
-This spins up a fake REST API from a `db.json` file.
+**Real-life:** a mannequin used to design clothes before the model arrives.
 
-### Q68. What is an API sandbox?
+Other tools: MSW (in the browser/tests), Postman mock servers.
+
+### API-68. What is an API sandbox?
 
 A safe test environment that mirrors production. Examples: PayPal Sandbox, Stripe Test Mode.
 
-### Q69. What is a schema registry?
+**Real-life:** a driving simulator: real controls, no real crashes.
 
-A central store of API and event schemas that keeps data structures consistent across microservices and event-driven systems.
+### API-69. What is a schema registry?
 
-### Q70. What do you monitor in an API?
+A central store of API/event schemas that keeps data structures consistent across services and versions.
 
-Response time, error rate, traffic volume and availability. Tools: New Relic, Datadog, Prometheus, Grafana, ELK stack.
+**Real-life:** a central dictionary everyone uses so words mean the same thing.
 
-### Q71. What is distributed tracing?
+🎯 Common with Kafka (Confluent Schema Registry); it rejects incompatible schema changes.
 
-Following one request across many services, e.g. `Client → Gateway → Auth → Order → Payment`. It is key for debugging microservices.
+### API-70. What do you monitor?
 
-### Q72. What should an API log?
+**Latency** (p95/p99, not just average), **error rate**, **traffic**, **availability**, saturation (CPU/memory).
 
-Timestamp, endpoint, status code, response time, user ID and errors. Used for debugging, auditing and monitoring.
+Tools: Datadog, New Relic, Prometheus + Grafana, ELK.
 
-### Q73. What is API abuse and how do you prevent it?
+**Real-life:** a car dashboard: speed, fuel, warning lights.
 
-Abuse includes brute force, scraping, DDoS and excessive requests. Prevent it with rate limiting, CAPTCHA and authentication.
+🎯 Averages hide slow users; watch **p95/p99**.
 
-## Section 8: REST vs other styles, real-world flow and resources
+### API-71. What is distributed tracing?
 
-### Q74. REST vs SOAP?
+Following **one request** across many services with a shared trace ID.
 
-| Feature | REST | SOAP |
-| --- | --- | --- |
-| Type | Architectural style over HTTP | Strict XML messaging protocol |
-| Format | Usually JSON | XML only |
-| Speed | Fast, lightweight | Slower, heavier |
-| Complexity | Simple | Complex |
-| Usage | Modern web and mobile apps | Legacy / enterprise systems (banking) |
+```text
+Client → Gateway → Auth → Order → Payment   (one trace ID)
+```
 
-### Q75. What is SOAP?
+**Real-life:** a parcel tracking number showing every depot it passed through.
 
-Simple Object Access Protocol: XML-based messaging, still common in banking and enterprise legacy systems.
+Tools: OpenTelemetry, Jaeger, Zipkin.
 
-### Q76. What is WSDL?
+### API-72. What should an API log?
 
-A file that describes a SOAP service's operations, structure and endpoints. Analogy: WSDL is the contract, the API is the implementation.
+Timestamp, method + endpoint, status code, response time, user ID, request/trace ID, errors.
 
-### Q77. What is GraphQL and what problem does it solve?
+⚠️ **Never log** passwords, tokens, card numbers or personal data.
 
-A query language where the client asks for exactly the fields it needs, in one request. It fixes REST's over-fetching (too much data) and under-fetching (needing many calls).
+**Real-life:** a ship's logbook: what happened and when, not the passengers' bank details.
+
+### API-73. What is API abuse and how do you prevent it?
+
+Brute force, scraping, DDoS, excessive requests.
+
+**Prevent:** rate limiting, authentication, CAPTCHA, bot detection, WAF, account lockouts, monitoring for unusual patterns.
+
+**Real-life:** a shop with security guards, a cap on items per customer and CCTV.
+
+---
+
+## Part H — REST vs Others & Real-World Flow
+
+### API-74. REST vs SOAP?
+
+| | REST | SOAP |
+|---|---|---|
+| Type | architectural style | strict protocol |
+| Format | usually JSON | XML only |
+| Speed | light, fast | heavier |
+| Contract | OpenAPI (optional) | WSDL (required) |
+| Usage | modern web/mobile | legacy enterprise, banking |
+
+**Real-life:** REST = a casual text message. SOAP = a formal stamped legal letter.
+
+### API-75. What is SOAP?
+
+**Simple Object Access Protocol**: XML-based messaging with strict rules and built-in standards (WS-Security). Still common in banking and enterprise systems.
+
+### API-76. What is WSDL?
+
+An XML file describing a SOAP service's operations, message formats and endpoints.
+
+**Real-life:** WSDL = the contract; the SOAP service = the work done under it.
+
+### API-77. What is GraphQL?
+
+A query language where the client asks for **exactly the fields** it needs in **one request**.
 
 ```graphql
 { user(id: 1) { name email } }
 ```
 
-### Q78. Walk me through a login API.
+| REST | GraphQL |
+|---|---|
+| many endpoints | one endpoint |
+| over/under-fetching | exact data |
+| easy HTTP caching | caching harder |
 
-1. Client calls `POST /login`.
-2. Server validates the input.
-3. Server authenticates the user.
-4. Server generates a JWT and returns it.
-5. Client stores the token and sends it on future requests.
-6. Around all of this: secure storage, error handling, logging and rate limiting.
+**Real-life:** REST = a fixed thali. GraphQL = ordering à la carte.
+
+🎯 Also know **gRPC**: binary, fast, great for service-to-service calls.
+
+### API-78. Walk me through a login API. ⭐
+
+1. Client: `POST /api/v1/auth/login` with email + password over **HTTPS**.
+2. Server **validates** input (Zod).
+3. Finds user, compares password with **bcrypt**.
+4. Wrong → `401` with a generic message ("Invalid email or password").
+5. Right → issues a short-lived **access token** (+ refresh token in an HttpOnly cookie).
+6. Client sends `Authorization: Bearer <token>` on future requests.
+7. Around it all: **rate limiting** (brute force), logging (no passwords), error handling.
 
 ```json
 {
@@ -420,7 +899,41 @@ A query language where the client asks for exactly the fields it needs, in one r
 }
 ```
 
-### Q79. Where can I learn more?
+**Real-life:** hotel check-in: show ID → reception checks the booking → you get a key card that expires at checkout.
 
-- [Postman Academy](https://academy.postman.com/) for API basics and testing.
-- [Extracting markdown blocks from LLM responses in Python](https://medium.com/@chigwel/extract-markdown-blocks-in-python-from-any-large-language-models-response-using-mdextractor-e6bdf3957370)
+🎯 Mention **generic error messages** (don't reveal whether the email exists).
+
+---
+
+## Part I — Revision
+
+### API-79. Quick revision + where to learn more
+
+| Topic | One line |
+|---|---|
+| REST | resources (nouns) + HTTP methods (verbs), stateless |
+| Idempotent | GET, PUT, DELETE ✅; POST ❌; PATCH not guaranteed |
+| PUT vs PATCH | replace whole vs update part |
+| Path vs query | which resource vs filter/sort/page |
+| 401 vs 403 | not logged in vs not allowed |
+| AuthN vs AuthZ | who are you vs what can you do |
+| JWT | `header.payload.signature`; payload readable, not encrypted |
+| Access vs refresh | short-lived API pass vs long-lived renewal |
+| CORS | browser rule; server sends allowed origins |
+| Rate limit | cap per client → 429 |
+| Pagination | offset (simple) vs cursor (scalable) |
+| Versioning | `/api/v1`; never break old clients |
+| Gateway | single entry: auth, routing, rate limit |
+| Circuit breaker | stop calling a failing service, fallback |
+| Retries | backoff + jitter + idempotency keys |
+| Webhook | server pushes events to you |
+| Queue | async processing, absorbs spikes |
+| Errors | right status + stable error code, no stack traces |
+| Docs | OpenAPI / Swagger |
+| Monitoring | latency p95/p99, errors, traffic, tracing |
+| REST vs SOAP vs GraphQL | JSON style vs XML protocol vs exact-field queries |
+
+**Learn more:**
+
+- [Postman Academy](https://academy.postman.com/): API basics and testing.
+- [MDN: HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP): methods, headers, status codes, CORS.
