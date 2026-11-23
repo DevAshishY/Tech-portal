@@ -1,30 +1,38 @@
-# HTML & CSS Advanced Interview Notes (12–14 Years Frontend)
+### HC-1. What changed from HTML to HTML5?
 
-Oct 14, 2026 · @ashish yadav
+HTML5 added **semantic tags** (`header`, `nav`, `main`, `section`, `article`, `aside`, `footer`), new input types (`email`, `date`, `range`), native `audio`/`video`, `canvas` and inline SVG, Web Storage, and the short `<!DOCTYPE html>`.
 
-All questions are numbered in one series. Each answer starts simple, then adds the senior-level point interviewers look for.
+**Real-life:** moving from a plain notebook to one with labelled sections and built-in tools.
 
-## Section 1: HTML document structure and fundamentals
+🎯 HTML is now a **WHATWG Living Standard**; there's no "HTML6", it just keeps evolving.
 
-### Q1. What changed from HTML to HTML5?
+### HC-2. HTML vs XHTML?
 
-HTML5 is the current "living standard". It added semantic tags (`header`, `nav`, `main`, `section`, `article`, `aside`, `footer`), new input types (`email`, `date`, `range`), native `audio`/`video`, `canvas`/SVG inline, Web Storage, and the short `<!DOCTYPE html>`.
+| HTML | XHTML |
+|---|---|
+| forgiving, defined error recovery | strict XML rules |
+| `<br>` fine | `<br />`, every tag closed, lowercase, quoted attributes |
 
-Senior point: HTML is now maintained by WHATWG as a Living Standard; there is no "HTML6".
+**Real-life:** HTML = a friendly teacher who understands messy handwriting. XHTML = an exam that fails you for one missing full stop.
 
-### Q2. HTML vs XHTML?
+### HC-3. What does `<!DOCTYPE html>` do? What is quirks mode?
 
-XHTML follows strict XML rules: every tag closed, properly nested, lowercase, attributes quoted. HTML is forgiving and has a defined error-recovery algorithm, so broken markup still renders consistently across browsers.
+Tells the browser to use **standards mode**. Without it → **quirks mode**, which copies old browser bugs (different box model, table sizing).
 
-### Q3. What does `<!DOCTYPE html>` do, and what is quirks mode?
+**Real-life:** telling a translator "use modern English", not "Shakespeare".
 
-It tells the browser to use **standards mode**. Without it, browsers fall back to **quirks mode**, which emulates old browser bugs (e.g. a different box model and table sizing). Always include it as the very first line.
+⚠️ It must be the **first line** of the file.
 
-### Q4. What goes in `<head>` vs `<body>`?
+### HC-4. `<head>` vs `<body>`?
 
-`<head>` holds metadata: `title`, `meta`, `link`, `style`, `script`, `base`. `<body>` holds visible content. Place scripts at the end of `body` or, better, in `head` with `defer`.
+- `<head>`: **metadata**: `title`, `meta`, `link`, `style`, `script`, `base`.
+- `<body>`: **visible** content.
 
-### Q5. What is a minimal production-ready HTML5 boilerplate?
+**Real-life:** head = the label and instructions on a box; body = what's inside.
+
+🎯 Put scripts in `head` with `defer` (or at the end of `body`).
+
+### HC-5. Minimal production-ready boilerplate?
 
 ```html
 <!DOCTYPE html>
@@ -43,31 +51,72 @@ It tells the browser to use **standards mode**. Without it, browsers fall back t
 </html>
 ```
 
-`lang` helps screen readers and translation; `charset` must be in the first 1024 bytes.
+- `lang` → screen-reader pronunciation and translation.
+- `charset` must be in the **first 1024 bytes**.
 
-### Q6. Which meta tags matter most?
+### HC-6. Which meta tags matter most?
 
-`charset`, `viewport`, `description`, `robots`, Open Graph / Twitter tags for social sharing (`og:title`, `og:image`), `theme-color`, and `Content-Security-Policy` (better sent as an HTTP header). The `keywords` meta tag is ignored by major search engines.
+| Meta | Why |
+|---|---|
+| `charset` | correct characters |
+| `viewport` | mobile layout |
+| `description` | search snippet |
+| `robots` | indexing rules |
+| Open Graph / Twitter (`og:title`, `og:image`) | social share previews |
+| `theme-color` | browser UI colour |
+| `Content-Security-Policy` | security (better as an HTTP header) |
 
-### Q7. Tag vs element vs attribute?
+⚠️ `keywords` meta is **ignored** by major search engines.
 
-A tag is the marker (`<p>`, `</p>`). An element is the whole thing: start tag + content + end tag. An attribute adds extra info on the start tag (`href`, `id`, `data-*`). In the DOM, attributes (HTML) and properties (JS object) are related but not always the same: `input.value` changes as the user types, while the `value` attribute keeps the initial value.
+**Real-life:** the information on a book's back cover and spine.
 
-### Q8. What are void (empty) elements?
+### HC-7. Tag vs element vs attribute? Attribute vs property?
 
-Elements with no content and no closing tag: `img`, `input`, `br`, `hr`, `meta`, `link`, `area`, `base`, `col`, `embed`, `source`, `track`, `wbr`. The self-closing slash (`<br />`) is optional in HTML.
+- **Tag:** the marker `<p>`, `</p>`.
+- **Element:** start tag + content + end tag.
+- **Attribute:** extra info on the start tag (`href`, `id`, `data-*`).
 
-### Q9. Block vs inline elements?
+**Real-life:** tag = bread slices, element = the whole sandwich, attribute = the label "veg".
 
-Block elements start on a new line and take full width (`div`, `p`, `h1`, `ul`, `section`). Inline elements flow inside text (`span`, `a`, `strong`, `em`). Senior point: "block" and "inline" are really CSS `display` values; the HTML spec now groups elements by content categories (flow, phrasing, interactive, etc.).
+🎯 **Attribute vs property:** `input.value` (property) changes as the user types; the `value` **attribute** keeps the initial value.
 
-### Q10. `id` vs `class` vs `style`, and what about duplicate IDs?
+```js
+input.getAttribute("value"); // initial value
+input.value;                 // current value
+```
 
-`id` must be unique per page (anchor targets, label `for`, ARIA references). `class` is reusable for styling and JS hooks. `style` is inline CSS with very high priority. Duplicate IDs render but are invalid: `getElementById` returns only the first, and ARIA/label links break.
+### HC-8. What are void elements?
 
-### Q11. What are `data-*` attributes and when should you use them?
+No content, no closing tag: `img`, `input`, `br`, `hr`, `meta`, `link`, `area`, `base`, `col`, `embed`, `source`, `track`, `wbr`.
 
-Custom attributes that store extra information on an element, readable in JS via `dataset` and in CSS via attribute selectors.
+**Real-life:** a stamp: one action, nothing goes inside.
+
+⚠️ The slash in `<br />` is **optional** in HTML.
+
+### HC-9. Block vs inline elements?
+
+- **Block:** new line, full width (`div`, `p`, `h1`, `ul`, `section`).
+- **Inline:** flows inside text (`span`, `a`, `strong`, `em`).
+
+**Real-life:** block = paragraphs in a book. Inline = highlighted words inside a sentence.
+
+🎯 "Block" and "inline" are really CSS `display` values; the spec now groups HTML by **content categories** (flow, phrasing, interactive).
+
+### HC-10. `id` vs `class` vs `style`? Duplicate IDs?
+
+| | Use |
+|---|---|
+| `id` | **unique**: anchors, `label for`, ARIA references |
+| `class` | reusable: styling, JS hooks |
+| `style` | inline CSS, very high priority |
+
+**Real-life:** `id` = your passport number. `class` = "student", shared by many.
+
+⚠️ Duplicate IDs render but are **invalid**: `getElementById` returns only the first; labels and ARIA links break.
+
+### HC-11. What are `data-*` attributes?
+
+Custom attributes storing small extra info, readable via `dataset` and CSS.
 
 ```html
 <div id="user" data-id="42" data-role="admin">Happy</div>
@@ -83,53 +132,127 @@ el.dataset.role; // "admin"
 [data-role="admin"] { color: red; }
 ```
 
-Use them for small UI state or test hooks (`data-testid`), not as a database.
+**Real-life:** a sticky note on a box.
 
-### Q12. What are HTML entities?
+⚠️ For small UI state or test hooks (`data-testid`), not as a database. Values are always **strings**.
 
-Codes for reserved or special characters: `&amp;` (&), `&lt;` (<), `&gt;` (>), `&quot;`, `&apos;`, `&nbsp;` (non-breaking space), `&copy;`. Escaping `<` and `&` in user content is part of preventing XSS.
+### HC-12. What are HTML entities?
 
-### Q13. What are the types of links and important `<a>` attributes?
+Codes for reserved characters: `&amp;` (&), `&lt;` (<), `&gt;` (>), `&quot;`, `&apos;`, `&nbsp;`, `&copy;`.
 
-Page links (`href="/about"`), fragment links (`href="#pricing"` jumps to the element with that id), email (`mailto:`), phone (`tel:`), and download links (`download` attribute). `<link>` loads external resources like stylesheets.
+**Real-life:** writing "quote" instead of an actual quote mark so the message isn't misunderstood.
 
-`target="_blank"` opens a new tab. Modern browsers imply `rel="noopener"` for it, but adding `rel="noopener noreferrer"` is still good practice to stop the new page accessing `window.opener`.
+🎯 Escaping `<` and `&` in user content is part of preventing **XSS**.
 
-### Q14. Absolute vs relative URL, and what does `<base>` do?
+### HC-13. Types of links and key `<a>` attributes?
 
-An absolute URL has the full address (`https://site.com/a`). A relative URL is resolved from the current page (`../img/a.png`). `<base href>` in the head changes the starting point for every relative URL on the page; it is easy to break things with it, so use carefully.
+| Link | Example |
+|---|---|
+| page | `href="/about"` |
+| fragment | `href="#pricing"` (jumps to `id="pricing"`) |
+| email / phone | `mailto:`, `tel:` |
+| download | `download` attribute |
 
-### Q15. What list and table elements should you know?
+```html
+<a href="https://other.com" target="_blank" rel="noopener noreferrer">Docs</a>
+```
 
-Lists: `ol` (numbered), `ul` (bulleted), `dl`/`dt`/`dd` (term + description). Tables: `table`, `caption`, `thead`, `tbody`, `tfoot`, `tr`, `th`, `td`, with `colspan` / `rowspan` to merge cells and `scope="col"` on headers for accessibility. Tables are for tabular data, never for page layout.
+**Real-life:** signposts: to another town, another street, or a phone number.
 
-## Section 2: Semantic HTML, forms and accessibility
+🎯 Browsers now imply `noopener` for `_blank`, but `rel="noopener noreferrer"` is still good practice (blocks `window.opener`, hides referrer).
 
-### Q16. What is semantic HTML and why does it matter?
+### HC-14. Absolute vs relative URL? `<base>`?
 
-Using elements for their meaning: `header`, `nav`, `main`, `section`, `article`, `aside`, `footer`, `figure`, `time`, `mark`, `details`/`summary`. `div` and `span` have no meaning. Semantic markup gives screen readers landmarks, helps SEO, and makes code easier to read.
+- **Absolute:** full address `https://site.com/a`.
+- **Relative:** from the current page `../img/a.png`.
+- `<base href>` changes the starting point for **every** relative URL.
 
-### Q17. `section` vs `article` vs `div`?
+**Real-life:** absolute = full postal address. Relative = "two doors down".
 
-`article` is self-contained content that makes sense on its own (blog post, product card, comment). `section` groups related content and should usually have a heading. `div` is a meaningless wrapper for styling or layout only.
+⚠️ `<base>` easily breaks links, anchors and assets; use carefully.
 
-### Q18. How should headings be structured?
+### HC-15. Lists and tables to know?
 
-One `h1` per page for the main topic, then `h2`–`h6` in order without skipping levels for structure. Never choose a heading level for its size; style it with CSS instead. Screen-reader users navigate by headings.
+- **Lists:** `ol` (numbered), `ul` (bullets), `dl`/`dt`/`dd` (term + description).
+- **Tables:** `table`, `caption`, `thead`, `tbody`, `tfoot`, `tr`, `th`, `td`, `colspan`/`rowspan`, `scope="col"`.
 
-### Q19. What are landmarks?
+```html
+<table>
+  <caption>Monthly sales</caption>
+  <thead><tr><th scope="col">Month</th><th scope="col">Sales</th></tr></thead>
+  <tbody><tr><td>Jan</td><td>120</td></tr></tbody>
+</table>
+```
 
-Regions that assistive tech can jump to: `header` (banner), `nav` (navigation), `main` (main), `aside` (complementary), `footer` (contentinfo), `form` with a name, `search`. Use only one `main` per page.
+⚠️ Tables are for **tabular data**, never page layout.
 
-### Q20. What is ARIA and what is the "first rule of ARIA"?
+---
 
-ARIA (Accessible Rich Internet Applications) adds roles, states and properties (`role="dialog"`, `aria-expanded`, `aria-label`) for custom widgets. First rule: **don't use ARIA if a native HTML element does the job**. A `<button>` gets focus, keyboard support and role for free; a `<div role="button">` needs all of that added manually.
+## Part B — Semantic HTML, Forms & Accessibility
 
-### Q21. `aria-label` vs `aria-labelledby` vs `aria-describedby`?
+### HC-16. What is semantic HTML and why does it matter?
 
-- `aria-label`: a text name directly on the element (icon-only buttons).
-- `aria-labelledby`: name taken from another element's text, by id.
-- `aria-describedby`: extra description, like help or error text.
+Using elements for their **meaning**: `header`, `nav`, `main`, `section`, `article`, `aside`, `footer`, `figure`, `time`, `mark`, `details`/`summary`. `div`/`span` mean nothing.
+
+**Real-life:** labelled rooms in a building (Kitchen, Bedroom) vs every door saying "Room".
+
+**Why:** screen-reader landmarks, better SEO, readable code.
+
+### HC-17. `section` vs `article` vs `div`?
+
+| | Use |
+|---|---|
+| `article` | self-contained, makes sense alone (blog post, product card, comment) |
+| `section` | groups related content, usually with a heading |
+| `div` | no meaning, styling/layout only |
+
+**Real-life:** article = a newspaper story you could cut out. Section = the "Sports" page. Div = a plain box.
+
+### HC-18. How should headings be structured?
+
+One `h1` per page, then `h2`–`h6` **in order**, no skipped levels.
+
+**Real-life:** a book's table of contents: chapter → section → subsection.
+
+⚠️ Never pick a heading for its **size**; style with CSS. Screen-reader users navigate by headings.
+
+### HC-19. What are landmarks?
+
+Regions assistive tech can jump to:
+
+| Element | Landmark |
+|---|---|
+| `header` | banner |
+| `nav` | navigation |
+| `main` | main (only one) |
+| `aside` | complementary |
+| `footer` | contentinfo |
+| `form` (named), `search` | form, search |
+
+**Real-life:** a shopping-mall map: "You are here", food court, exits.
+
+### HC-20. What is ARIA? What's the first rule of ARIA?
+
+ARIA adds roles, states and properties (`role="dialog"`, `aria-expanded`, `aria-label`) for custom widgets.
+
+**First rule:** **don't use ARIA if a native element does the job.**
+
+```html
+<button>Save</button>                 <!-- focus, keyboard, role: free -->
+<div role="button" tabindex="0">Save</div>  <!-- must add Enter/Space handling yourself -->
+```
+
+**Real-life:** using a real door instead of painting a door on the wall and adding a doorbell.
+
+🎯 "No ARIA is better than bad ARIA."
+
+### HC-21. `aria-label` vs `aria-labelledby` vs `aria-describedby`?
+
+| Attribute | Gives |
+|---|---|
+| `aria-label` | name as text, on the element (icon buttons) |
+| `aria-labelledby` | name from another element (by id) |
+| `aria-describedby` | extra description (help or error text) |
 
 ```html
 <button aria-label="Close dialog">×</button>
@@ -137,15 +260,35 @@ ARIA (Accessible Rich Internet Applications) adds roles, states and properties (
 <p id="email-err">Enter a valid email</p>
 ```
 
-### Q22. How do you make a page keyboard accessible?
+**Real-life:** label = a name badge. Describedby = a note underneath with extra details.
 
-Use native interactive elements, keep a logical DOM order, never remove focus outlines without a replacement (use `:focus-visible`), add a "Skip to main content" link, trap focus inside modals and return it on close, and avoid positive `tabindex` values (use 0 or −1 only).
+### HC-22. How do you make a page keyboard accessible?
 
-### Q23. What are WCAG levels and key rules to remember?
+- Native interactive elements.
+- Logical DOM order.
+- Never remove focus outlines without a replacement (`:focus-visible`).
+- "Skip to main content" link.
+- Trap focus in modals, return it on close.
+- Only `tabindex="0"` or `-1`; never positive values.
 
-WCAG has levels A, AA and AAA; most companies and laws target **AA** (WCAG 2.1 / 2.2). Key rules: text contrast at least 4.5:1 (3:1 for large text), all functionality usable by keyboard, alt text on meaningful images (`alt=""` for decorative ones), visible focus, no content that flashes more than 3 times per second, and target size at least 24×24 px (2.2).
+**Real-life:** a building usable without a lift button panel: every room reachable by stairs (Tab).
 
-### Q24. How do you hide content visually but keep it for screen readers?
+### HC-23. WCAG levels and key rules?
+
+Levels **A, AA, AAA**; most companies and laws target **AA** (WCAG 2.1 / 2.2).
+
+| Rule | Value |
+|---|---|
+| Text contrast | ≥ **4.5:1** (3:1 for large text) |
+| Keyboard | everything usable |
+| Images | meaningful `alt`; `alt=""` for decorative |
+| Focus | visible |
+| Flashing | ≤ 3 times per second |
+| Target size (2.2) | ≥ **24×24 px** |
+
+**Real-life:** building codes for ramps, handrails and signage.
+
+### HC-24. Hide visually but keep for screen readers?
 
 ```css
 .sr-only {
@@ -159,67 +302,147 @@ WCAG has levels A, AA and AAA; most companies and laws target **AA** (WCAG 2.1 /
 }
 ```
 
-`display: none` and `visibility: hidden` hide content from everyone, including screen readers. `aria-hidden="true"` hides it only from assistive tech. The `hidden` attribute is like `display: none`.
+| Method | Visible | Screen reader |
+|---|---|---|
+| `.sr-only` | ❌ | ✅ |
+| `display: none` / `hidden` attr | ❌ | ❌ |
+| `visibility: hidden` | ❌ | ❌ |
+| `aria-hidden="true"` | ✅ | ❌ |
 
-### Q25. How do you build an accessible form?
+**Real-life:** a whisper only the person with a hearing aid can hear.
 
-Every input has a `<label for>`; group radio buttons with `fieldset` + `legend`; use the right `type` (`email`, `tel`, `number`) for mobile keyboards; set `autocomplete` (`email`, `current-password`); show errors as text linked with `aria-describedby`, plus `aria-invalid="true"`; never rely on placeholder as the label.
+### HC-25. How do you build an accessible form?
 
-### Q26. What native form validation features exist?
+- Every input has `<label for>`.
+- Radio groups in `fieldset` + `legend`.
+- Correct `type` (`email`, `tel`) for mobile keyboards.
+- `autocomplete` (`email`, `current-password`).
+- Errors as text, linked with `aria-describedby`, plus `aria-invalid="true"`.
+- Never use `placeholder` as the label.
 
-Attributes: `required`, `min`, `max`, `minlength`, `maxlength`, `pattern`, `type="email"`. CSS hooks: `:valid`, `:invalid`, `:user-invalid` (only after user interaction). JS: the Constraint Validation API (`checkValidity()`, `setCustomValidity()`). Senior point: client validation is for UX only; always validate on the server too.
+```html
+<label for="email">Email</label>
+<input id="email" type="email" autocomplete="email" aria-invalid="true" aria-describedby="email-err">
+<p id="email-err">Enter a valid email</p>
+```
 
-### Q27. Radio vs checkbox vs select?
+**Real-life:** a paper form with printed labels next to every box, and clear notes where you went wrong.
 
-Radio: choose exactly one; group by the same `name`. Checkbox: choose any number. `select`: one (or `multiple`) choice from a long list, saving space. `datalist` gives suggestions on a text input.
+### HC-26. Native form validation features?
 
-### Q28. What are `<dialog>`, `<details>` and the Popover API?
+- **Attributes:** `required`, `min`, `max`, `minlength`, `maxlength`, `pattern`, `type="email"`.
+- **CSS:** `:valid`, `:invalid`, `:user-invalid` (only after interaction).
+- **JS:** `checkValidity()`, `setCustomValidity()`.
 
-- `<dialog>` with `showModal()`: a native modal with focus trapping, Escape to close, a `::backdrop`, and rendering in the top layer.
-- `<details>`/`<summary>`: native accordion with no JS.
-- Popover API (`popover` attribute + `popovertarget`): native menus and tooltips in the top layer with light-dismiss.
+```css
+input:user-invalid { border-color: red; }
+```
 
-Senior point: these replace a lot of custom JS and get accessibility mostly right by default.
+⚠️ Client validation is **UX only**; always validate on the server.
 
-### Q29. What are Web Components?
+**Real-life:** a receptionist checks your form, but the office still verifies it.
 
-Browser-native reusable components built with three APIs: Custom Elements (`customElements.define`), Shadow DOM (encapsulated DOM and styles), and `<template>`/`<slot>`. They work in any framework. Trade-offs: styling from outside needs CSS custom properties or `::part()`, and server-side rendering needs Declarative Shadow DOM.
+### HC-27. Radio vs checkbox vs select?
 
-## Section 3: HTML loading, performance, images and SEO
+| Control | Choice |
+|---|---|
+| radio | exactly **one** (same `name`) |
+| checkbox | **any** number |
+| `select` | one (or `multiple`) from a long list, saves space |
+| `datalist` | suggestions on a text input |
 
-### Q30. What is the Critical Rendering Path?
+**Real-life:** radio = choosing one meal; checkbox = choosing toppings.
 
-The steps a browser takes to show pixels: parse HTML → build the DOM; parse CSS → build the CSSOM; combine them into the render tree; **layout** (calculate sizes and positions); **paint** (draw pixels); **composite** (combine layers on the GPU). CSS is render-blocking and synchronous scripts are parser-blocking, so both delay first paint.
+### HC-28. `<dialog>`, `<details>` and the Popover API?
 
-### Q31. `script` vs `async` vs `defer` vs `type="module"`?
+- `<dialog>` + `showModal()` → native modal: focus trapping, Esc to close, `::backdrop`, **top layer**.
+- `<details>`/`<summary>` → accordion with no JS.
+- `popover` + `popovertarget` → menus/tooltips in the top layer with light-dismiss.
+
+```html
+<button popovertarget="menu">Menu</button>
+<div id="menu" popover>Profile · Logout</div>
+
+<details><summary>Shipping info</summary>Delivered in 3 days.</details>
+```
+
+**Real-life:** built-in kitchen appliances vs building your own oven.
+
+🎯 They replace lots of custom JS and get accessibility mostly right by default.
+
+### HC-29. What are Web Components?
+
+Browser-native reusable components:
+
+1. **Custom Elements** (`customElements.define`)
+2. **Shadow DOM** (encapsulated DOM + styles)
+3. **`<template>` / `<slot>`**
+
+```js
+class HelloCard extends HTMLElement {
+  connectedCallback() {
+    this.attachShadow({ mode: "open" }).innerHTML = `<p>Hello <slot></slot></p>`;
+  }
+}
+customElements.define("hello-card", HelloCard);
+```
+
+**Real-life:** LEGO bricks that fit any set (React, Vue, Angular or none).
+
+⚠️ Styling from outside needs CSS custom properties or `::part()`; SSR needs **Declarative Shadow DOM**.
+
+---
+
+## Part C — Loading, Performance, Images & SEO
+
+### HC-30. What is the Critical Rendering Path?
+
+```text
+HTML → DOM
+CSS  → CSSOM
+DOM + CSSOM → Render tree → Layout → Paint → Composite
+```
+
+**Real-life:** building a house: plan (DOM) + paint scheme (CSSOM) → measure rooms (layout) → paint (paint) → assemble floors (composite).
+
+⚠️ CSS is **render-blocking**; synchronous scripts are **parser-blocking**. Both delay first paint.
+
+### HC-31. `script` vs `async` vs `defer` vs `type="module"`?
 
 | Type | Download | Runs | Order kept |
-| --- | --- | --- | --- |
-| `<script>` | Blocks HTML parsing | Immediately | Yes |
-| `async` | In parallel | As soon as downloaded (may interrupt parsing) | No |
-| `defer` | In parallel | After HTML is parsed, before `DOMContentLoaded` | Yes |
-| `type="module"` | In parallel | Deferred by default | Yes |
+|---|---|---|---|
+| `<script>` | blocks parsing | immediately | ✅ |
+| `async` | parallel | as soon as downloaded | ❌ |
+| `defer` | parallel | after parsing, before `DOMContentLoaded` | ✅ |
+| `type="module"` | parallel | deferred by default | ✅ |
 
-Use `defer` for app code, `async` for independent scripts like analytics.
+**Real-life:** `defer` = guests arrive while you cook and sit down in order once dinner's ready. `async` = guests eat whenever they arrive.
 
-### Q32. What are resource hints?
+🎯 `defer` for app code; `async` for independent scripts like analytics.
 
-- `preload`: fetch a critical resource for this page early (fonts, hero image). Needs the `as` attribute.
-- `preconnect`: open the connection (DNS + TCP + TLS) to an important third-party origin early.
-- `dns-prefetch`: only the DNS lookup; a lighter fallback.
-- `prefetch`: low-priority fetch for a likely next page.
-- `modulepreload`: preload an ES module and its dependencies.
+### HC-32. What are resource hints?
+
+| Hint | Does |
+|---|---|
+| `preload` | fetch a **critical** resource early (needs `as`) |
+| `preconnect` | open DNS + TCP + TLS early |
+| `dns-prefetch` | DNS only (lighter) |
+| `prefetch` | low-priority fetch for a likely **next** page |
+| `modulepreload` | preload an ES module + deps |
 
 ```html
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" href="/font.woff2" as="font" type="font/woff2" crossorigin>
 ```
 
-Senior point: preloading too much competes for bandwidth and slows the real critical resources.
+**Real-life:** calling a restaurant ahead so the table is ready when you arrive.
 
-### Q33. How do you serve responsive images?
+⚠️ Preloading too much competes for bandwidth and **slows** the real critical resources.
 
-`srcset` + `sizes` let the browser pick a resolution; `<picture>` lets you switch formats or crops (art direction).
+### HC-33. How do you serve responsive images?
+
+- `srcset` + `sizes` → browser picks the **resolution**.
+- `<picture>` → switch **format** or **crop** (art direction).
 
 ```html
 <picture>
@@ -232,223 +455,419 @@ Senior point: preloading too much competes for bandwidth and slows the real crit
 </picture>
 ```
 
-### Q34. How do you optimise image loading?
+**Real-life:** a clothes shop offering S/M/L sizes; the browser picks the one that fits.
 
-Use modern formats (AVIF, WebP), always set `width` and `height` (or CSS `aspect-ratio`) to prevent layout shift, add `loading="lazy"` for below-the-fold images, `fetchpriority="high"` on the LCP (hero) image, and `decoding="async"`. Never lazy-load the hero image.
+### HC-34. How do you optimise image loading?
 
-### Q35. JPEG vs PNG vs WebP vs AVIF vs SVG?
+- Modern formats (AVIF, WebP).
+- Always `width` + `height` (or `aspect-ratio`) → no layout shift.
+- `loading="lazy"` below the fold.
+- `fetchpriority="high"` on the LCP/hero image.
+- `decoding="async"`.
+
+⚠️ **Never lazy-load the hero image**; it delays LCP.
+
+### HC-35. JPEG vs PNG vs WebP vs AVIF vs SVG?
 
 | Format | Compression | Best for |
-| --- | --- | --- |
-| JPEG | Lossy | Photos (legacy fallback) |
-| PNG | Lossless, transparency | Screenshots, simple graphics |
-| WebP | Lossy or lossless, transparency | General web images |
-| AVIF | Better compression than WebP | Photos where support allows |
-| SVG | Vector (code) | Icons, logos, illustrations |
+|---|---|---|
+| JPEG | lossy | photos (legacy fallback) |
+| PNG | lossless, transparency | screenshots, simple graphics |
+| WebP | lossy/lossless, transparency | general web images |
+| AVIF | better than WebP | photos where supported |
+| SVG | vector (code) | icons, logos, illustrations |
 
-### Q36. What are Core Web Vitals?
+**Real-life:** SVG = a recipe (redraw at any size); JPEG = a photo of the dish.
 
-Google's user-experience metrics, also a ranking signal:
+### HC-36. What are Core Web Vitals?
 
 | Metric | Measures | Good |
-| --- | --- | --- |
-| LCP (Largest Contentful Paint) | Loading speed of main content | ≤ 2.5 s |
-| INP (Interaction to Next Paint) | Responsiveness to input (replaced FID in 2024) | ≤ 200 ms |
-| CLS (Cumulative Layout Shift) | Visual stability | ≤ 0.1 |
+|---|---|---|
+| **LCP** | loading of main content | ≤ 2.5 s |
+| **INP** | responsiveness (replaced FID in 2024) | ≤ 200 ms |
+| **CLS** | visual stability | ≤ 0.1 |
 
-Fixes: LCP → preload/prioritise the hero, faster server, critical CSS. INP → break up long JS tasks, less main-thread work. CLS → set image dimensions, reserve space for ads and embeds, use `font-display` carefully.
+**Fixes:**
 
-### Q37. How do you load web fonts efficiently?
+- **LCP:** preload/prioritise hero, faster server, critical CSS.
+- **INP:** break up long JS tasks, less main-thread work.
+- **CLS:** image dimensions, reserve space for ads/embeds, careful `font-display`.
 
-Self-host WOFF2, subset to the characters you need, preload only the one or two critical fonts, and use `font-display: swap` (or `optional`). Use `size-adjust` / fallback metric overrides so the fallback font matches size and doesn't shift layout. Variable fonts can replace several files.
+**Real-life:** LCP = how fast the food arrives, INP = how fast the waiter responds, CLS = whether the table wobbles.
 
-### Q38. What are the main HTML performance best practices?
+### HC-37. How do you load web fonts efficiently?
 
-Fewer and smaller requests (bundling, HTTP/2 or 3), minified and compressed files (Brotli/gzip), long cache headers with hashed file names, a CDN, critical CSS inlined and the rest loaded later, deferred JS, lazy-loaded images and iframes, and `content-visibility: auto` for long pages.
+- Self-host **WOFF2**, subset to needed characters.
+- Preload only 1–2 critical fonts.
+- `font-display: swap` (or `optional`).
+- `size-adjust` / metric overrides so the fallback matches → no shift.
+- Variable fonts can replace several files.
 
-### Q39. What are the key on-page SEO practices?
+```css
+@font-face {
+  font-family: "Inter";
+  src: url("/inter.woff2") format("woff2");
+  font-display: swap;
+}
+```
 
-A unique `<title>` and meta description per page, one `h1` and a logical heading order, semantic elements, descriptive `alt` text, clean URLs, a `canonical` link to avoid duplicate content, structured data (JSON-LD with schema.org), an XML sitemap and `robots.txt`, fast Core Web Vitals, and server-side rendering or static generation for content that must be indexed.
+**Real-life:** wearing your own clothes until the tailored suit arrives, cut to the same size so nobody notices the swap.
 
-### Q40. What are the main HTML-level security practices?
+### HC-38. Main HTML performance best practices?
 
-Escape user content to prevent XSS, use a Content-Security-Policy header, add `rel="noopener noreferrer"` on external new-tab links, use `sandbox` on untrusted iframes, add Subresource Integrity (`integrity` attribute) on CDN scripts, and set `autocomplete` correctly on password fields.
+- Fewer, smaller requests; HTTP/2 or HTTP/3.
+- Minify + compress (Brotli/gzip).
+- Long cache headers + hashed file names; CDN.
+- Inline critical CSS, load the rest later.
+- `defer` JS; lazy-load images and iframes.
+- `content-visibility: auto` for long pages.
 
-## Section 4: CSS cascade, specificity, selectors and the box model
+### HC-39. Key on-page SEO practices?
 
-### Q41. What are the ways to add CSS, and which is best?
+- Unique `<title>` + meta description per page.
+- One `h1`, logical headings, semantic elements.
+- Descriptive `alt` text, clean URLs.
+- `canonical` link to avoid duplicates.
+- Structured data (JSON-LD, schema.org).
+- XML sitemap + `robots.txt`.
+- Good Core Web Vitals.
+- SSR/SSG for content that must be indexed.
 
-Inline (`style=""`), internal (`<style>` in the head), external (`<link>` to a `.css` file), `@import` inside CSS, and preprocessors/CSS-in-JS that compile to one of these. External files are best: cacheable, reusable, and they separate content from presentation. Avoid `@import` in production CSS because it loads files one after another.
+```html
+<link rel="canonical" href="https://site.com/shoes">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"Running Shoe"}</script>
+```
 
-### Q42. How does the cascade decide which rule wins?
+**Real-life:** a well-labelled shop window so passers-by (search engines) know what you sell.
 
-In this order:
+### HC-40. HTML-level security practices?
 
-1. Origin and importance (user-agent → user → author; `!important` reverses the order).
-2. Context (Shadow DOM encapsulation).
-3. Inline `style` attribute.
-4. Cascade layers (`@layer`).
-5. Specificity.
-6. Source order (later wins).
+- Escape user content (XSS).
+- **Content-Security-Policy** header.
+- `rel="noopener noreferrer"` on external new-tab links.
+- `sandbox` on untrusted iframes.
+- **Subresource Integrity** on CDN scripts.
+- Correct `autocomplete` on password fields.
 
-### Q43. How is specificity calculated?
+```html
+<script src="https://cdn.example.com/lib.js"
+        integrity="sha384-..." crossorigin="anonymous"></script>
+<iframe src="https://widget.example.com" sandbox="allow-scripts"></iframe>
+```
 
-As three numbers (A, B, C):
+**Real-life:** SRI = checking a parcel's seal before opening it.
+
+---
+
+## Part D — Cascade, Specificity, Selectors & Box Model
+
+### HC-41. Ways to add CSS, and which is best?
+
+| Way | Example |
+|---|---|
+| Inline | `style="color:red"` |
+| Internal | `<style>` in `head` |
+| External ✅ | `<link rel="stylesheet" href="app.css">` |
+| `@import` | inside CSS |
+| Preprocessor / CSS-in-JS | compiles to one of the above |
+
+**Real-life:** external CSS = one shared uniform guide for all staff, instead of instructions pinned on each person.
+
+⚠️ Avoid `@import` in production CSS: files load **one after another**.
+
+### HC-42. How does the cascade decide which rule wins?
+
+1. **Origin + importance** (user-agent → user → author; `!important` reverses it).
+2. **Context** (Shadow DOM).
+3. **Inline `style`**.
+4. **Cascade layers** (`@layer`).
+5. **Specificity**.
+6. **Source order** (later wins).
+
+**Real-life:** a court system: higher courts (origin, importance) beat lower ones; only if equal do you compare evidence (specificity), then who spoke last (order).
+
+### HC-43. How is specificity calculated?
+
+As **(A, B, C)**:
 
 | Selector part | Adds to |
-| --- | --- |
+|---|---|
 | ID (`#nav`) | A |
-| Class, attribute, pseudo-class (`.btn`, `[type]`, `:hover`) | B |
-| Element, pseudo-element (`div`, `::before`) | C |
-| Universal `*`, combinators | Nothing |
+| class, attribute, pseudo-class (`.btn`, `[type]`, `:hover`) | B |
+| element, pseudo-element (`div`, `::before`) | C |
+| `*`, combinators | nothing |
 
-Example: `#nav .item a:hover` = (1, 2, 1). Compare A first, then B, then C. Inline styles beat all selectors; `!important` beats inline.
-
-### Q44. How do `:is()`, `:where()`, `:not()` and `:has()` affect specificity?
-
-- `:is()` and `:not()` take the specificity of their most specific argument.
-- `:where()` always has **zero** specificity, great for resettable defaults in libraries.
-- `:has()` takes its most specific argument.
-
-```css
-:where(.card) h2 { margin: 0; }   /* easy to override */
-li:not(.one) { font-style: italic; } /* every li except .one */
+```text
+#nav .item a:hover  →  (1, 2, 1)
 ```
 
-### Q45. What is `:has()` and why is it called the "parent selector"?
+Compare A, then B, then C. Inline beats selectors; `!important` beats inline.
 
-It selects an element based on what it contains or what follows it, which was impossible before.
+**Real-life:** army ranks: one general (ID) outranks any number of captains (classes).
+
+⚠️ 11 classes never beat 1 ID; it isn't a base-10 number.
+
+### HC-44. `:is()`, `:where()`, `:not()`, `:has()` and specificity?
+
+| Selector | Specificity |
+|---|---|
+| `:is()`, `:not()`, `:has()` | their **most specific** argument |
+| `:where()` | **always 0** |
 
 ```css
-.card:has(img) { padding: 0; }               /* cards with an image */
-form:has(input:invalid) button { opacity: .5; }
-label:has(+ input:focus) { color: blue; }     /* previous sibling */
+:where(.card) h2 { margin: 0; }       /* (0,0,1): easy to override */
+li:not(.one) { font-style: italic; }  /* every li except .one */
 ```
 
-Senior point: it replaces many JS class toggles; avoid very broad usage like `body:has(...)` on huge DOMs for performance.
+🎯 Libraries use `:where()` for defaults that users override without fighting specificity.
 
-### Q46. What are cascade layers (`@layer`)?
+### HC-45. What is `:has()` (the "parent selector")?
 
-A way to group CSS into ordered layers. A later layer always beats an earlier one, **regardless of specificity**. Unlayered styles beat all layers.
+Selects an element based on **what it contains** or **what follows it**.
+
+```css
+.card:has(img) { padding: 0; }                   /* cards with an image */
+form:has(input:invalid) button { opacity: .5; }  /* disable look on invalid form */
+label:has(+ input:focus) { color: blue; }        /* previous sibling */
+```
+
+**Real-life:** "highlight every box that has a red ball inside".
+
+⚠️ Avoid very broad usage like `body:has(...)` on huge DOMs (performance).
+🎯 Replaces many JS class toggles.
+
+### HC-46. What are cascade layers (`@layer`)?
+
+Ordered groups of CSS. A **later layer beats an earlier one regardless of specificity**. Unlayered styles beat all layers.
 
 ```css
 @layer reset, base, components, utilities;
 
 @layer components { .btn#primary { color: blue; } }
-@layer utilities  { .text-red { color: red; } }  /* wins */
+@layer utilities  { .text-red { color: red; } }   /* wins, despite lower specificity */
 ```
 
-This solves specificity wars when combining resets, third-party libraries and your own code.
+**Real-life:** floors in a building: anything on a higher floor sits above everything below, however tall it is.
 
-### Q47. What are the main selector types?
+🎯 Ends specificity wars between resets, third-party libraries and your code.
 
-Element (`p`), class (`.btn`), ID (`#app`), universal (`*`), attribute (`[type="text"]`), descendant (`a b`, any depth), child (`a > b`, direct children only), adjacent sibling (`a + b`), general sibling (`a ~ b`), pseudo-classes and pseudo-elements.
+### HC-47. Main selector types?
 
-### Q48. What attribute selector variations exist?
+| Selector | Example |
+|---|---|
+| element / class / ID / universal | `p`, `.btn`, `#app`, `*` |
+| attribute | `[type="text"]` |
+| descendant (any depth) | `a b` |
+| child (direct) | `a > b` |
+| adjacent sibling | `a + b` |
+| general sibling | `a ~ b` |
+| pseudo-class / pseudo-element | `:hover`, `::before` |
 
-`[attr]` exists, `[attr="v"]` equals, `[attr*="v"]` contains, `[attr^="v"]` starts with, `[attr$="v"]` ends with, `[attr~="v"]` is one word in a space-separated list, `[attr|="v"]` equals or starts with `v-`. Add `  i ` before `]` for case-insensitive matching.
+**Real-life:** descendant = anyone in the family tree; child = direct children only.
 
-### Q49. Pseudo-class vs pseudo-element?
+### HC-48. Attribute selector variations?
 
-A pseudo-class (single colon) selects an element in a **state**: `:hover`, `:focus-visible`, `:nth-child(2n)`, `:checked`, `:empty`. A pseudo-element (double colon) styles a **part** of an element or adds generated content: `::before`, `::after`, `::first-line`, `::placeholder`, `::marker`, `::selection`, `::backdrop`.
+| Selector | Matches |
+|---|---|
+| `[attr]` | exists |
+| `[attr="v"]` | equals |
+| `[attr*="v"]` | contains |
+| `[attr^="v"]` | starts with |
+| `[attr$="v"]` | ends with |
+| `[attr~="v"]` | one word in a space list |
+| `[attr\|="v"]` | equals or starts with `v-` |
+| `[attr="v" i]` | case-insensitive |
 
-### Q50. What are inheritance, `inherit`, `initial`, `unset` and `revert`?
+```css
+a[href^="https"] { color: green; }
+a[href$=".pdf"]::after { content: " (PDF)"; }
+```
 
-Some properties inherit by default (`color`, `font`, `line-height`, `visibility`); most don't (`margin`, `border`, `background`).
+### HC-49. Pseudo-class vs pseudo-element?
 
-- `inherit`: take the parent's value.
-- `initial`: the property's spec default (e.g. `display: inline`).
-- `unset`: `inherit` if the property inherits, otherwise `initial`.
-- `revert`: go back to the browser's default style.
-- `revert-layer`: go back to the previous cascade layer's value.
+| Pseudo-class `:` | Pseudo-element `::` |
+|---|---|
+| element in a **state** | a **part** or generated content |
+| `:hover`, `:focus-visible`, `:nth-child(2n)`, `:checked`, `:empty` | `::before`, `::after`, `::first-line`, `::placeholder`, `::marker`, `::selection`, `::backdrop` |
 
-### Q51. What is the box model?
+**Real-life:** pseudo-class = "a person who is smiling". Pseudo-element = "a person's hat".
 
-Every element is a box: content → padding → border → margin (inside to outside). Padding is space inside the border; margin is space outside, between elements.
+### HC-50. Inheritance and `inherit` / `initial` / `unset` / `revert`?
 
-### Q52. `box-sizing: content-box` vs `border-box`?
+Inherited by default: `color`, `font`, `line-height`, `visibility`. Not inherited: `margin`, `border`, `background`.
 
-With `content-box` (default), `width` is only the content, so padding and border are added on top. With `border-box`, `width` includes padding and border, which is far easier to reason about.
+| Keyword | Means |
+|---|---|
+| `inherit` | parent's value |
+| `initial` | spec default (e.g. `display: inline`) |
+| `unset` | inherit if inherited property, else initial |
+| `revert` | browser's default style |
+| `revert-layer` | previous cascade layer's value |
+
+**Real-life:** children inherit their family's language (color), not their parents' house (margin).
+
+⚠️ `display: initial` is `inline`, not `block`, even on a `div`; use `revert` for the browser default.
+
+### HC-51. What is the box model?
+
+```text
+margin → border → padding → content
+```
+
+- **Padding:** space **inside** the border.
+- **Margin:** space **outside**, between elements.
+
+**Real-life:** a framed photo: photo (content), mount (padding), frame (border), gap on the wall (margin).
+
+### HC-52. `content-box` vs `border-box`?
+
+| `content-box` (default) | `border-box` |
+|---|---|
+| `width` = content only | `width` includes padding + border |
+| 200px + 20px padding = **240px** | stays **200px** |
 
 ```css
 *, *::before, *::after { box-sizing: border-box; }
 ```
 
-### Q53. What is margin collapsing?
+**Real-life:** border-box = a suitcase with fixed outside dimensions; padding eats into the inside space.
 
-Vertical margins of adjacent block elements combine into one margin equal to the larger value (20px + 30px → 30px). It also happens between a parent and its first or last child if nothing separates them. It does **not** happen in flex or grid containers, or with padding, borders, or a new block formatting context (`display: flow-root`).
+### HC-53. What is margin collapsing?
 
-### Q54. What is a Block Formatting Context (BFC)?
+Vertical margins of adjacent blocks **combine** into the larger one (20px + 30px → **30px**). Also between a parent and its first/last child when nothing separates them.
 
-An isolated layout region where floats are contained and margins don't collapse with outside elements. Created by `display: flow-root`, `overflow` other than `visible`, floats, absolute positioning, `inline-block`, flex/grid items, and `contain: layout`. `display: flow-root` is the clean modern way to contain floats (replacing the old clearfix hack).
+**Doesn't happen** in flex/grid, with padding/border between, or in a new BFC (`display: flow-root`).
 
-### Q55. Which CSS units should you use?
+**Real-life:** two people each wanting "2 metres personal space" stand 2 metres apart, not 4.
+
+### HC-54. What is a Block Formatting Context (BFC)?
+
+An isolated layout region: floats are contained and margins don't collapse with outside.
+
+Created by: `display: flow-root`, `overflow` ≠ `visible`, floats, absolute positioning, `inline-block`, flex/grid items, `contain: layout`.
+
+```css
+.parent { display: flow-root; } /* modern clearfix */
+```
+
+**Real-life:** a room with its own walls; furniture inside doesn't spill into the hallway.
+
+### HC-55. Which CSS units should you use?
 
 | Unit | Relative to | Use for |
-| --- | --- | --- |
-| `px` | Fixed (CSS pixel) | Borders, small details |
-| `rem` | Root font size | Font sizes, spacing (respects user zoom settings) |
-| `em` | Current element's font size | Padding that scales with text |
-| `%` | Parent size | Fluid widths |
-| `vw` / `vh` | Viewport | Full-screen sections |
-| `dvh` / `svh` / `lvh` | Dynamic / small / large viewport | Mobile full-height (fixes the `100vh` address-bar bug) |
-| `ch` | Width of "0" | Readable line length (`max-width: 65ch`) |
-| `cqi` / `cqw` | Container size | Container-query-based sizing |
-| `fr` | Free space in a grid | Grid tracks |
+|---|---|---|
+| `px` | fixed | borders, small details |
+| `rem` | root font size | font sizes, spacing (respects zoom) |
+| `em` | element's font size | padding that scales with text |
+| `%` | parent | fluid widths |
+| `vw` / `vh` | viewport | full-screen sections |
+| `dvh` / `svh` / `lvh` | dynamic/small/large viewport | mobile full height (fixes `100vh` bug) |
+| `ch` | width of "0" | line length (`max-width: 65ch`) |
+| `cqi` / `cqw` | container | container-query sizing |
+| `fr` | free grid space | grid tracks |
 
-## Section 5: Layout: positioning, stacking context, flexbox and grid
+**Real-life:** `rem` = measuring in "standard steps", which grow if the user turns up the zoom.
 
-### Q56. `display: block` vs `inline` vs `inline-block` vs `none`?
+⚠️ Nested `em` **compounds** (1.2em inside 1.2em = 1.44×).
 
-- `block`: new line, full width, accepts width/height and vertical margins.
-- `inline`: flows with text, ignores width/height and vertical margins.
-- `inline-block`: flows with text **and** accepts width/height.
-- `none`: removed from layout and the accessibility tree (vs `visibility: hidden`, which keeps the space).
+---
 
-### Q57. What are the `position` values?
+## Part E — Layout: Position, Stacking, Flexbox & Grid
 
-| Value | Positioned relative to | In normal flow? |
-| --- | --- | --- |
-| `static` (default) | Not positioned | Yes |
-| `relative` | Its own normal position | Yes (space kept) |
-| `absolute` | Nearest positioned ancestor (else the initial containing block) | No |
-| `fixed` | Viewport (unless an ancestor has `transform`, `filter` or `contain`) | No |
-| `sticky` | Acts relative until a scroll threshold, then sticks within its parent | Yes |
+### HC-56. `display: block` vs `inline` vs `inline-block` vs `none`?
 
-Common sticky-header pattern: `position: sticky; top: 0;`. Sticky fails if an ancestor has `overflow: hidden` or the parent is too short.
+| Value | Behaviour |
+|---|---|
+| `block` | new line, full width, accepts width/height |
+| `inline` | flows with text, **ignores** width/height and vertical margins |
+| `inline-block` | flows with text **and** accepts width/height |
+| `none` | removed from layout and accessibility tree |
 
-### Q58. How does `z-index` work, and what is a stacking context?
+**Real-life:** inline-block = a sticker placed in a line of text that keeps its own size.
 
-`z-index` only compares elements **within the same stacking context**. A stacking context is a group that is layered as one unit. It's created by: the root element, positioned elements with `z-index` other than `auto`, flex/grid children with `z-index`, `opacity` < 1, `transform`, `filter`, `will-change`, `isolation: isolate`, `position: fixed`/`sticky`, and `contain: paint`.
+### HC-57. `position` values?
 
-Classic bug: a modal with `z-index: 9999` still appears behind a header because its parent created a lower stacking context. Fix: render overlays at the top level (portal), use the top layer (`<dialog>`, popover), or use `isolation: isolate` to control contexts deliberately.
+| Value | Relative to | In flow? |
+|---|---|---|
+| `static` | not positioned | ✅ |
+| `relative` | its own normal spot | ✅ (space kept) |
+| `absolute` | nearest positioned ancestor | ❌ |
+| `fixed` | viewport* | ❌ |
+| `sticky` | relative until a scroll point, then sticks in parent | ✅ |
 
-### Q59. What does `float` do, and how do you clear it?
+\* unless an ancestor has `transform`, `filter` or `contain` (HC-112).
 
-It pushes an element left or right so text wraps around it (originally for images in text). Clear with `clear: both` on the next element, or contain floats in the parent with `display: flow-root`. Don't use floats for page layout anymore; use flexbox or grid.
+```css
+header { position: sticky; top: 0; }
+```
 
-### Q60. What is flexbox and its main properties?
+**Real-life:** absolute = a sticky note on a specific page. Fixed = a note on your screen frame. Sticky = a bookmark that stays at the top while you read that chapter.
 
-A one-dimensional layout system (row **or** column).
+⚠️ Sticky fails if an ancestor has `overflow: hidden` or the parent is too short.
 
-Container: `display: flex`, `flex-direction`, `flex-wrap`, `justify-content` (main axis), `align-items` (cross axis), `align-content` (multiple lines), `gap`.
+### HC-58. How does `z-index` work? What is a stacking context?
 
-Item: `flex-grow`, `flex-shrink`, `flex-basis`, `flex` shorthand, `align-self`, `order`.
+`z-index` compares elements **only within the same stacking context** (a group layered as one unit).
 
-### Q61. What do `flex: 1`, `flex: auto` and `flex: none` mean?
+Created by: root, positioned + `z-index` ≠ auto, flex/grid child with `z-index`, `opacity < 1`, `transform`, `filter`, `will-change`, `isolation: isolate`, `position: fixed/sticky`, `contain: paint`.
+
+**Real-life:** papers in folders. A paper with "9999" inside a bottom folder still sits under every paper in the top folder.
+
+⚠️ Classic bug: modal `z-index: 9999` behind a header because its parent made a lower context.
+🎯 Fix: render overlays at the top level (portal), use the **top layer** (`<dialog>`, popover), or `isolation: isolate` deliberately.
+
+### HC-59. What does `float` do? How to clear?
+
+Pushes an element left/right so text wraps around it (images in articles).
+
+```css
+.next { clear: both; }
+.parent { display: flow-root; } /* contain floats */
+```
+
+**Real-life:** a photo in a magazine with text flowing around it.
+
+⚠️ Don't use floats for page layout; use flexbox/grid.
+
+### HC-60. What is flexbox?
+
+**One-dimensional** layout (row **or** column).
+
+| Container | Item |
+|---|---|
+| `display: flex`, `flex-direction`, `flex-wrap` | `flex-grow`, `flex-shrink`, `flex-basis` |
+| `justify-content` (main axis) | `flex` shorthand |
+| `align-items` (cross axis) | `align-self` |
+| `align-content`, `gap` | `order` |
+
+**Real-life:** books on one shelf: spread them out, push to one end, or centre them.
+
+⚠️ `order` changes visual order only, not tab/reading order (accessibility).
+
+### HC-61. `flex: 1` vs `flex: auto` vs `flex: none`?
 
 | Shorthand | grow / shrink / basis | Behaviour |
-| --- | --- | --- |
-| `flex: 1` | 1 / 1 / 0% | Equal shares of space, ignoring content size |
-| `flex: auto` | 1 / 1 / auto | Grows from its content size |
-| `flex: none` | 0 / 0 / auto | Fixed at content size |
-| `flex: 0 0 200px` | 0 / 0 / 200px | Exactly 200px |
+|---|---|---|
+| `flex: 1` | 1 / 1 / 0% | equal shares, ignores content size |
+| `flex: auto` | 1 / 1 / auto | grows from content size |
+| `flex: none` | 0 / 0 / auto | fixed at content size |
+| `flex: 0 0 200px` | 0 / 0 / 200px | exactly 200px |
 
-### Q62. Why does a flex item overflow instead of shrinking?
+**Real-life:** `flex: 1` = splitting a pizza equally; `flex: auto` = everyone keeps what they brought, then shares the extra.
 
-Flex items have `min-width: auto` by default, so they won't shrink below their content size (long words, `pre`, tables). Fix with `min-width: 0` (or `overflow: hidden`) on the item. This is one of the most common real-world flexbox bugs.
+### HC-62. Why does a flex item overflow instead of shrinking? ⭐
 
-### Q63. How do you center an element?
+Flex items default to `min-width: auto`, so they won't shrink below their **content** (long words, `pre`, tables).
+
+```css
+.item { min-width: 0; } /* or overflow: hidden */
+```
+
+**Real-life:** a passenger with a huge suitcase who refuses to fit a smaller seat.
+
+🎯 One of the most common real-world flexbox bugs (also needed for text ellipsis, HC-103).
+
+### HC-63. How do you centre an element?
 
 ```css
 /* Flexbox */
@@ -460,13 +879,13 @@ Flex items have `min-width: auto` by default, so they won't shrink below their c
 /* Absolute */
 .child { position: absolute; inset: 0; margin: auto; width: fit-content; height: fit-content; }
 
-/* Horizontal only, block */
+/* Horizontal only */
 .child { margin-inline: auto; width: 600px; }
 ```
 
-### Q64. What is CSS Grid and its main properties?
+### HC-64. What is CSS Grid?
 
-A two-dimensional layout system (rows **and** columns).
+**Two-dimensional** layout (rows **and** columns).
 
 ```css
 .layout {
@@ -483,60 +902,106 @@ A two-dimensional layout system (rows **and** columns).
 .header { grid-area: header; }
 ```
 
-Other key parts: `grid-column: 1 / -1` (span all), `span 2`, `minmax()`, `repeat()`, `grid-auto-flow: dense`, `justify-items` / `align-items`.
+Also: `grid-column: 1 / -1` (span all), `span 2`, `minmax()`, `repeat()`, `grid-auto-flow: dense`.
 
-### Q65. `auto-fill` vs `auto-fit`?
+**Real-life:** a spreadsheet or a chessboard: place items in rows and columns at once.
 
-Both create as many columns as fit, which gives responsive cards without media queries:
+### HC-65. `auto-fill` vs `auto-fit`?
 
 ```css
 .grid { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
 ```
 
-`auto-fill` keeps empty column tracks when there are few items. `auto-fit` collapses empty tracks, so the existing items stretch to fill the row.
+| `auto-fill` | `auto-fit` |
+|---|---|
+| keeps empty tracks | collapses empty tracks |
+| few items stay narrow | few items **stretch** to fill |
 
-### Q66. What is subgrid?
+**Real-life:** auto-fill = setting chairs for absent guests. auto-fit = removing empty chairs so guests spread out.
 
-`grid-template-columns: subgrid` (or rows) makes a nested grid use its parent's tracks. Example: cards in a grid where every card's title, body and button line up across cards even when content length differs.
+🎯 Responsive cards **without media queries**.
 
-### Q67. Flexbox vs Grid: when to use which?
+### HC-66. What is subgrid?
 
-Flexbox for one direction and content-driven sizing: navbars, button groups, centring, items that wrap. Grid for two-dimensional, layout-driven structures: page shells, dashboards, card galleries, anything needing alignment in both rows and columns. They are often combined: grid for the page, flex inside components.
+A nested grid uses its **parent's tracks**.
 
-### Q68. What are logical properties?
+```css
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); }
+.card  { display: grid; grid-row: span 3; grid-template-rows: subgrid; }
+```
 
-Direction-aware versions of physical properties, so layouts work for right-to-left (Arabic, Hebrew) and vertical writing modes automatically.
+**Real-life:** every card's title, body and button line up across the row, even with different text lengths.
+
+### HC-67. Flexbox vs Grid?
+
+| Flexbox | Grid |
+|---|---|
+| one direction | two directions |
+| content-driven | layout-driven |
+| navbars, button groups, centring | page shells, dashboards, galleries |
+
+**Real-life:** flexbox = a row of books on a shelf. Grid = a whole bookcase.
+
+🎯 Combine them: grid for the page, flex inside components.
+
+### HC-68. What are logical properties?
+
+Direction-aware properties that work in RTL (Arabic, Hebrew) and vertical writing modes.
 
 | Physical | Logical |
-| --- | --- |
+|---|---|
 | `margin-left` / `margin-right` | `margin-inline-start` / `margin-inline-end` |
 | `padding-top` / `padding-bottom` | `padding-block` |
 | `width` / `height` | `inline-size` / `block-size` |
 | `top/right/bottom/left: 0` | `inset: 0` |
 | `text-align: left` | `text-align: start` |
 
-## Section 6: Responsive and modern CSS
+**Real-life:** saying "at the start of the line" instead of "on the left", which works for any language direction.
 
-### Q69. What does the viewport meta tag do?
+---
 
-`<meta name="viewport" content="width=device-width, initial-scale=1">` tells mobile browsers to use the device width instead of rendering a \~980px desktop page and zooming out. Never add `user-scalable=no` or `maximum-scale=1`: blocking zoom fails accessibility.
+## Part F — Responsive & Modern CSS
 
-### Q70. Mobile-first vs desktop-first media queries?
+### HC-69. What does the viewport meta tag do?
 
-Mobile-first writes base styles for small screens and adds `min-width` queries for larger ones. It usually means less CSS to override and faster mobile loading. Desktop-first uses `max-width` queries.
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1">
+```
+
+Tells mobile browsers to use the **device width** instead of rendering a ~980px desktop page and zooming out.
+
+**Real-life:** printing on the right paper size instead of shrinking an A3 poster onto a postcard.
+
+⚠️ Never add `user-scalable=no` or `maximum-scale=1`; blocking zoom fails accessibility.
+
+### HC-70. Mobile-first vs desktop-first?
+
+| Mobile-first | Desktop-first |
+|---|---|
+| base styles for small screens | base styles for large screens |
+| `min-width` queries | `max-width` queries |
+| less overriding, faster mobile | more overrides on mobile |
 
 ```css
 .card { padding: 1rem; }
 @media (min-width: 768px) { .card { padding: 2rem; } }
 ```
 
-### Q71. What else can media queries check besides width?
+**Real-life:** packing a small backpack first, then adding extras when you have a bigger bag.
 
-`prefers-color-scheme` (dark mode), `prefers-reduced-motion`, `prefers-contrast`, `hover` / `pointer` (touch vs mouse), `orientation`, `resolution`, and `print`. The newer range syntax is easier to read: `@media (400px <= width <= 900px)`.
+### HC-71. What else can media queries check?
 
-### Q72. What are container queries?
+`prefers-color-scheme`, `prefers-reduced-motion`, `prefers-contrast`, `hover` / `pointer` (touch vs mouse), `orientation`, `resolution`, `print`.
 
-Styles that respond to the size of a **parent container**, not the viewport. A component can adapt wherever it's placed (sidebar vs main area).
+```css
+@media (hover: none) { .tooltip { display: none; } }
+@media (400px <= width <= 900px) { /* range syntax */ }
+@media print { nav { display: none; } }
+```
+
+### HC-72. What are container queries?
+
+Style a component based on its **parent container's** size, not the viewport.
 
 ```css
 .card-wrap { container-type: inline-size; container-name: card; }
@@ -546,26 +1011,38 @@ Styles that respond to the size of a **parent container**, not the viewport. A c
 }
 ```
 
-Senior point: use media queries for page-level layout and container queries for reusable components. Style queries (`@container style(--theme: dark)`) also exist.
+**Real-life:** furniture that rearranges itself depending on the **room** it's in, not the size of the house.
 
-### Q73. What is fluid typography with `clamp()`?
+🎯 Media queries for page layout; container queries for reusable components. Style queries also exist: `@container style(--theme: dark)`.
 
-`clamp(min, preferred, max)` gives a value that scales smoothly between limits, removing many breakpoints.
+### HC-73. Fluid typography with `clamp()`?
+
+`clamp(min, preferred, max)` scales smoothly between limits.
 
 ```css
 h1 { font-size: clamp(1.75rem, 1rem + 3vw, 3.5rem); }
 .container { width: min(100% - 2rem, 1200px); margin-inline: auto; }
 ```
 
-Always mix a `rem` part into the preferred value so text still responds to user zoom.
+**Real-life:** a thermostat: follows the outside temperature but never below 18° or above 24°.
 
-### Q74. What is a responsive design checklist?
+⚠️ Always mix a `rem` part into the preferred value so text responds to user zoom.
 
-Viewport meta tag, relative units (`rem`, `%`, `fr`), fluid layouts with flexbox/grid, `img, video { max-width: 100%; height: auto; }`, responsive images (`srcset`), container queries for components, touch targets at least 44px, test on real devices, and respect user preferences (dark mode, reduced motion).
+### HC-74. Responsive design checklist?
 
-### Q75. What are CSS custom properties (variables)?
+- Viewport meta tag.
+- Relative units (`rem`, `%`, `fr`).
+- Flexbox/grid fluid layouts.
+- `img, video { max-width: 100%; height: auto; }`
+- Responsive images (`srcset`).
+- Container queries for components.
+- Touch targets ≥ 44px.
+- Test on real devices.
+- Respect dark mode and reduced motion.
 
-Values defined with `--name` and used with `var(--name, fallback)`. Unlike Sass variables, they are **live at runtime**: they inherit, cascade, can change in media queries, and can be updated by JS.
+### HC-75. What are CSS custom properties?
+
+`--name` defined, `var(--name, fallback)` used. Unlike Sass variables, they're **live at runtime**: inherit, cascade, change in media queries, update via JS.
 
 ```css
 :root { --brand: #0055ff; --space: 1rem; }
@@ -577,9 +1054,16 @@ Values defined with `--name` and used with `var(--name, fallback)`. Unlike Sass 
 document.documentElement.style.setProperty("--brand", "red");
 ```
 
-### Q76. What is `@property`?
+**Real-life:** a thermostat setting all rooms read from; change it once and every room updates.
 
-It registers a custom property with a type, initial value and inheritance. Typed properties can be **animated** (e.g. animating a gradient angle), which plain custom properties can't.
+| Sass `$var` | CSS `--var` |
+|---|---|
+| compile time | runtime |
+| can't change in the browser | JS and media queries can change it |
+
+### HC-76. What is `@property`?
+
+Registers a custom property with a **type**, initial value and inheritance, so it can be **animated**.
 
 ```css
 @property --angle {
@@ -587,11 +1071,22 @@ It registers a custom property with a type, initial value and inheritance. Typed
   initial-value: 0deg;
   inherits: false;
 }
+
+.ring {
+  background: conic-gradient(from var(--angle), red, blue);
+  animation: spin 3s linear infinite;
+}
+@keyframes spin { to { --angle: 360deg; } }
 ```
 
-### Q77. How do you implement dark mode?
+**Real-life:** telling the browser "this is an angle, not just text", so it knows how to move smoothly between values.
 
-Define colours as custom properties, switch them with `prefers-color-scheme` and/or a `data-theme` attribute for a user toggle, and set `color-scheme: light dark` so form controls and scrollbars adapt. The `light-dark()` function picks one of two colours based on the current scheme.
+### HC-77. How do you implement dark mode?
+
+- Colours as custom properties.
+- Switch with `prefers-color-scheme` and/or `data-theme` for a toggle.
+- `color-scheme: light dark` so form controls and scrollbars adapt.
+- `light-dark()` picks a colour per scheme.
 
 ```css
 :root { color-scheme: light dark; --bg: light-dark(#fff, #111); }
@@ -599,9 +1094,11 @@ Define colours as custom properties, switch them with `prefers-color-scheme` and
 body { background: var(--bg); }
 ```
 
-### Q78. What is native CSS nesting?
+**Real-life:** a room with two lighting presets; one switch changes every lamp.
 
-Browsers now support Sass-like nesting without a build step.
+🎯 Save the user's choice and apply it **before first paint** (inline script in `head`) to avoid a flash.
+
+### HC-78. Native CSS nesting?
 
 ```css
 .card {
@@ -612,52 +1109,74 @@ Browsers now support Sass-like nesting without a build step.
 }
 ```
 
-### Q79. Which other modern CSS features should a senior know?
+Sass-like nesting, no build step.
 
-- `aspect-ratio: 16 / 9` for media boxes.
-- `gap` in flexbox.
-- `color-mix()`, `oklch()` colours and relative colour syntax for design-system palettes.
-- `@scope` to limit styles to part of the DOM.
-- `text-wrap: balance` (headings) and `text-wrap: pretty` (paragraphs).
-- `accent-color` to theme checkboxes and radios.
-- `scroll-snap-type` for carousels without JS.
-- `scrollbar-gutter: stable` to stop layout shift when scrollbars appear.
-- Anchor positioning (`anchor-name`, `position-anchor`) for tooltips; check browser support first.
+⚠️ Deep nesting increases specificity and couples styles to markup; keep it shallow (1–2 levels).
 
-Senior point: check support on caniuse.com / Baseline and use `@supports` for progressive enhancement.
+### HC-79. Other modern CSS features a senior should know?
 
-### Q80. What is `@supports`?
+| Feature | Use |
+|---|---|
+| `aspect-ratio: 16 / 9` | media boxes |
+| `gap` in flexbox | spacing without margins |
+| `color-mix()`, `oklch()`, relative colours | design-system palettes |
+| `@scope` | limit styles to part of the DOM |
+| `text-wrap: balance` / `pretty` | nicer headings / paragraphs |
+| `accent-color` | theme checkboxes and radios |
+| `scroll-snap-type` | carousels without JS |
+| `scrollbar-gutter: stable` | no layout shift when a scrollbar appears |
+| anchor positioning | tooltips tied to an element (check support) |
 
-A feature query: apply CSS only if the browser supports a feature.
+🎯 Check **Baseline** / caniuse.com and use `@supports` for progressive enhancement.
+
+### HC-80. What is `@supports`?
+
+A **feature query**: apply CSS only if supported.
 
 ```css
 @supports (container-type: inline-size) { /* modern layout */ }
 @supports not selector(:has(a)) { /* fallback */ }
 ```
 
-## Section 7: Rendering, animation and CSS performance
+**Real-life:** "if the venue has a projector, show slides; otherwise use handouts".
 
-### Q81. Reflow vs repaint vs composite?
+---
 
-- **Reflow (layout)**: geometry changes (`width`, `height`, `top`, `margin`, font size, adding DOM nodes). Most expensive; can affect the whole page.
-- **Repaint**: visual changes without geometry (`color`, `background`, `box-shadow`).
-- **Composite only**: `transform` and `opacity` can be handled on the GPU without layout or paint. Cheapest.
+## Part G — Rendering, Animation & CSS Performance
 
-### Q82. What is layout thrashing and how do you avoid it?
+### HC-81. Reflow vs repaint vs composite?
 
-Forcing layout repeatedly by alternating DOM reads (`offsetHeight`, `getBoundingClientRect`) and writes in a loop. Fix: batch all reads first, then all writes, or schedule writes in `requestAnimationFrame`.
+| Step | Triggered by | Cost |
+|---|---|---|
+| **Reflow (layout)** | `width`, `height`, `top`, `margin`, font size, DOM changes | 💰💰💰 |
+| **Repaint** | `color`, `background`, `box-shadow` | 💰💰 |
+| **Composite only** | `transform`, `opacity` | 💰 (GPU) |
+
+**Real-life:** reflow = rearranging all the furniture. Repaint = repainting a wall. Composite = sliding a picture along its rail.
+
+### HC-82. What is layout thrashing?
+
+Forcing layout repeatedly by **alternating** DOM reads and writes.
 
 ```js
-// Bad: read/write interleaved → N reflows
-items.forEach(el => { el.style.width = box.offsetWidth + "px"; });
-// Good: read once, then write
+// ❌ read/write interleaved → many reflows
+items.forEach((el) => { el.style.width = box.offsetWidth + "px"; });
+
+// ✅ read once, then write
 const w = box.offsetWidth;
-items.forEach(el => { el.style.width = w + "px"; });
+items.forEach((el) => { el.style.width = w + "px"; });
 ```
 
-### Q83. Transitions vs animations?
+**Real-life:** measuring the room, moving one chair, measuring again, moving another… instead of measuring once.
 
-A `transition` animates between two states when a property changes (e.g. on hover). An `animation` with `@keyframes` can run multiple steps, loop, auto-start and be paused.
+🎯 Batch reads, then writes; schedule writes with `requestAnimationFrame`.
+
+### HC-83. Transitions vs animations?
+
+| Transition | Animation (`@keyframes`) |
+|---|---|
+| between **two** states on change | many steps |
+| needs a trigger (hover, class) | can auto-start, loop, pause |
 
 ```css
 .btn { transition: transform 200ms ease-out; }
@@ -667,11 +1186,21 @@ A `transition` animates between two states when a property changes (e.g. on hove
 .loader { animation: spin 1s linear infinite; }
 ```
 
-### Q84. How do you make animations smooth (60fps)?
+**Real-life:** transition = a door swinging open when pushed. Animation = a ceiling fan running on its own.
 
-Animate only `transform` and `opacity`, avoid animating `width`, `height`, `top` or `left`, use `will-change` sparingly and only just before an animation (it costs memory per layer), prefer CSS over JS animation for simple cases, and use the Web Animations API or `requestAnimationFrame` for JS-driven motion.
+### HC-84. How do you make animations smooth (60fps)?
 
-### Q85. How do you respect reduced motion?
+- Animate only **`transform` and `opacity`**.
+- Avoid animating `width`, `height`, `top`, `left`.
+- `will-change` sparingly, just before animating (each layer costs memory).
+- CSS for simple cases; Web Animations API or `requestAnimationFrame` for JS.
+
+```css
+/* ❌ */ .box { transition: left 300ms; }
+/* ✅ */ .box { transition: transform 300ms; }
+```
+
+### HC-85. How do you respect reduced motion?
 
 ```css
 @media (prefers-reduced-motion: reduce) {
@@ -684,69 +1213,169 @@ Animate only `transform` and `opacity`, avoid animating `width`, `height`, `top`
 }
 ```
 
-Some users get motion sickness from parallax and large animations; this is a WCAG requirement for non-essential motion.
+**Real-life:** offering a calm lift instead of a rollercoaster to people who get motion sick.
 
-### Q86. What are View Transitions and scroll-driven animations?
+🎯 A WCAG requirement for non-essential motion (parallax, large animations).
 
-- View Transitions API: animated transitions between DOM states or pages (`document.startViewTransition()`, or `@view-transition { navigation: auto; }` for multi-page apps), styled with `::view-transition-*` pseudo-elements.
-- Scroll-driven animations: link a CSS animation to scroll position with `animation-timeline: scroll()` or `view()`, e.g. a reading progress bar, with no JS.
+### HC-86. View Transitions and scroll-driven animations?
 
-### Q87. What do `contain` and `content-visibility` do?
+- **View Transitions:** animated transitions between DOM states or pages.
 
-`contain: layout paint` tells the browser that an element's insides don't affect the outside, so it can limit reflow and repaint work. `content-visibility: auto` skips rendering off-screen sections until they're near the viewport; pair it with `contain-intrinsic-size` to reserve space and avoid scrollbar jumps. Big wins on long pages.
+```js
+document.startViewTransition(() => updateDOM());
+```
 
-### Q88. How do you optimise CSS delivery?
+```css
+@view-transition { navigation: auto; } /* multi-page apps */
+::view-transition-old(root) { animation-duration: 300ms; }
+```
 
-Inline critical above-the-fold CSS, load the rest without blocking, remove unused CSS (PurgeCSS, Tailwind's JIT, coverage tools), minify and compress, split CSS per route, avoid `@import` chains, and use long-term caching with hashed file names.
+- **Scroll-driven animations:** link animation to scroll position, no JS.
 
-### Q89. Do selector types affect performance?
+```css
+.progress {
+  animation: grow linear;
+  animation-timeline: scroll();
+}
+@keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+```
 
-Browsers match selectors right to left, so the rightmost part (key selector) matters most: `.nav a` checks every `a`. In practice, selector cost is rarely the bottleneck today; large DOMs, frequent style recalculation and layout thrashing are. Measure with the DevTools Performance panel (Recalculate Style, Layout) before optimising.
+**Real-life:** a reading-progress bar that fills as you scroll.
 
-### Q90. How do you debug CSS and rendering issues?
+### HC-87. `contain` and `content-visibility`?
 
-DevTools Elements panel (computed styles, box model, which rule wins), the flex/grid overlays, the Layers and Rendering panels (paint flashing, layout shift regions), the Performance panel for long tasks and layout, Lighthouse for Core Web Vitals, and `outline: 1px solid red` on `*` for quick layout debugging.
+- `contain: layout paint` → the element's insides don't affect the outside; limits reflow/repaint.
+- `content-visibility: auto` → skips rendering off-screen sections until near the viewport.
 
-## Section 8: CSS architecture, tooling and Bootstrap
+```css
+.section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 800px; /* reserve space, avoid scrollbar jumps */
+}
+```
 
-### Q91. What CSS methodologies do you know?
+**Real-life:** only furnishing the rooms people are about to enter.
 
-- **BEM** (Block\_\_Element--Modifier): `.card__title--large`. Flat, predictable specificity, clear naming.
-- **OOCSS**: separate structure from skin, and container from content.
-- **SMACSS**: categories: base, layout, module, state, theme.
-- **ITCSS**: layers from generic to specific (settings → tools → generic → elements → objects → components → utilities). Maps well to `@layer`.
-- **Utility-first** (Tailwind): small single-purpose classes in the markup.
+🎯 Big wins on long pages (feeds, docs).
 
-### Q92. CSS Modules vs CSS-in-JS vs utility CSS?
+### HC-88. How do you optimise CSS delivery?
 
-| Approach | How | Pros | Cons |
-| --- | --- | --- | --- |
-| CSS Modules | Class names hashed per file at build time | Local scope, plain CSS, zero runtime | Theming via variables only |
-| Runtime CSS-in-JS (styled-components, Emotion) | Styles generated in JS at runtime | Dynamic props, co-location | Runtime cost, SSR complexity, poor fit with React Server Components |
-| Zero-runtime CSS-in-JS (vanilla-extract, Linaria, Panda) | Extracted to CSS at build | Type-safe, no runtime | Build tooling |
-| Utility-first (Tailwind) | Classes in markup | Fast to build, tiny CSS output, consistent tokens | Long class lists, needs team discipline |
+- Inline critical above-the-fold CSS.
+- Load the rest without blocking.
+- Remove unused CSS (PurgeCSS, Tailwind JIT, coverage tools).
+- Minify + compress; split per route.
+- No `@import` chains.
+- Long-term caching with hashed names.
 
-Senior point: the industry has moved away from runtime CSS-in-JS toward zero-runtime and utility approaches for performance and server rendering.
+### HC-89. Do selector types affect performance?
 
-### Q93. What are CSS preprocessors, and are they still needed?
+Browsers match **right to left**: the rightmost (key) selector matters most (`.nav a` checks every `a`).
 
-Sass/SCSS, Less and Stylus add variables, nesting, mixins, functions and loops, compiled to plain CSS. Native CSS now covers variables, nesting, `color-mix()` and layers, so many teams use less Sass. Sass is still useful for mixins, loops and large legacy codebases. PostCSS (with Autoprefixer) transforms modern CSS for older browsers.
+🎯 In practice selector cost is **rarely** the bottleneck. Large DOMs, frequent style recalculation and layout thrashing are. **Measure first** (DevTools Performance: Recalculate Style, Layout).
 
-### Q94. What are design tokens?
+### HC-90. How do you debug CSS and rendering?
 
-Named design decisions (colours, spacing, typography, radii, shadows) stored in a platform-neutral format (JSON) and turned into CSS variables, iOS and Android values with tools like Style Dictionary. They keep a design system consistent across platforms and themes.
+- **Elements panel:** computed styles, box model, which rule wins.
+- **Flex/grid overlays.**
+- **Rendering panel:** paint flashing, layout-shift regions.
+- **Layers panel.**
+- **Performance panel:** long tasks, layout.
+- **Lighthouse** for Core Web Vitals.
+- Quick hack: `* { outline: 1px solid red; }`.
 
-### Q95. How do you design CSS for a large app or design system?
+**Real-life:** X-ray glasses for your page.
 
-Tokens as CSS custom properties; components with scoped styles (Modules or BEM); `@layer` order for reset → base → components → utilities; low and flat specificity (no IDs, avoid `!important`); documentation in Storybook; visual regression tests (Chromatic, Percy, Playwright screenshots); Stylelint for rules; and dark-mode/theming designed from the start.
+---
 
-### Q96. What is Bootstrap and how is it used?
+## Part H — CSS Architecture, Tooling & Bootstrap
 
-An open-source, mobile-first CSS framework with a responsive grid, ready-made components and utility classes. Include it via a CDN `<link>` or npm and customise it with Sass variables. Advantages: fast development, consistency, accessibility basics. Trade-offs: generic look, unused CSS unless trimmed.
+### HC-91. CSS methodologies?
 
-### Q97. How does the Bootstrap grid work?
+| Method | Idea |
+|---|---|
+| **BEM** | `.card__title--large` (Block__Element--Modifier); flat specificity |
+| **OOCSS** | separate structure from skin, container from content |
+| **SMACSS** | base, layout, module, state, theme |
+| **ITCSS** | layers generic → specific (maps to `@layer`) |
+| **Utility-first** | small single-purpose classes (Tailwind) |
 
-A 12-column flexbox grid: `.container` → `.row` → `.col-*`. Breakpoints: none (xs, <576px), `sm` (≥576px), `md` (≥768px), `lg` (≥992px), `xl` (≥1200px), `xxl` (≥1400px). In Bootstrap 5 the smallest class is just `.col-6` (the `-xs` suffix was removed in Bootstrap 4).
+```html
+<div class="card card--featured">
+  <h2 class="card__title">Title</h2>
+</div>
+```
+
+**Real-life:** BEM = a filing system with strict naming so anyone can find a document.
+
+### HC-92. CSS Modules vs CSS-in-JS vs utility CSS?
+
+| Approach | Pros | Cons |
+|---|---|---|
+| **CSS Modules** | local scope, plain CSS, zero runtime | theming via variables only |
+| **Runtime CSS-in-JS** (styled-components, Emotion) | dynamic props, co-location | runtime cost, SSR complexity, poor fit with Server Components |
+| **Zero-runtime CSS-in-JS** (vanilla-extract, Linaria, Panda) | type-safe, no runtime | build tooling |
+| **Utility-first** (Tailwind) | fast, tiny CSS, consistent tokens | long class lists, needs discipline |
+
+🎯 The industry moved away from runtime CSS-in-JS toward **zero-runtime** and **utility** approaches (performance, SSR).
+
+### HC-93. Are preprocessors still needed?
+
+Sass/SCSS, Less, Stylus add variables, nesting, mixins, functions, loops.
+
+Native CSS now has variables, nesting, `color-mix()` and layers, so many teams use **less Sass**. Sass still helps with mixins, loops and legacy code. **PostCSS + Autoprefixer** transforms modern CSS for older browsers.
+
+**Real-life:** you used to need a calculator app; now the phone has one built in, but some still prefer a scientific calculator.
+
+### HC-94. What are design tokens?
+
+Named design decisions (colours, spacing, typography, radii, shadows) in a platform-neutral format (JSON), converted to CSS variables, iOS and Android values (e.g. **Style Dictionary**).
+
+```json
+{ "color": { "brand": { "value": "#0055ff" } }, "space": { "md": { "value": "16px" } } }
+```
+
+```css
+:root { --color-brand: #0055ff; --space-md: 16px; }
+```
+
+**Real-life:** a brand guidebook every team (web, iOS, Android) follows.
+
+### HC-95. How do you design CSS for a large app / design system?
+
+- Tokens as CSS custom properties.
+- Scoped component styles (Modules or BEM).
+- `@layer` order: reset → base → components → utilities.
+- Low, flat specificity (no IDs, avoid `!important`).
+- Storybook docs.
+- Visual regression (Chromatic, Percy, Playwright screenshots).
+- Stylelint rules.
+- Theming and dark mode from day one.
+
+**Real-life:** city planning: zoning rules, standard materials and inspections, not each builder doing their own thing.
+
+### HC-96. What is Bootstrap?
+
+An open-source, **mobile-first** CSS framework: responsive grid, ready components, utility classes. Add via CDN `<link>` or npm; customise with Sass variables.
+
+| ✅ Pros | ❌ Cons |
+|---|---|
+| fast development, consistency | generic look |
+| accessibility basics | unused CSS unless trimmed |
+
+**Real-life:** a ready-made furnished show flat.
+
+### HC-97. How does the Bootstrap grid work?
+
+**12-column flexbox grid:** `.container` → `.row` → `.col-*`.
+
+| Breakpoint | Class infix | Width |
+|---|---|---|
+| xs | (none) | < 576px |
+| sm | `sm` | ≥ 576px |
+| md | `md` | ≥ 768px |
+| lg | `lg` | ≥ 992px |
+| xl | `xl` | ≥ 1200px |
+| xxl | `xxl` | ≥ 1400px |
 
 ```html
 <div class="container">
@@ -756,117 +1385,238 @@ A 12-column flexbox grid: `.container` → `.row` → `.col-*`. Breakpoints: non
 </div>
 ```
 
-### Q98. `.container` vs `.container-fluid`, and the main components?
+**Real-life:** a page split into 12 equal strips; each column takes some strips per screen size.
 
-`.container` has a fixed max-width per breakpoint and is centred; `.container-fluid` is always 100% wide. Common components: navbar (with collapse toggler), modal, carousel, cards, buttons, forms, badges, alerts, pagination, spinners, progress bars, tooltips and popovers (need Popper).
+⚠️ There's no `-xs` suffix (removed in Bootstrap 4); the smallest is just `.col-6`.
 
-### Q99. Bootstrap vs Tailwind?
+### HC-98. `.container` vs `.container-fluid`? Main components?
 
-Bootstrap gives ready-made components with a standard look; fast for admin tools and prototypes. Tailwind gives low-level utilities and no prebuilt look; better for custom designs and keeps CSS small by generating only used classes. Others: Foundation, Bulma, Materialize, and component libraries like MUI or shadcn/ui.
+| `.container` | `.container-fluid` |
+|---|---|
+| fixed max-width per breakpoint, centred | always 100% wide |
 
-## Section 9: Tips, tricks and tricky interview questions
+**Components:** navbar (collapse toggler), modal, carousel, cards, buttons, forms, badges, alerts, pagination, spinners, progress bars, tooltips/popovers (need Popper).
 
-### Q100. What does `object-fit` do?
+### HC-99. Bootstrap vs Tailwind?
 
-It controls how an image or video fills its box without distortion. `cover` fills and crops; `contain` fits fully with empty space; `object-position` picks the focus point.
+| Bootstrap | Tailwind |
+|---|---|
+| ready components, standard look | low-level utilities, no prebuilt look |
+| fast for admin tools, prototypes | custom designs |
+| ships more CSS | generates only used classes |
+
+**Real-life:** Bootstrap = ready-made furniture. Tailwind = a box of quality parts to build your own design.
+
+Others: Foundation, Bulma, MUI, shadcn/ui.
+
+---
+
+## Part I — Tips, Tricks & Tricky Questions
+
+### HC-100. What does `object-fit` do?
+
+Controls how an image/video fills its box **without distortion**.
 
 ```css
-img { width: 100px; height: 100px; object-fit: cover; }
+img { width: 100px; height: 100px; object-fit: cover; object-position: top; }
 ```
 
-### Q101. How do you enable smooth scrolling, and what's the catch?
+| Value | Effect |
+|---|---|
+| `cover` | fills, crops extra |
+| `contain` | fits fully, empty space |
+
+**Real-life:** `cover` = a photo filling a frame (edges trimmed). `contain` = the whole photo with a mount around it.
+
+### HC-101. Smooth scrolling, and the catch?
 
 ```css
-html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
 :target { scroll-margin-top: 80px; } /* clear a sticky header */
 ```
 
-Wrap it in `@media (prefers-reduced-motion: no-preference)` for accessibility.
+⚠️ Without `scroll-margin-top`, anchored headings hide under sticky headers.
 
-### Q102. How do you hide empty elements?
+### HC-102. How do you hide empty elements?
 
 ```css
 p:empty { display: none; }
 ```
 
-`:empty` only matches elements with no children and no text; even a single space or newline counts as content (some browsers are changing this, but don't rely on it).
+⚠️ `:empty` only matches elements with **no children and no text**. Whitespace has traditionally counted as content; the spec is changing this, but don't rely on it.
 
-### Q103. How do you truncate text with an ellipsis?
+### HC-103. How do you truncate text with an ellipsis?
 
 ```css
-/* One line */
+/* one line */
 .one { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-/* Multiple lines */
+/* multiple lines */
 .multi { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 ```
 
-In a flex row, the text item also needs `min-width: 0` (see Q62).
+⚠️ In a flex row, the text item also needs `min-width: 0` (HC-62).
 
-### Q104. How do you make a sticky footer?
+**Real-life:** "Read more…" on a news card.
+
+### HC-104. How do you make a sticky footer?
 
 ```css
 body { min-height: 100dvh; display: grid; grid-template-rows: auto 1fr auto; }
 ```
 
-Header, main and footer; `main` takes the remaining space so the footer stays at the bottom on short pages.
+`main` takes the remaining space, so the footer stays at the bottom on short pages.
 
-### Q105. How do you make a full-bleed section inside a centred container?
+**Real-life:** a table runner that always reaches the end of the table, however few plates there are.
+
+### HC-105. Full-bleed section inside a centred container?
 
 ```css
 .full-bleed { width: 100vw; margin-inline: calc(50% - 50vw); }
 ```
 
-Or use a named-line grid layout so any child can span full width.
+⚠️ `100vw` includes the vertical scrollbar → can cause a horizontal scrollbar. A named-line grid layout is more robust:
 
-### Q106. `display: none` vs `visibility: hidden` vs `opacity: 0`?
+```css
+.page { display: grid; grid-template-columns: [full-start] 1fr [content-start] min(65ch, 100% - 2rem) [content-end] 1fr [full-end]; }
+.page > * { grid-column: content; }
+.page > .full-bleed { grid-column: full; }
+```
 
-|  | Takes space | Clickable | Screen readers | Animatable |
-| --- | --- | --- | --- | --- |
-| `display: none` | No | No | Hidden | No (except new `transition-behavior: allow-discrete`) |
-| `visibility: hidden` | Yes | No | Hidden | Yes (discrete) |
-| `opacity: 0` | Yes | Yes | Still read | Yes |
+### HC-106. `display: none` vs `visibility: hidden` vs `opacity: 0`? ⭐
 
-### Q107. Why is my `z-index: 9999` not working?
+| | Takes space | Clickable | Screen readers | Animatable |
+|---|---|---|---|---|
+| `display: none` | ❌ | ❌ | hidden | ❌ (except `transition-behavior: allow-discrete`) |
+| `visibility: hidden` | ✅ | ❌ | hidden | ✅ (discrete) |
+| `opacity: 0` | ✅ | ✅ | **still read** | ✅ |
 
-Either the element isn't positioned (and isn't a flex/grid item), or a parent creates a lower stacking context (`transform`, `opacity`, `filter`, etc.). The child can never escape its parent's context. See Q58.
+**Real-life:** `display: none` = person left the room. `visibility: hidden` = invisible but their chair is taken. `opacity: 0` = invisible but you can still bump into them.
 
-### Q108. Why does `height: 100%` not work?
+### HC-107. Why is `z-index: 9999` not working?
 
-Percentage height needs a parent with an explicit height. The chain must go all the way up (`html`, `body`). Modern fixes: use `min-height: 100dvh`, or make the parent flex/grid and let the child stretch.
+1. The element isn't positioned (and isn't a flex/grid item), **or**
+2. A parent created a **lower stacking context** (`transform`, `opacity`, `filter`…).
 
-### Q109. Why is there a small gap under an image?
+A child can never escape its parent's context (HC-58).
 
-Images are inline by default and sit on the text baseline, leaving room for letter descenders. Fix: `img { display: block; }` or `vertical-align: middle`.
+### HC-108. Why doesn't `height: 100%` work?
 
-### Q110. Why is there a gap between `inline-block` elements?
+Percentage height needs a parent with an **explicit height**, all the way up (`html`, `body`).
 
-The whitespace (newlines, spaces) between them in the HTML is rendered as a space character. Fix: use flexbox or grid with `gap` instead.
+```css
+/* modern fixes */
+.page { min-height: 100dvh; }
+.parent { display: flex; } /* children stretch */
+```
 
-### Q111. Which wins: the class written first in HTML or last in CSS?
+**Real-life:** "fill 100% of the glass" means nothing if nobody knows how big the glass is.
 
-Order in the `class` attribute doesn't matter. With equal specificity, the rule that appears **later in the stylesheet** wins. `class="red blue"` and `class="blue red"` look identical.
+### HC-109. Why is there a gap under an image?
 
-### Q112. Can a child with `position: fixed` move with its parent?
+Images are **inline** and sit on the text **baseline**, leaving room for letter descenders (g, y, p).
 
-Yes, if an ancestor has `transform`, `filter`, `perspective`, `contain: paint` or `will-change: transform`. That ancestor becomes the containing block, so the "fixed" element scrolls with it. Common bug inside animated containers.
+```css
+img { display: block; } /* or vertical-align: middle */
+```
 
-### Q113. Why do percentage paddings use the width even for top/bottom?
+### HC-110. Why is there a gap between `inline-block` elements?
 
-In the spec, percentage padding and margin (top and bottom too) are calculated from the containing block's **width**. That's how the old "padding-top: 56.25%" 16:9 trick worked; use `aspect-ratio` now.
+The whitespace (spaces, newlines) between them in HTML renders as a space character.
 
-### Q114. How do you style a parent based on a checked checkbox, without JS?
+**Fix:** use flexbox or grid with `gap`.
+
+### HC-111. Which wins: class order in HTML or CSS order?
+
+**CSS order.** With equal specificity, the rule **later in the stylesheet** wins. `class="red blue"` and `class="blue red"` look the same.
+
+**Real-life:** the last instruction in the rulebook counts, not the order names were written on the form.
+
+### HC-112. Can `position: fixed` move with its parent?
+
+**Yes**, if an ancestor has `transform`, `filter`, `perspective`, `contain: paint` or `will-change: transform`. That ancestor becomes the containing block.
+
+**Real-life:** a sign "fixed to the wall", but the wall is on a moving train.
+
+⚠️ Common bug inside animated containers; render overlays at the top level.
+
+### HC-113. Why do percentage paddings use width even for top/bottom?
+
+By spec, percentage padding and margin (**all sides**) use the containing block's **width**. That's how the old `padding-top: 56.25%` 16:9 trick worked.
+
+🎯 Use `aspect-ratio: 16 / 9` now.
+
+### HC-114. Style a parent based on a checked checkbox, no JS?
 
 ```css
 .option:has(input:checked) { border-color: var(--brand); }
 ```
 
-Before `:has()`, you needed the sibling selector (`input:checked + label`) and a specific DOM order.
+Before `:has()`: `input:checked + label` with a strict DOM order.
 
-### Q115. What does `gap` do that margins don't?
+**Real-life:** a whole card lighting up when you tick the box inside it.
 
-`gap` adds space only **between** items in flex and grid, never on the outer edges, so you don't need `:last-child { margin: 0 }` hacks or negative margins on the container.
+### HC-115. What does `gap` do that margins don't?
 
-### Q116. What's your approach to reviewing frontend CSS in a large team?
+Adds space only **between** flex/grid items, never on the outer edges.
 
-Senior answer: check that tokens are used (no hard-coded colours or spacing), specificity stays flat, components don't leak styles, layouts work at all breakpoints and with long content or translations, focus states and contrast are intact, there are no layout shifts, and new code uses the agreed method (Modules, BEM or utilities) consistently. Automate what you can with Stylelint, visual regression and accessibility tests (axe).
+```css
+.list { display: flex; gap: 1rem; } /* no :last-child { margin: 0 } hacks */
+```
+
+**Real-life:** spacing between fence posts, not before the first or after the last.
+
+### HC-116. How do you review CSS in a large team? (Senior)
+
+Check that:
+
+- Tokens are used (no hard-coded colours/spacing).
+- Specificity stays flat; no leaking styles.
+- Layouts work at all breakpoints, with long content and translations.
+- Focus states and contrast are intact.
+- No layout shifts.
+- The agreed method (Modules, BEM or utilities) is used consistently.
+
+**Automate:** Stylelint, visual regression, axe accessibility tests.
+
+**Real-life:** a building inspector with a checklist, plus automatic smoke detectors.
+
+---
+
+## Part J — Cheat Sheet
+
+### HC-117. One-line answers
+
+| Topic | One line |
+|---|---|
+| DOCTYPE | standards mode; without it → quirks mode |
+| Semantic HTML | meaning over `div`s → a11y, SEO, readability |
+| ARIA rule #1 | native element first |
+| WCAG AA | contrast 4.5:1, keyboard, alt text, visible focus |
+| `async` vs `defer` | any order, ASAP vs in order after parsing |
+| Resource hints | preload (now), preconnect (connection), prefetch (next page) |
+| Core Web Vitals | LCP ≤ 2.5 s, INP ≤ 200 ms, CLS ≤ 0.1 |
+| Hero image | `fetchpriority="high"`, never lazy |
+| Cascade | origin/importance → context → inline → layers → specificity → order |
+| Specificity | (IDs, classes/attrs/pseudo-classes, elements) |
+| `:where()` | zero specificity |
+| `@layer` | later layer wins regardless of specificity |
+| `:has()` | parent / previous-sibling selector |
+| `border-box` | width includes padding + border |
+| Margin collapse | vertical, block only, larger wins |
+| BFC | `display: flow-root` contains floats |
+| Stacking context | `z-index` only compares inside the same context |
+| Flex overflow bug | `min-width: 0` |
+| Flex vs grid | 1D content-driven vs 2D layout-driven |
+| `auto-fit` vs `auto-fill` | collapse vs keep empty tracks |
+| Container queries | respond to parent, not viewport |
+| `clamp()` | fluid values with min/max |
+| Custom properties | live at runtime, cascade, JS-updatable |
+| Cheap animation | only `transform` + `opacity` |
+| Layout thrashing | batch reads, then writes |
+| `content-visibility` | skip off-screen rendering |
+| Runtime CSS-in-JS | declining → zero-runtime / utilities |
+| Bootstrap grid | 12 columns, `container > row > col` |
+| `display/visibility/opacity` | removed / invisible + space / invisible + clickable |
