@@ -1,256 +1,330 @@
+---
 
+## Part A — Fundamentals & Type System
 
-## How to use these notes
+### TS-1. What is TypeScript and why use it?
 
-Every topic is one question, a short simple answer, and a small code example. At 12+ years, interviewers expect you to explain *why* and *trade-offs*, not just syntax, so each answer ends with a one-line "Senior tip" where it matters.
+JavaScript **plus a static type system**. It compiles to plain JS and **all types are erased** at runtime.
 
-Suggested plan: read one section a day, say each answer out loud in 30–60 seconds, then do Section 7 (tricky questions) without looking at the answers.
+**Real-life:** a spell-checker for code. It catches mistakes while you write, but it isn't printed in the final letter.
 
-## Section 1: Fundamentals and the type system
+**Benefits:** catch bugs early, better autocomplete and refactoring, self-documenting code.
 
-### Q1. What is TypeScript and why use it?
+⚠️ Types give **zero runtime safety**. API, form and JSON data must still be validated (Zod, TS-47).
 
-TypeScript is JavaScript plus a static type system. It compiles (transpiles) to plain JavaScript, and all types are erased at runtime. Benefits: catch bugs before running, better autocomplete and refactoring, and code that documents itself.
+### TS-2. What is structural typing?
 
-Senior tip: types give zero runtime safety. Data from APIs, forms or JSON must still be validated (for example with Zod).
+TS compares types by **shape**, not by name. Same properties = compatible.
 
-### Q2. What is structural typing (duck typing)?
+**Real-life:** a socket accepts any plug with the right pins, whatever the brand.
 
-TypeScript compares types by their *shape*, not their name. If two types have the same properties, they are compatible.
-
-```typescript
+```ts
 interface Point { x: number; y: number }
 class Pixel { constructor(public x: number, public y: number) {} }
 
 const p: Point = new Pixel(1, 2); // OK: same shape
 ```
 
-Java and C# use *nominal* typing (names must match). To fake nominal types in TS, use branded types (see Q20).
+🎯 Java/C# are **nominal** (names must match). Fake nominal types in TS with **branded types** (TS-20).
 
-### Q3. `interface` vs `type` — which and when?
-
-Both describe object shapes. Differences:
+### TS-3. `interface` vs `type`?
 
 | Feature | interface | type |
-| --- | --- | --- |
-| Object shapes | Yes | Yes |
-| Unions, tuples, primitives | No | Yes |
-| Declaration merging | Yes | No |
-| Extending | `extends` | `&` intersection |
-| Mapped / conditional types | No | Yes |
+|---|---|---|
+| Object shapes | ✅ | ✅ |
+| Unions, tuples, primitives | ❌ | ✅ |
+| Declaration merging | ✅ | ❌ |
+| Extending | `extends` | `&` |
+| Mapped / conditional types | ❌ | ✅ |
 
-Rule of thumb: `interface` for public object contracts (especially libraries, since users can extend them); `type` for unions, utility compositions and everything else. Interfaces also give slightly faster type checking and clearer error messages in large codebases.
+**Real-life:** `interface` = a job contract others can add clauses to. `type` = a formula you can combine any way.
 
-### Q4. `any` vs `unknown` vs `never`?
+🎯 `interface` for public object contracts (libraries, users can extend). `type` for unions and compositions. Interfaces also check slightly faster and give clearer errors in big codebases.
 
-- `any`: switches off type checking. Avoid it; it spreads silently.
-- `unknown`: "could be anything, but you must check before using it." The safe version of `any`.
-- `never`: a value that can never exist (a function that always throws, or an impossible branch).
+### TS-4. `any` vs `unknown` vs `never`?
 
-```typescript
+| Type | Meaning | Real-life |
+|---|---|---|
+| `any` | type checking **off** | a stranger walks in, nobody checks |
+| `unknown` | anything, but **check before use** | stranger must show ID first |
+| `never` | value that **can't exist** | a door to a room that doesn't exist |
+
+```ts
 function parse(input: unknown) {
   if (typeof input === "string") return input.toUpperCase(); // OK after check
-  // input.toUpperCase(); // Error without check
 }
 
 function fail(msg: string): never { throw new Error(msg); }
 ```
 
-### Q5. What is `void` and how is it different from `undefined`?
+⚠️ `any` spreads silently through everything it touches. Prefer `unknown`.
 
-`void` means "the return value should not be used." A callback typed `() => void` may still return something; TS just ignores it. That is why `arr.forEach(x => list.push(x))` compiles even though `push` returns a number.
+### TS-5. `void` vs `undefined`?
 
-### Q6. What are union and intersection types?
+`void` = "**don't use** the return value". A callback typed `() => void` may still return something; TS ignores it.
 
-- Union `A | B`: value is A **or** B.
-- Intersection `A & B`: value is A **and** B (has all properties).
+```ts
+const list: number[] = [];
+[1, 2].forEach((x) => list.push(x)); // OK, push returns a number but forEach ignores it
+```
 
-```typescript
+**Real-life:** "just drop the parcel at the door"; whether the courier also leaves a receipt doesn't matter.
+
+### TS-6. Union vs intersection types?
+
+- **Union `A | B`:** A **or** B.
+- **Intersection `A & B`:** A **and** B (all properties).
+
+```ts
 type Id = string | number;
 type Admin = User & { permissions: string[] };
 ```
 
-### Q7. What are literal types and `as const`?
+**Real-life:** union = "pay by cash **or** card". Intersection = a phone that is a camera **and** a music player.
 
-A literal type is an exact value, like `"GET"` or `42`. `as const` makes an object deeply `readonly` and keeps the literal values.
+### TS-7. Literal types and `as const`?
 
-```typescript
+A literal type is an exact value (`"GET"`, `42`). `as const` makes values deeply `readonly` and keeps literals.
+
+```ts
 const ROLES = ["admin", "user", "guest"] as const;
 type Role = typeof ROLES[number]; // "admin" | "user" | "guest"
 ```
 
-Senior tip: this pattern (array as const + `typeof X[number]`) replaces most enums.
+**Real-life:** writing in pen instead of pencil; the exact values are fixed.
 
-### Q8. Enums: should you use them?
+🎯 This pattern replaces most enums, and you get a runtime array **and** a type from one source.
 
-Regular enums generate runtime JavaScript code, numeric enums accept any number, and `const enum` breaks with `isolatedModules` (Babel, esbuild, SWC). Many teams prefer union literal types or `as const` objects instead.
+### TS-8. Should you use enums?
 
-```typescript
+Problems: regular enums **generate runtime code**, numeric enums accept **any number**, `const enum` breaks with `isolatedModules` (esbuild, SWC, Babel), and enums aren't "erasable" (fail with Node type stripping, TS-49).
+
+```ts
 const Status = { Active: "ACTIVE", Closed: "CLOSED" } as const;
-type Status = typeof Status[keyof typeof Status];
+type Status = typeof Status[keyof typeof Status]; // "ACTIVE" | "CLOSED"
 ```
 
-### Q9. What are tuples?
+🎯 Prefer union literals or `as const` objects.
 
-Fixed-length arrays where each position has its own type. Labels make them readable.
+### TS-9. What are tuples?
 
-```typescript
-type Range = [start: number, end: number];
-type Args = [string, ...number[]]; // variadic
+Fixed-length arrays with a type per position.
+
+```ts
+type Range = [start: number, end: number]; // labelled
+type Args = [string, ...number[]];          // variadic
 ```
 
-### Q10. What is the difference between `readonly` and `const`?
+**Real-life:** a form with fixed boxes: box 1 = name, box 2 = age.
 
-`const` stops reassigning a *variable*. `readonly` stops changing a *property*. Both are shallow: nested objects can still change unless also readonly.
+🎯 `useState` returns a tuple: `[value, setValue]`.
 
-### Q11. What is excess property checking?
+### TS-10. `readonly` vs `const`?
 
-When you pass an object *literal* directly, TS errors on extra properties. Passing a variable skips this check (structural typing).
+- `const` → can't **reassign the variable**.
+- `readonly` → can't **change the property**.
 
-```typescript
+Both are **shallow**.
+
+```ts
+const user = { name: "A" };
+user.name = "B";         // ✅ const doesn't protect properties
+
+type U = { readonly name: string; tags: string[] };
+declare const u: U;
+// u.name = "B";         // ❌
+u.tags.push("x");        // ✅ nested data still mutable
+```
+
+**Real-life:** `const` = your house address can't change; you can still rearrange furniture inside.
+
+### TS-11. What is excess property checking?
+
+Passing an object **literal** directly → TS errors on extra properties. Passing a **variable** skips it.
+
+```ts
 interface Opts { size: number }
 const f = (o: Opts) => {};
-f({ size: 1, colr: "red" }); // Error: typo caught
+
+f({ size: 1, colr: "red" }); // ❌ typo caught
 const o = { size: 1, colr: "red" };
-f(o); // OK, no error
+f(o);                         // ✅ no error
 ```
 
-### Q12. What is the `satisfies` operator?
+**Real-life:** a form checked at the counter catches typos; one posted inside an envelope isn't checked so closely.
 
-`satisfies` checks that a value matches a type **without widening it**, so you keep the exact inferred type.
+### TS-12. What is `satisfies`?
 
-```typescript
+Checks a value matches a type **without widening** its inferred type.
+
+```ts
 type Config = Record<string, string | number>;
+
 const cfg = { port: 3000, host: "localhost" } satisfies Config;
-cfg.port.toFixed(); // OK: still known as number
+cfg.port.toFixed(); // ✅ still number
+
+const cfg2: Config = { port: 3000 };
+// cfg2.port.toFixed(); // ❌ string | number
 ```
 
-With `const cfg: Config = …`, `cfg.port` would be `string | number`.
+**Real-life:** a quality inspector stamps "approved" but doesn't repaint the product grey.
 
-## Section 2: Advanced types
+🎯 Annotation = checked **and** widened. `satisfies` = checked, **exact type kept**.
 
-### Q13. What are generics and why do we need them?
+---
 
-Generics are type *parameters*. They let one function or type work with many types while keeping the link between input and output.
+## Part B — Advanced Types
 
-```typescript
+### TS-13. What are generics?
+
+Type **parameters**: one function or type works with many types while keeping the input-output link.
+
+```ts
 function first<T>(arr: T[]): T | undefined { return arr[0]; }
 const n = first([1, 2, 3]); // number | undefined
 ```
 
-Without generics you would use `any` and lose type information.
+**Real-life:** a labelled container: whatever you put in, the label tells you what comes out.
 
-### Q14. What are generic constraints and defaults?
+⚠️ Without generics you'd use `any` and lose type information.
 
-`extends` limits what T can be; `=` gives a default.
+### TS-14. Generic constraints and defaults?
 
-```typescript
+`extends` limits T; `=` gives a default.
+
+```ts
 function getProp<T, K extends keyof T>(obj: T, key: K): T[K] {
   return obj[key];
 }
+
 type ApiResponse<T = unknown> = { data: T; error?: string };
 ```
 
-Senior tip: if a type parameter appears only once in a signature, you probably don't need it ("golden rule of generics").
+**Real-life:** a car park that accepts "any car" but only if it fits the height limit.
 
-### Q15. What does `keyof` and `typeof` do in types?
+🎯 **Golden rule:** if a type parameter appears only once in a signature, you probably don't need it.
 
-- `keyof T`: union of T's property names.
-- `typeof value`: gets the type of a runtime variable.
-- `T[K]`: indexed access, the type of property K.
+### TS-15. `keyof`, `typeof` and indexed access?
 
-```typescript
+```ts
 const user = { id: 1, name: "A" };
 type User = typeof user;   // { id: number; name: string }
-type Keys = keyof User;     // "id" | "name"
-type NameT = User["name"];  // string
+type Keys = keyof User;    // "id" | "name"
+type NameT = User["name"]; // string
 ```
 
-### Q16. What are conditional types?
+- `typeof` → type of a runtime value.
+- `keyof` → union of property names.
+- `T[K]` → type of property K.
+
+**Real-life:** `keyof` = reading the labels on a set of drawers; `T[K]` = opening one drawer to see what's inside.
+
+### TS-16. What are conditional types?
 
 Type-level if/else: `T extends U ? X : Y`.
 
-```typescript
+```ts
 type IsString<T> = T extends string ? true : false;
 type A = IsString<"hi">; // true
 ```
 
-They are **distributive** over unions when T is a naked type parameter:
+They **distribute** over unions when T is a naked type parameter:
 
-```typescript
+```ts
 type ToArray<T> = T extends any ? T[] : never;
-type R = ToArray<string | number>; // string[] | number[]
+type R = ToArray<string | number>;               // string[] | number[]
+
 type NoDist<T> = [T] extends [any] ? T[] : never; // (string | number)[]
 ```
 
-### Q17. What does `infer` do?
+**Real-life:** distributive = sorting each letter in a pile one by one, instead of judging the whole pile.
 
-`infer` captures a type from inside another type, only within a conditional type.
+🎯 Wrapping in `[T]` turns distribution off.
 
-```typescript
+### TS-17. What does `infer` do?
+
+Captures a type from inside another type (only inside conditional types).
+
+```ts
 type ReturnOf<T> = T extends (...args: any[]) => infer R ? R : never;
 type Unwrap<T> = T extends Promise<infer U> ? Unwrap<U> : T;
 type X = Unwrap<Promise<Promise<number>>>; // number
 ```
 
-### Q18. What are mapped types?
+**Real-life:** opening nested gift boxes until you find the actual gift.
 
-They build a new type by looping over keys. Modifiers `+/-readonly` and `+/-?` add or remove flags; `as` renames keys.
+### TS-18. What are mapped types?
 
-```typescript
+Build a new type by looping over keys. `+/-readonly`, `+/-?` add/remove modifiers; `as` renames keys.
+
+```ts
 type Mutable<T> = { -readonly [K in keyof T]: T[K] };
+
 type Getters<T> = {
   [K in keyof T as `get${Capitalize<string & K>}`]: () => T[K];
 };
 // Getters<{ name: string }> → { getName: () => string }
 ```
 
-### Q19. What are template literal types?
+**Real-life:** photocopying every page of a form while changing each heading.
 
-String types built like template strings, great for event names, routes and CSS values.
+### TS-19. What are template literal types?
 
-```typescript
-type Event = "click" | "focus";
-type Handler = `on${Capitalize<Event>}`; // "onClick" | "onFocus"
+String types built like template strings: event names, routes, CSS values.
+
+```ts
+type Evt = "click" | "focus";
+type Handler = `on${Capitalize<Evt>}`; // "onClick" | "onFocus"
 
 type Params<S> = S extends `${string}:${infer P}/${infer Rest}`
   ? P | Params<`/${Rest}`>
   : S extends `${string}:${infer P}` ? P : never;
+
 type P = Params<"/user/:id/post/:postId">; // "id" | "postId"
 ```
 
-### Q20. What are branded (nominal) types?
+**Real-life:** a label printer that builds names from parts: "on" + "Click".
 
-A trick to stop mixing values with the same base type, like `UserId` and `OrderId` (both strings).
+⚠️ TS 7 treats emoji (surrogate pairs) as one character in template inference; utilities relying on old behaviour may change.
 
-```typescript
+### TS-20. What are branded (nominal) types?
+
+Stop mixing values with the same base type (`UserId` vs `OrderId`, both strings).
+
+```ts
 type Brand<T, B> = T & { readonly __brand: B };
 type UserId = Brand<string, "UserId">;
 type OrderId = Brand<string, "OrderId">;
 
-const toUserId = (s: string) => s as UserId;
+const toUserId = (s: string) => s as UserId; // only create through this
 function getUser(id: UserId) {}
-getUser("abc" as OrderId); // Error
+
+getUser("abc" as OrderId); // ❌ error
 ```
 
-### Q21. Name the important built-in utility types.
+**Real-life:** two keys that look the same but are cut for different doors.
 
-| Utility | What it does |
-| --- | --- |
-| `Partial<T>` / `Required<T>` | All props optional / required |
-| `Readonly<T>` | All props readonly (shallow) |
-| `Pick<T, K>` / `Omit<T, K>` | Keep / remove some keys |
-| `Record<K, V>` | Object with keys K and values V |
-| `Exclude<U, X>` / `Extract<U, X>` | Remove / keep union members |
-| `NonNullable<T>` | Remove null and undefined |
-| `ReturnType<F>` / `Parameters<F>` | Function return / argument types |
-| `Awaited<T>` | Unwrap Promise types (recursive) |
-| `InstanceType<C>` | Type of `new C()` |
-| `NoInfer<T>` (TS 5.4) | Stop a position from driving inference |
+🎯 Real bugs this prevents: passing `orderId` where `userId` was expected, mixing cents and rupees.
 
-Senior tip: be able to write `Partial`, `Pick`, `Omit` and `DeepReadonly` from scratch; interviewers often ask.
+### TS-21. Important built-in utility types?
 
-```typescript
+| Utility | Does |
+|---|---|
+| `Partial<T>` / `Required<T>` | all props optional / required |
+| `Readonly<T>` | all props readonly (shallow) |
+| `Pick<T, K>` / `Omit<T, K>` | keep / remove keys |
+| `Record<K, V>` | object with keys K, values V |
+| `Exclude<U, X>` / `Extract<U, X>` | remove / keep union members |
+| `NonNullable<T>` | remove `null` / `undefined` |
+| `ReturnType<F>` / `Parameters<F>` | function return / arg types |
+| `Awaited<T>` | unwrap Promises (recursive) |
+| `InstanceType<C>` | type of `new C()` |
+| `NoInfer<T>` (TS 5.4) | stop a position from driving inference |
+
+Write them yourself (common interview ask):
+
+```ts
+type MyPartial<T> = { [K in keyof T]?: T[K] };
 type MyPick<T, K extends keyof T> = { [P in K]: T[P] };
 type MyOmit<T, K extends PropertyKey> = Pick<T, Exclude<keyof T, K>>;
 type DeepReadonly<T> = {
@@ -258,41 +332,60 @@ type DeepReadonly<T> = {
 };
 ```
 
-### Q22. What is variance (covariance, contravariance)?
+**Real-life:** utility types are kitchen tools: you could cut everything with a knife, but a peeler is faster.
 
-- Covariant (outputs): `Dog[]` is usable where `Animal[]` is expected.
-- Contravariant (inputs): a function taking `Animal` is usable where a function taking `Dog` is expected, not the reverse.
+### TS-22. What is variance?
 
-With `strictFunctionTypes`, function *properties* are checked contravariantly, but *methods* stay bivariant (unsafe). So prefer `handler: (x: T) => void` over `handler(x: T): void` in interfaces. TS 4.7 added `in` / `out` annotations: `interface Box<out T>`.
+- **Covariant (outputs):** `Dog[]` works where `Animal[]` is expected.
+- **Contravariant (inputs):** a function taking `Animal` works where a function taking `Dog` is expected, not the reverse.
 
-### Q23. What are const type parameters? (TS 5.0)
+**Real-life:** a vet who treats **all animals** can replace a dog-only vet. A dog-only vet can't replace an all-animals vet.
 
-They infer literal types as if the caller wrote `as const`.
+⚠️ With `strictFunctionTypes`, function **properties** are checked contravariantly, but **methods** stay bivariant (unsafe):
 
-```typescript
+```ts
+interface Good { handler: (x: Dog) => void } // ✅ checked strictly
+interface Loose { handler(x: Dog): void }    // ⚠️ bivariant
+```
+
+🎯 TS 4.7 added `in` / `out` annotations: `interface Box<out T>`.
+
+### TS-23. What are `const` type parameters? (TS 5.0)
+
+Infer literal types as if the caller wrote `as const`.
+
+```ts
 function routes<const T extends readonly string[]>(r: T) { return r; }
 const r = routes(["/home", "/about"]); // readonly ["/home", "/about"]
 ```
 
-## Section 3: Narrowing, type guards and inference
+**Real-life:** writing down the exact words someone said, not a summary.
 
-### Q24. What is type narrowing?
+---
 
-TS follows your `if` checks and makes the type more specific inside each branch. Ways to narrow: `typeof`, `instanceof`, `in`, equality (`===`), truthiness, and discriminated unions.
+## Part C — Narrowing, Guards & Inference
 
-```typescript
+### TS-24. What is type narrowing?
+
+TS follows your checks and makes types more specific in each branch: `typeof`, `instanceof`, `in`, `===`, truthiness, discriminated unions.
+
+```ts
 function len(x: string | string[] | null) {
-  if (!x) return 0;              // removes null (and "")
-  if (typeof x === "string") return x.length;
-  return x.length;               // string[]
+  if (!x) return 0;                           // removes null (and "")
+  if (typeof x === "string") return x.length; // string
+  return x.length;                            // string[]
 }
 ```
 
-### Q25. What is a discriminated (tagged) union?
+**Real-life:** a sorting machine at a post office sends each parcel down the right chute.
 
-A union where every member has a common literal field (the "tag"). Checking the tag narrows to the right member. This is the most important pattern for modelling state.
+⚠️ Truthiness also removes `""` and `0`; use `x == null` when those are valid values.
 
-```typescript
+### TS-25. What is a discriminated union? ⭐
+
+A union where every member has a common **literal tag**. Checking the tag narrows to the right member.
+
+```ts
 type State =
   | { status: "loading" }
   | { status: "success"; data: string[] }
@@ -300,263 +393,389 @@ type State =
 
 function render(s: State) {
   switch (s.status) {
-    case "success": return s.data.length; // data available here
-    case "error": return s.error.message;
+    case "success": return s.data.length;   // data only exists here
+    case "error":   return s.error.message;
+    case "loading": return 0;
   }
 }
 ```
 
-Senior tip: this makes impossible states impossible, unlike `{ loading: boolean; data?: T; error?: Error }`.
+**Real-life:** a traffic light: red, amber or green, never two at once.
 
-### Q26. What is exhaustive checking with `never`?
+🎯 "Makes impossible states impossible", unlike `{ loading: boolean; data?: T; error?: Error }`.
 
-Assign the leftover value to `never` in the `default` branch. If someone adds a new union member later, the compiler shows an error.
+### TS-26. What is exhaustive checking with `never`?
 
-```typescript
+```ts
 function assertNever(x: never): never {
   throw new Error(`Unhandled: ${JSON.stringify(x)}`);
 }
-// default: return assertNever(s);
+
+switch (s.status) {
+  // ...cases
+  default: return assertNever(s); // error at compile time if a case is missing
+}
 ```
 
-### Q27. What is a user-defined type guard?
+**Real-life:** a checklist that flags a new item nobody handled yet.
 
-A function returning `value is Type`. If it returns true, TS narrows the value.
+🎯 Add `{ status: "idle" }` later → the compiler points to every switch you forgot to update.
 
-```typescript
+### TS-27. What is a user-defined type guard?
+
+A function returning `value is Type`.
+
+```ts
 function isUser(x: unknown): x is User {
   return typeof x === "object" && x !== null && "id" in x;
 }
+
+if (isUser(data)) data.id; // narrowed
 ```
 
-Senior tip: TS trusts you blindly; a wrong guard is a lie to the compiler. Since TS 5.5, simple guards like `arr.filter(x => x !== null)` are inferred automatically.
+**Real-life:** a bouncer checking IDs; if he says "OK", everyone trusts him.
 
-### Q28. What are assertion functions?
+⚠️ TS **trusts you blindly**. A wrong guard is a lie to the compiler.
+🎯 Since TS 5.5, simple guards are inferred: `[1, null, 2].filter(x => x !== null)` → `number[]`.
 
-Functions with `asserts x is T` (or `asserts condition`). They throw if the check fails, and narrow the type for the code after them.
+### TS-28. What are assertion functions?
 
-```typescript
+`asserts x is T` (or `asserts condition`): throws if false, narrows after.
+
+```ts
 function assertDefined<T>(v: T): asserts v is NonNullable<T> {
   if (v == null) throw new Error("Missing value");
 }
+
+assertDefined(user);
+user.name; // narrowed below the call
 ```
 
-### Q29. How does type inference work, and what is widening?
+| Type guard | Assertion function |
+|---|---|
+| returns boolean | throws or returns nothing |
+| use in `if` | call as a statement |
 
-TS guesses types from values. `let` widens literals (`let a = "x"` → `string`); `const` keeps them (`const a = "x"` → `"x"`). Object properties are widened too because they are mutable; use `as const` to keep literals.
+**Real-life:** a security gate: you either pass through cleared, or you're stopped.
 
-Contextual typing: a callback's parameter types are inferred from where it is used, like `[1, 2].map(n => n * 2)`.
+### TS-29. How does inference and widening work?
 
-### Q30. Type assertion (`as`) vs type annotation?
+- `let a = "x"` → `string` (widened, can change).
+- `const a = "x"` → `"x"` (literal).
+- Object properties widen (they're mutable); use `as const` to keep literals.
+- **Contextual typing:** `[1, 2].map(n => n * 2)` knows `n` is `number`.
 
-An annotation (`const u: User = …`) is *checked*. An assertion (`… as User`) *overrides* the checker and can hide bugs. Double assertion `x as unknown as T` forces anything. The non-null assertion `x!` says "trust me, not null."
+**Real-life:** writing in pencil (`let`) means "could change"; pen (`const`) means exact.
 
-Rule: prefer annotations and `satisfies`; use `as` only at real boundaries, with a comment.
+### TS-30. `as` (assertion) vs annotation?
 
-### Q31. What are function overloads?
+| Annotation `const u: User = …` | Assertion `… as User` |
+|---|---|
+| **checked** | **overrides** the checker |
+| safe | can hide bugs |
 
-Multiple call signatures followed by one implementation signature (which is not callable from outside).
+- `x as unknown as T` → forces anything.
+- `x!` → "trust me, not null".
 
-```typescript
+**Real-life:** annotation = a teacher checking your answer. `as` = writing "correct" on your own answer.
+
+🎯 Prefer annotations and `satisfies`; use `as` only at real boundaries, with a comment.
+
+### TS-31. What are function overloads?
+
+Several call signatures + one implementation (not callable from outside).
+
+```ts
 function get(id: number): User;
 function get(ids: number[]): User[];
 function get(x: number | number[]): User | User[] { /* ... */ }
 ```
 
-Senior tip: often a conditional return type or union parameter is simpler than overloads. Overloads are resolved top-down, so put the most specific first.
+**Real-life:** a restaurant menu listing "single scoop" and "family tub", served by one kitchen.
 
-### Q32. How do you type `this` in functions?
+🎯 Most specific signature first (resolved top-down). Often a union parameter or conditional return type is simpler.
 
-Add a fake first parameter named `this`; it is erased at compile time.
+### TS-32. How do you type `this`?
 
-```typescript
+A fake first parameter named `this` (erased at compile time).
+
+```ts
 function onClick(this: HTMLButtonElement, e: MouseEvent) {
   this.disabled = true;
 }
 ```
 
-## Section 4: Classes, decorators and modules
+---
 
-### Q33. `private` vs `#private`?
+## Part D — Classes, Decorators & Modules
 
-`private` is compile-time only; at runtime the field is a normal property anyone can read (`(obj as any).secret`). `#secret` is a real JavaScript private field, enforced at runtime. Use `#` when true hiding matters.
+### TS-33. `private` vs `#private`?
 
-### Q34. What are access modifiers and parameter properties?
+- `private` → **compile-time only**; at runtime anyone can read it (`(obj as any).secret`).
+- `#secret` → real JavaScript private field, enforced at **runtime**.
 
-`public` (default), `protected` (class + subclasses), `private` (class only), `readonly`. Parameter properties declare and assign a field in one line:
+**Real-life:** `private` = a "Staff only" sign. `#` = a locked door.
 
-```typescript
+🎯 Use `#` when true hiding matters.
+
+### TS-34. Access modifiers and parameter properties?
+
+`public` (default), `protected` (class + subclasses), `private` (class only), `readonly`.
+
+```ts
 class User {
-  constructor(private readonly id: string, public name: string) {}
+  constructor(private readonly id: string, public name: string) {} // declare + assign
 }
 ```
 
-Note: parameter properties are not "erasable syntax", so they fail under `--erasableSyntaxOnly` (TS 5.8) and Node's built-in type stripping.
+⚠️ Parameter properties aren't **erasable syntax**, so they fail with `--erasableSyntaxOnly` (TS 5.8) and Node's built-in type stripping.
 
-### Q35. Abstract class vs interface?
+### TS-35. Abstract class vs interface?
 
-An interface is only a contract (erased at runtime). An abstract class can hold shared code and state, cannot be created with `new`, and exists at runtime. A class can `implements` many interfaces but `extends` only one class.
+| Interface | Abstract class |
+|---|---|
+| contract only, erased at runtime | can have shared code + state |
+| `implements` many | `extends` only one |
+| no `new` | no `new` (only subclasses) |
 
-Senior tip: prefer composition and interfaces; use abstract classes for a template-method pattern with real shared logic.
+**Real-life:** interface = a job description. Abstract class = a half-built house the buyer finishes.
 
-### Q36. What does `override` do?
+🎯 Prefer composition + interfaces; abstract classes for a template-method pattern with real shared logic.
 
-The `override` keyword (with `noImplicitOverride`) makes you mark methods that replace a parent method. If the parent method is renamed, you get an error instead of a silent bug.
+### TS-36. What does `override` do?
 
-### Q37. What are decorators?
+With `noImplicitOverride`, you must mark methods that replace a parent method. If the parent method is renamed, you get an **error** instead of a silent bug.
 
-Functions that wrap classes, methods, fields or accessors to add behaviour (logging, DI, validation). Two versions exist:
+```ts
+class Base { save() {} }
+class Child extends Base { override save() {} }
+```
 
-- Legacy `experimentalDecorators`: used by Angular, NestJS, TypeORM; supports parameter decorators and `emitDecoratorMetadata`.
-- Standard (TC39) decorators, default since TS 5.0: different signature `(value, context)`, no parameter decorators.
+**Real-life:** writing "replaces page 4" on a new page, so you notice if page 4 disappears.
 
-```typescript
+### TS-37. What are decorators?
+
+Functions that wrap classes, methods, fields or accessors to add behaviour (logging, DI, validation).
+
+| Legacy `experimentalDecorators` | Standard TC39 (default since TS 5.0) |
+|---|---|
+| Angular, NestJS, TypeORM | new projects |
+| parameter decorators, `emitDecoratorMetadata` | no parameter decorators |
+| `(target, key, descriptor)` | `(value, context)` |
+
+```ts
 function log(target: any, context: ClassMethodDecoratorContext) {
   return function (this: any, ...args: any[]) {
     console.log(`Calling ${String(context.name)}`);
     return target.apply(this, args);
   };
 }
+
 class Svc { @log run() {} }
+new Svc().run(); // "Calling run"
 ```
 
-### Q38. What is declaration merging and module augmentation?
+**Real-life:** gift wrap on a present: the gift is the same, the wrapper adds something.
 
-Interfaces with the same name merge into one. You use this to extend third-party types.
+### TS-38. Declaration merging and module augmentation?
 
-```typescript
-// Add a field to Express Request
+Same-name interfaces **merge**. Use it to extend third-party types.
+
+```ts
+// add a field to Express Request
 declare global {
   namespace Express { interface Request { userId?: string } }
 }
 
-// Augment a library module
+// augment a library
 declare module "axios" {
   interface AxiosRequestConfig { retry?: number }
 }
 ```
 
-### Q39. What are `.d.ts` files and `declare`?
+**Real-life:** sticking an extra page into a published manual.
 
-Declaration files describe types only, with no code. They type plain JS libraries (DefinitelyTyped `@types/*`) or your published package. `declare` tells TS "this exists at runtime, trust me."
+⚠️ The augmenting file must be a **module** (have an `import`/`export`) and be included by tsconfig.
 
-```typescript
-declare const __APP_VERSION__: string; // injected by bundler
+### TS-39. What are `.d.ts` files and `declare`?
+
+Declaration files = **types only, no code**. They type plain JS libraries (`@types/*`) or your published package. `declare` says "this exists at runtime, trust me".
+
+```ts
+declare const __APP_VERSION__: string;                    // injected by bundler
 declare module "*.svg" { const url: string; export default url; }
 ```
 
-### Q40. What is `import type` and why does it matter?
+**Real-life:** a product manual for a machine you didn't build.
 
-`import type { User } from "./user"` is always erased, so it never creates a runtime import or circular-dependency issue. With `verbatimModuleSyntax: true`, TS forces you to mark type-only imports, which makes output predictable for esbuild, SWC and Babel.
+### TS-40. What is `import type`?
 
-### Q41. ES modules vs CommonJS in TS?
+`import type { User } from "./user"` is **always erased**: no runtime import, no circular-dependency side effects.
 
-TS can output either. `module` / `moduleResolution` settings decide how imports are resolved:
+🎯 `verbatimModuleSyntax: true` forces you to mark type-only imports, so output is predictable for esbuild, SWC and Babel.
 
-| Setting | Use for |
-| --- | --- |
-| `nodenext` | Node.js apps and libraries (respects `package.json` `type` and `exports`) |
-| `bundler` | Code built by Vite, webpack, esbuild |
-| `node10` (old `node`) | Legacy only, avoid |
+**Real-life:** borrowing a recipe's description, not the ingredients.
 
-In `nodenext` ESM files, relative imports need file extensions (`./util.js`, even for a `.ts` file).
+### TS-41. ES modules vs CommonJS in TS?
 
-### Q42. Namespaces: use or avoid?
+| `moduleResolution` | Use for |
+|---|---|
+| `nodenext` | Node.js apps/libraries (respects `package.json` `type` + `exports`) |
+| `bundler` | Vite, webpack, esbuild projects |
+| `node10` / `classic` | ❌ **removed in TS 7** (hard error) |
 
-Namespaces are an old TS-only module system. Avoid them in new code; use ES modules. They still appear in `.d.ts` files and global augmentation.
+⚠️ In `nodenext` ESM files, relative imports need extensions: `./util.js` (even for a `.ts` file).
+⚠️ TS 7 defaults `module` to `esnext`, and `module: amd/umd/systemjs/none` are removed.
 
-## Section 5: tsconfig, compiler, performance and tooling
+### TS-42. Namespaces: use or avoid?
 
-### Q43. Which tsconfig options matter most?
+An old TS-only module system. **Avoid** in new code; use ES modules. They still appear in `.d.ts` files and global augmentation.
 
-| Option | Why it matters |
-| --- | --- |
-| `strict` | Turns on all strict checks (`strictNullChecks`, `noImplicitAny`, `strictFunctionTypes`, etc.). Always on for new code |
-| `noUncheckedIndexedAccess` | `arr[0]` and `obj[key]` become `T \| undefined`; catches many real bugs |
-| `exactOptionalPropertyTypes` | `prop?: string` no longer accepts an explicit `undefined` |
-| `target` | Which JS version to output (e.g. `ES2022`) |
-| `lib` | Which built-in types exist (`DOM`, `ES2023`) |
-| `module` / `moduleResolution` | How imports are emitted and resolved (see Q41) |
-| `isolatedModules` | Each file must compile alone; required for esbuild, SWC, Babel |
-| `verbatimModuleSyntax` | Exact import/export output; forces `import type` |
-| `skipLibCheck` | Skip checking `.d.ts` files; much faster builds |
-| `declaration` / `declarationMap` | Emit `.d.ts` files for libraries |
-| `paths` / `baseUrl` | Import aliases (`@/utils`); bundler must match |
-| `incremental` / `composite` | Faster rebuilds; `composite` needed for project references |
+⚠️ TS 7 removed the `module` keyword for namespaces (`module Foo {}`); only `namespace Foo {}` remains.
 
-### Q44. How do you migrate a big JavaScript codebase to TypeScript?
+---
 
-1. Add `tsconfig` with `allowJs: true` and `checkJs: false`; build passes on day one.
-2. Rename files to `.ts` leaf-first (utils, then services, then UI).
-3. Start loose (`strict: false`), then enable strict flags one by one.
-4. Track progress: count of `any` and `@ts-expect-error`, enforce in CI.
-5. Use JSDoc types in JS files you can't convert yet.
-6. Lint rules (`@typescript-eslint/no-explicit-any`) to stop new debt.
+## Part E — tsconfig, Compiler & Tooling
 
-Senior tip: migrate by module ownership and ship continuously; a "big bang" rewrite branch usually fails.
+### TS-43. Which tsconfig options matter most?
 
-### Q45. How do you make a slow TS build faster?
+| Option | Why |
+|---|---|
+| `strict` | all strict checks; **default `true` in TS 7** |
+| `noUncheckedIndexedAccess` | `arr[0]` → `T \| undefined`; catches real bugs |
+| `exactOptionalPropertyTypes` | `prop?: string` rejects explicit `undefined` |
+| `target` / `lib` | output JS version / built-in types (`DOM`, `ES2023`) |
+| `module` / `moduleResolution` | `nodenext` or `bundler` (TS-41) |
+| `isolatedModules` | each file compiles alone (esbuild/SWC/Babel) |
+| `verbatimModuleSyntax` | exact import output; forces `import type` |
+| `skipLibCheck` | skip `.d.ts` checks; faster builds |
+| `declaration` / `declarationMap` | emit `.d.ts` for libraries |
+| `paths` | import aliases (`@/utils`); bundler must match |
+| `incremental` / `composite` | faster rebuilds; project references |
 
-- Use project references (`composite`, `tsc -b`) to split a monorepo into separately cached projects.
-- `skipLibCheck: true` and `incremental: true`.
-- Transpile with esbuild/SWC, and run `tsc --noEmit` for type checking in parallel.
-- Prefer `interface extends` over big `&` intersections; name complex types instead of inlining them.
-- Avoid huge unions (thousands of members) and deeply recursive conditional types.
-- Add explicit return types on exported functions (with `isolatedDeclarations` in TS 5.5, this also lets tools generate `.d.ts` in parallel).
-- Diagnose with `tsc --extendedDiagnostics` and `tsc --generateTrace`.
+⚠️ **TS 7 changes:** `baseUrl` removed (use `paths` relative to the tsconfig), `target: es5` removed, `types` defaults to `[]` (add `"types": ["node"]` or `["*"]`), and `rootDir` defaults to `./`.
 
-### Q46. `@ts-ignore` vs `@ts-expect-error`?
+**Real-life:** tsconfig is the car's settings menu: safety features, which roads it drives on, how fast it builds.
 
-`@ts-ignore` silences the next line forever. `@ts-expect-error` silences it but **errors if there is no longer an error**, so stale suppressions get cleaned up. Always prefer `@ts-expect-error` with a reason.
+### TS-44. How do you migrate a big JS codebase to TS?
 
-### Q47. Does TypeScript do runtime validation? How do you handle API data?
+1. Add tsconfig with `allowJs: true`, `checkJs: false`; build passes on day one.
+2. Rename to `.ts` **leaf-first** (utils → services → UI).
+3. Start loose, enable strict flags **one by one**.
+4. Track `any` and `@ts-expect-error` counts in CI.
+5. JSDoc types in JS files you can't convert yet.
+6. Lint rules (`no-explicit-any`) to stop new debt.
 
-No. Types are erased. For external data (HTTP, env vars, localStorage, queues) validate at the boundary and derive the type from the schema, so you have one source of truth.
+**Real-life:** renovating a house room by room while living in it.
 
-```typescript
+🎯 Migrate by module ownership and ship continuously; a big-bang rewrite branch usually fails.
+
+### TS-45. How do you speed up a slow TS build?
+
+- **Upgrade to TS 7** (native Go compiler, ~8–12× faster full builds).
+- Project references (`composite`, `tsc -b`) to split a monorepo.
+- `skipLibCheck: true`, `incremental: true`.
+- Transpile with esbuild/SWC; run `tsc --noEmit` for type checking in parallel.
+- Prefer `interface extends` over big `&` intersections; name complex types.
+- Avoid huge unions and deep recursive conditional types.
+- Explicit return types on exports (`isolatedDeclarations`, TS 5.5).
+- Diagnose: `tsc --extendedDiagnostics`, `tsc --generateTrace`.
+
+**Real-life:** a traffic jam: widen the road (TS 7), split traffic (project references), skip unnecessary checkpoints (`skipLibCheck`).
+
+### TS-46. `@ts-ignore` vs `@ts-expect-error`?
+
+| `@ts-ignore` | `@ts-expect-error` |
+|---|---|
+| silences forever | **errors if there's no longer an error** |
+| stale suppressions pile up | auto-cleaned |
+
+```ts
+// @ts-expect-error legacy lib has wrong types, remove after v3 upgrade
+legacy.call(1);
+```
+
+**Real-life:** `@ts-expect-error` = a reminder note that beeps when the problem is fixed.
+
+### TS-47. Does TS validate at runtime? How to handle API data?
+
+**No.** Validate at the boundary and **derive the type from the schema** (one source of truth).
+
+```ts
 import { z } from "zod";
+
 const UserSchema = z.object({ id: z.number(), email: z.string().email() });
 type User = z.infer<typeof UserSchema>;
 
 const user = UserSchema.parse(await res.json()); // throws if invalid
 ```
 
-Alternatives: Valibot, ArkType, io-ts, or generating types from OpenAPI / GraphQL schemas.
+**Real-life:** a passport photo (type) doesn't prove who's standing at the counter; you still check the person (validation).
 
-### Q48. How do you publish a TypeScript library correctly?
+🎯 Alternatives: Valibot, ArkType, or generate types from OpenAPI / GraphQL.
 
-- Emit `.d.ts` (`declaration: true`) and point `types` / `exports` in `package.json` to them.
-- Use the `exports` map with `types` conditions first; support ESM (and CJS if needed).
-- Test types with tools like `@arethetypeswrong/cli`, `tsd` or `expect-type`.
-- Treat type changes as API changes: a stricter type can be a breaking change for semver.
+### TS-48. How do you publish a TS library correctly?
 
-### Q49. How does TS run in Node directly now?
+- `declaration: true`; point `types` / `exports` in package.json to the `.d.ts`.
+- `exports` map with **`types` condition first**; ESM (and CJS if needed).
+- Test types: `@arethetypeswrong/cli`, `tsd`, `expect-type`.
+- A stricter type can be a **breaking change** for semver.
 
-Node.js (22.6+, unflagged in 23.6+) can strip types and run `.ts` files directly, but only "erasable" syntax: no enums, namespaces with code, or parameter properties. TS 5.8 added `--erasableSyntaxOnly` to enforce this. Tools like `tsx` and Bun run full TS.
+**Real-life:** shipping a product with the right instruction manual for each country.
 
-### Q50. What is the new native TypeScript compiler?
+### TS-49. How does TS run directly in Node?
 
-Microsoft is porting the TypeScript compiler to Go ("Project Corsa", planned as TypeScript 7), reporting around 10x faster builds and editor loading. TS 6.x is the bridge release that deprecates old options. Version details change fast, so check the official TypeScript blog for current status before an interview.
+Node.js (22.6+, unflagged in 23.6+) can **strip types** and run `.ts` files directly, but only **erasable** syntax: no enums, namespaces with code, or parameter properties.
 
-## Section 6: Architecture and senior-level questions
+```bash
+node app.ts
+```
 
-At 12+ years, these questions test judgment. Answer with: the principle, a short example from your work, and the trade-off.
+🎯 `--erasableSyntaxOnly` (TS 5.8) enforces this. `tsx` and Bun run full TS.
 
-### Q51. How do you share types between frontend and backend?
+**Real-life:** reading a book with the margin notes erased; anything that needs rewriting (enums) can't be erased.
 
-Options, from simplest to strongest:
+### TS-50. What is TypeScript 7 (the native compiler)?
 
-1. A shared `types` package in a monorepo (pnpm/Nx/Turborepo workspaces).
-2. Generate types from a contract: OpenAPI (`openapi-typescript`), GraphQL Codegen, or Protobuf.
-3. End-to-end inferred types: tRPC, or Zod schemas shared by both sides.
+**TypeScript 7.0 (released 8 July 2026)** is the compiler **ported to Go** ("Project Corsa"). Same type-checking results as TS 6, but much faster.
 
-Trade-off: generated contracts work across languages and teams; inferred types (tRPC) are fastest to build but couple client and server to TypeScript.
+| | TS 6 → TS 7 |
+|---|---|
+| Full builds | ~**7.7–12×** faster (vscode: 125.7 s → 10.6 s) |
+| With `--checkers 8` | up to ~**17×** |
+| Memory | 6–26% lower |
+| Editor first error | ~17.5 s → under 1.3 s |
 
-### Q52. How do you design a type-safe API client?
+**New defaults:** `strict: true`, `module: esnext`, `types: []`, `rootDir: ./`.
+**Now errors:** `target: es5`, `moduleResolution: node10/classic`, `baseUrl`, `module: amd/umd/systemjs`, `esModuleInterop: false`, import `asserts` (use `with`).
 
-Map each endpoint to its request and response types once, then let generics do the rest.
+⚠️ TS 7.0 has **no programmatic API yet** (planned for 7.1). Tools that need it (typescript-eslint, Vue/Svelte/Angular template editors, some webpack loaders) run alongside TS 6 via `@typescript/typescript6`.
 
-```typescript
+**Real-life:** same car, new engine: it drives the same roads, just far faster.
+
+🎯 "Upgrade to TS 6 first to clear deprecations, then move to 7; keep TS 6 side by side for tools that still need the API."
+
+---
+
+## Part F — Architecture (Senior)
+
+> Answer with: **principle → short example from your work → trade-off.**
+
+### TS-51. How do you share types between frontend and backend?
+
+1. **Shared `types` package** in a monorepo (pnpm/Nx/Turborepo).
+2. **Generate from a contract:** OpenAPI (`openapi-typescript`), GraphQL Codegen, Protobuf.
+3. **End-to-end inference:** tRPC, or Zod schemas shared by both sides.
+
+**Real-life:** both teams build from the same blueprint instead of copying measurements by hand.
+
+🎯 Generated contracts work across languages and teams; tRPC is fastest to build but couples both sides to TS.
+
+### TS-52. How do you design a type-safe API client?
+
+Map each endpoint to request/response types once, then let generics do the rest.
+
+```ts
 type Endpoints = {
   "GET /users/:id": { res: User };
   "POST /users": { body: NewUser; res: User };
@@ -567,217 +786,295 @@ async function api<K extends keyof Endpoints>(
   ...args: Endpoints[K] extends { body: infer B } ? [body: B] : []
 ): Promise<Endpoints[K]["res"]> { /* fetch + validate */ }
 
-const u = await api("GET /users/:id"); // User
+const u = await api("GET /users/:id");         // User, no body allowed
+await api("POST /users", { name: "A" });       // body required and typed
 ```
 
-### Q53. How do you model errors in TypeScript?
+**Real-life:** a vending machine: each button (route) takes the right coin (body) and gives the right item (response).
 
-`throw` is not typed: a `catch (e)` gives `unknown` (with `useUnknownInCatchVariables`). For expected failures, return a Result type so callers must handle them.
+### TS-53. How do you model errors?
 
-```typescript
+`catch (e)` gives `unknown`; thrown errors aren't typed. For **expected** failures, return a **Result**.
+
+```ts
 type Result<T, E = Error> =
   | { ok: true; value: T }
   | { ok: false; error: E };
+
+function parseAge(s: string): Result<number, "NOT_A_NUMBER"> {
+  const n = Number(s);
+  return Number.isNaN(n) ? { ok: false, error: "NOT_A_NUMBER" } : { ok: true, value: n };
+}
 ```
 
-Use exceptions for truly unexpected errors; Result types for business failures (validation, not found). Libraries: `neverthrow`, Effect.
+**Real-life:** a delivery app shows "delivered" **or** "address not found" clearly, instead of the driver just disappearing (throw).
 
-### Q54. How do you implement type-safe dependency injection?
+🎯 Exceptions for unexpected errors; Result for business failures. Libraries: `neverthrow`, Effect.
 
-Depend on interfaces, inject through constructors, and wire up in one place (composition root). Frameworks: NestJS and Angular (decorator-based), InversifyJS, or plain factory functions. Senior tip: for most apps, plain constructor injection without a container is simpler and fully type-safe.
+### TS-54. Type-safe dependency injection?
 
-### Q55. How do you write type-safe event emitters / pub-sub?
+Depend on **interfaces**, inject through constructors, wire up in one place (**composition root**).
 
-```typescript
+```ts
+interface Mailer { send(to: string, msg: string): Promise<void> }
+
+class UserService {
+  constructor(private mailer: Mailer) {}
+}
+
+const service = new UserService(new SmtpMailer()); // composition root
+// tests: new UserService(fakeMailer)
+```
+
+**Real-life:** a phone charger with a standard port: plug in any brand of cable.
+
+🎯 For most apps, plain constructor injection is simpler and fully type-safe; containers (NestJS, Angular, Inversify) for large frameworks.
+
+### TS-55. Type-safe event emitter?
+
+```ts
 type Events = { login: { userId: string }; logout: void };
 
 class Emitter<E extends Record<string, unknown>> {
   private handlers: { [K in keyof E]?: ((p: E[K]) => void)[] } = {};
+
   on<K extends keyof E>(event: K, fn: (p: E[K]) => void) {
     (this.handlers[event] ??= []).push(fn);
   }
+
   emit<K extends keyof E>(event: K, payload: E[K]) {
-    this.handlers[event]?.forEach(fn => fn(payload));
+    this.handlers[event]?.forEach((fn) => fn(payload));
   }
 }
+
+const em = new Emitter<Events>();
+em.on("login", (p) => p.userId); // p is { userId: string }
 ```
 
-### Q56. What TypeScript standards would you set for a large team?
+**Real-life:** a radio where each channel has a fixed programme format; you can't tune into a channel that doesn't exist.
 
-- `strict: true` plus `noUncheckedIndexedAccess` from day one.
-- ESLint with `typescript-eslint` type-aware rules (`no-floating-promises`, `no-explicit-any`, `consistent-type-imports`).
-- Validate all external input at boundaries; no `as` casts on API data.
-- Discriminated unions for state; avoid optional-field soup.
-- Explicit return types on exported/public functions.
-- Type checking in CI and pre-commit; ban `@ts-ignore`, allow `@ts-expect-error` with a reason.
-- Code review focus: are the types *modelling the domain*, not just silencing errors?
+### TS-56. TypeScript standards for a large team?
 
-### Q57. When is too much type cleverness a problem?
+- `strict: true` + `noUncheckedIndexedAccess` from day one.
+- `typescript-eslint` type-aware rules: `no-floating-promises`, `no-explicit-any`, `consistent-type-imports`.
+- Validate all external input; no `as` on API data.
+- Discriminated unions for state.
+- Explicit return types on exported functions.
+- Type check in CI; ban `@ts-ignore`, allow `@ts-expect-error` with a reason.
+- Review question: "Do the types **model the domain**, or just silence errors?"
 
-When types become hard to read, slow the compiler, or give error messages nobody understands. Senior answer: keep public APIs simple, hide complex types inside library code, add type tests, and choose readability over perfect precision when the risk is low.
+**Real-life:** building codes for a city: everyone follows the same safety rules.
 
-### Q58. How do you type React components well? (if asked)
+### TS-57. When is type cleverness a problem?
 
-- Props as a `type` or `interface`; avoid `React.FC` for children inference issues in older versions, just type props directly.
-- Use discriminated unions for variant props.
+When types are **hard to read**, **slow the compiler**, or give errors nobody understands.
+
+**Real-life:** a lock so complex even the owner can't open it.
+
+🎯 Keep public APIs simple, hide complex types inside library code, add type tests, choose readability when risk is low.
+
+### TS-58. How do you type React components?
+
+- Props as `type`/`interface`; type props directly (`React.FC` is optional).
+- Discriminated unions for variant props.
 - Extend native props: `ComponentPropsWithoutRef<"button">`.
 - Generic components: `function List<T>({ items, render }: { items: T[]; render: (t: T) => ReactNode })`.
-- Type `useState` when the initial value is empty: `useState<User | null>(null)`.
+- Empty initial state: `useState<User | null>(null)`.
 
-### Q59. How do you type async code safely?
+```tsx
+type ButtonProps =
+  | { variant: "link"; href: string }
+  | { variant: "button"; onClick: () => void };
+```
 
-- Async functions always return `Promise<T>`; use `Awaited<T>` to unwrap.
-- `Promise.all([a(), b()])` keeps a typed tuple.
-- Turn on the `no-floating-promises` lint rule to catch missing `await`.
-- Use `AbortController` signals for cancellation in typed fetch helpers.
+### TS-59. How do you type async code safely?
 
-### Q60. What is the `using` keyword? (TS 5.2)
+- `async` always returns `Promise<T>`; unwrap with `Awaited<T>`.
+- `Promise.all([a(), b()])` keeps a **typed tuple**.
+- `no-floating-promises` lint rule catches missing `await`.
+- `AbortController` signals in typed fetch helpers.
 
-Explicit resource management: `using` calls `[Symbol.dispose]()` automatically when the block ends (like `try/finally`). `await using` does the same for async cleanup. Good for DB connections, file handles and locks.
+```ts
+const [user, posts] = await Promise.all([getUser(), getPosts()]); // [User, Post[]]
+```
 
-## Section 7: Tricky questions (try before reading the answer)
+**Real-life:** a forgotten `await` is like ordering food and walking off before it arrives.
 
-### T1. What is the type of `x`?
+### TS-60. What is `using`? (TS 5.2)
 
-```typescript
+Explicit resource management: `using` calls `[Symbol.dispose]()` automatically at the end of the block (like `try/finally`). `await using` for async cleanup.
+
+```ts
+function openFile(path: string) {
+  return { read() { /* ... */ }, [Symbol.dispose]() { console.log("closed"); } };
+}
+
+{
+  using file = openFile("a.txt");
+  file.read();
+} // "closed" runs automatically
+```
+
+**Real-life:** a hotel room that checks you out automatically when you leave.
+
+🎯 Good for DB connections, file handles, locks.
+
+---
+
+## Part G — Tricky Questions (try first!)
+
+### TS-61. What is the type of `x`?
+
+```ts
 const arr = [1, "a", true];
 const x = arr[0];
 ```
 
-Answer: `string | number | boolean`, not `number`. Arrays are not tuples. With `as const` it becomes `1`.
+**Answer:** `string | number | boolean`, not `number`. Arrays aren't tuples. With `as const` it's `1`.
 
-### T2. Does this compile?
+### TS-62. Does this compile?
 
-```typescript
+```ts
 interface A { name: string }
 const obj = { name: "x", age: 3 };
 const a: A = obj;
 ```
 
-Answer: Yes. Excess property checks only apply to fresh object literals (Q11).
+**Answer:** Yes. Excess property checks only apply to **fresh object literals** (TS-11).
 
-### T3. Why does this error?
+### TS-63. Why is `Object.keys` typed as `string[]`?
 
-```typescript
+```ts
 const keys = Object.keys({ a: 1, b: 2 }); // string[]
 ```
 
-Answer: `Object.keys` returns `string[]`, not `("a" | "b")[]`, because an object may have extra keys at runtime (structural typing). Use `(Object.keys(o) as (keyof typeof o)[])` only when you are sure.
+**Answer:** objects may have **extra keys at runtime** (structural typing). Cast only when sure: `Object.keys(o) as (keyof typeof o)[]`.
 
-### T4. What is `keyof any`?
+### TS-64. What is `keyof any`?
 
-Answer: `string | number | symbol` (same as the built-in `PropertyKey`).
+**Answer:** `string | number | symbol` (= `PropertyKey`).
 
-### T5. What is `never` in a union and intersection?
+### TS-65. What is `never` in unions and intersections?
 
-Answer: `string | never` = `string` (never disappears). `string & never` = `never`. Also `string & number` = `never`.
+**Answer:** `string | never` = `string` (disappears). `string & never` = `never`. `string & number` = `never`.
 
-### T6. What is the result?
+**Real-life:** adding "nothing" to a list changes nothing; requiring "impossible" makes the whole requirement impossible.
 
-```typescript
+### TS-66. What is the result?
+
+```ts
 type T = Exclude<"a" | "b" | "c", "a">;
 ```
 
-Answer: `"b" | "c"`. It works because conditional types distribute over unions.
+**Answer:** `"b" | "c"`, because conditional types **distribute** over unions.
 
-### T7. Why is this unsafe even with strict mode?
+### TS-67. Why is this unsafe even in strict mode?
 
-```typescript
+```ts
 const nums: number[] = [];
-const first = nums[0].toFixed(); // runtime crash
+nums[0].toFixed(); // runtime crash
 ```
 
-Answer: index access returns `number`, not `number | undefined`, unless `noUncheckedIndexedAccess` is on.
+**Answer:** index access returns `number`, not `number | undefined`, unless `noUncheckedIndexedAccess` is on.
 
-### T8. Why does narrowing get lost here?
+### TS-68. Why is narrowing lost here?
 
-```typescript
+```ts
 function f(u: { name?: string }) {
   if (u.name) {
-    setTimeout(() => u.name.toUpperCase()); // error
+    setTimeout(() => u.name.toUpperCase()); // ❌ error
   }
 }
 ```
 
-Answer: inside a callback, TS can't be sure `u.name` wasn't changed later. Copy it to a `const` first: `const n = u.name;`. (TS 5.4 keeps narrowing in closures after the last assignment for `let` variables and parameters, but not for object properties.)
+**Answer:** inside a callback, TS can't be sure `u.name` wasn't changed later. Fix: `const n = u.name;` and use `n`.
 
-### T9. Write a type `Last<T>` that returns the last element of a tuple.
+🎯 TS 5.4 keeps narrowing in closures for `let` variables and parameters after their last assignment, but **not for object properties**.
 
-```typescript
+### TS-69. Write `Last<T>` for a tuple.
+
+```ts
 type Last<T extends any[]> = T extends [...any[], infer L] ? L : never;
 type R = Last<[1, 2, 3]>; // 3
 ```
 
-### T10. Write `DeepPartial<T>`.
+### TS-70. Write `DeepPartial<T>`.
 
-```typescript
+```ts
 type DeepPartial<T> = T extends object
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : T;
 ```
 
-Follow-up: functions and arrays are objects too; production versions handle them separately.
+🎯 Follow-up: functions and arrays are objects too; production versions handle them separately.
 
-### T11. Write `UnionToIntersection<U>`.
+### TS-71. Write `UnionToIntersection<U>`.
 
-```typescript
+```ts
 type UnionToIntersection<U> =
   (U extends any ? (x: U) => void : never) extends (x: infer I) => void
-    ? I : never;
+    ? I
+    : never;
+
+type R = UnionToIntersection<{ a: 1 } | { b: 2 }>; // { a: 1 } & { b: 2 }
 ```
 
-Why it works: function parameters are contravariant, so inferring from a union of functions gives an intersection.
+**Why:** function parameters are **contravariant**, so inferring from a union of functions gives an intersection.
 
-### T12. Make a function that only accepts keys whose values are strings.
+### TS-72. Accept only keys whose values are strings.
 
-```typescript
+```ts
 type KeysOfType<T, V> = { [K in keyof T]: T[K] extends V ? K : never }[keyof T];
 
 function pluck<T>(o: T, k: KeysOfType<T, string>) { return o[k]; }
-pluck({ a: "x", b: 1 }, "a"); // OK
-pluck({ a: "x", b: 1 }, "b"); // Error
+
+pluck({ a: "x", b: 1 }, "a"); // ✅
+pluck({ a: "x", b: 1 }, "b"); // ❌
 ```
 
-### T13. What does this print, and what does TS think?
+### TS-73. What does this print?
 
-```typescript
+```ts
 enum Color { Red, Green }
 console.log(Color[0], Color.Green);
 ```
 
-Answer: prints `Red 1`. Numeric enums have reverse mapping (number → name). String enums do not.
+**Answer:** `Red 1`. Numeric enums have **reverse mapping** (number → name). String enums don't.
 
-## Quick revision cheat sheet
+---
 
-Read this the night before the interview.
+## Part H — Cheat Sheet
 
-| Topic | One-line answer |
-| --- | --- |
-| Typing model | Structural (shape-based), types erased at runtime |
-| interface vs type | interface for object contracts + merging; type for unions and compositions |
-| any / unknown / never | Off / must-check / impossible |
-| satisfies | Check a type without losing the inferred, narrower type |
-| as const | Deep readonly + literal types; replaces most enums |
-| Generics | Type parameters that link inputs to outputs; constrain with `extends` |
+### TS-74. One-line answers (night before the interview)
+
+| Topic | One line |
+|---|---|
+| Typing model | structural (shape-based); types erased at runtime |
+| interface vs type | interface for object contracts + merging; type for unions/compositions |
+| any / unknown / never | off / must check / impossible |
+| `satisfies` | check type without losing the narrow inferred type |
+| `as const` | deep readonly + literals; replaces most enums |
+| Generics | type parameters linking inputs to outputs; constrain with `extends` |
 | Conditional types | `T extends U ? X : Y`; distributive over naked unions |
-| infer | Pull a type out inside a conditional type |
-| Mapped types | Loop over keys; `-readonly`, `-?`, `as` for renaming |
-| Template literal types | String types like `` `on${Capitalize<E>}` `` |
-| Branded types | `T & { __brand: B }` to fake nominal typing |
-| Discriminated unions | Common literal tag field; best way to model state |
-| Exhaustiveness | Assign leftover to `never` in default |
+| `infer` | pull a type out inside a conditional type |
+| Mapped types | loop over keys; `-readonly`, `-?`, `as` rename |
+| Template literal types | `` `on${Capitalize<E>}` `` |
+| Branded types | `T & { __brand: B }` fakes nominal typing |
+| Discriminated unions | literal tag field; best way to model state |
+| Exhaustiveness | leftover assigned to `never` in `default` |
 | Type guards | `x is T` (TS trusts you); `asserts x is T` throws |
-| as vs annotation | Annotation is checked; `as` overrides the checker |
-| Variance | Outputs covariant, inputs contravariant; methods are bivariant |
-| private vs # | Compile-time only vs real runtime privacy |
-| Decorators | Legacy (Angular/Nest) vs TC39 standard (TS 5.0+) |
-| import type | Erased import; enforce with `verbatimModuleSyntax` |
-| Module resolution | `nodenext` for Node, `bundler` for Vite/webpack |
-| Must-have flags | `strict`, `noUncheckedIndexedAccess`, `isolatedModules`, `skipLibCheck` |
-| Runtime data | Validate with Zod and infer types from the schema |
-| Big builds | Project references, SWC/esbuild transpile, `tsc --noEmit`, diagnostics |
+| `as` vs annotation | annotation is checked; `as` overrides |
+| Variance | outputs covariant, inputs contravariant; methods bivariant |
+| `private` vs `#` | compile-time only vs real runtime privacy |
+| Decorators | legacy (Angular/Nest) vs TC39 standard (TS 5.0+) |
+| `import type` | erased import; enforce with `verbatimModuleSyntax` |
+| Module resolution | `nodenext` for Node, `bundler` for Vite/webpack; `node10` removed in TS 7 |
+| Must-have flags | `strict` (default in TS 7), `noUncheckedIndexedAccess`, `isolatedModules`, `skipLibCheck` |
+| Runtime data | validate with Zod, infer types from the schema |
+| Big builds | TS 7, project references, SWC/esbuild + `tsc --noEmit` |
 | Migration | allowJs, leaf-first, strict flags one by one, track `any` in CI |
-| ts-expect-error | Better than ts-ignore: errors when no longer needed |
-| using | Auto cleanup via `Symbol.dispose` (TS 5.2) |
+| `@ts-expect-error` | better than `@ts-ignore`: errors when no longer needed |
+| `using` | auto cleanup via `Symbol.dispose` (TS 5.2) |
+| TS 7 | Go-native compiler (July 2026), ~10× faster, no API until 7.1 |
 
-Practice tip: write `Pick`, `Omit`, `Partial`, `DeepReadonly`, `ReturnType`, `Awaited` and `UnionToIntersection` from memory on paper. If you can explain each line, you are ready for the type-level round.
+> **Practice:** write `Partial`, `Pick`, `Omit`, `DeepReadonly`, `ReturnType`, `Awaited` and `UnionToIntersection` from memory. If you can explain each line, you're ready for the type-level round.
