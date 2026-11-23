@@ -1,209 +1,326 @@
-# 📘 My AI & Claude Study Notes
 
-Short, simple notes for quick revision. Each topic has everything in one place: **key points → code → quiz answers**.
+# AI & Claude Interview Notes
+
+> Question-wise notes from **Claude 101**, **Building with the Claude API** and **Claude Code 101**, plus AI-engineering and system-design interview questions.
+> Each question: **short answer → real-life example → code → ⚠️ gotcha → 🎯 interview tip.**
+> Questions marked **🆕** are extra interview topics. **🔄 Updated** marks API facts that changed on the latest models (checked against the Claude docs, Nov 2026).
 
 > **TL;DR:** Brief Claude like a colleague → **Task + Context + Example + Format** → iterate.
 
-## 📚 Contents
-**Part A – AI & Claude Basics** ([Claude 101](https://anthropic.skilljar.com/claude-101))
-1. [AI Basics](#1-ai-basics)
-2. [How an LLM Works](#2-how-an-llm-works)
-3. [Claude Features & Where Claude Lives](#3-claude-features--where-claude-lives)
-4. [AI Tools Map](#4-ai-tools-map)
-5. [AI Safety](#5-ai-safety)
+## Table of Contents
 
-**Part B – Building with the Claude API** ([course](https://academy.claude.com/courses/building-with-the-claude-api))
-6. [API Basics](#6-api-basics)
-7. [Prompt Engineering](#7-prompt-engineering)
-8. [Prompt Evaluation](#8-prompt-evaluation)
-9. [Tool Use](#9-tool-use)
-10. [RAG (Search in Documents)](#10-rag-search-in-documents)
-11. [Claude Features (API)](#11-claude-features-api)
-12. [MCP (Model Context Protocol)](#12-mcp-model-context-protocol)
-13. [Claude Code & Computer Use](#13-claude-code--computer-use)
-14. [Agents & Workflows](#14-agents--workflows)
-
-**Part C – System Design**
-15. [System Design Basics](#15-system-design-basics)
-
-**[⚡ One-Page Cheat Sheet](#-one-page-cheat-sheet)**
+| Part | Topic | Questions |
+|---|---|---|
+| A | AI & Claude Basics | AI-1 to AI-12 |
+| B | Claude API Basics | AI-13 to AI-22 |
+| C | Prompt Engineering & Evaluation | AI-23 to AI-30 |
+| D | Tool Use | AI-31 to AI-35 |
+| E | RAG | AI-36 to AI-41 |
+| F | API Features (Thinking, Files, Caching…) | AI-42 to AI-47 |
+| G | MCP | AI-48 to AI-53 |
+| H | Claude Code & Computer Use | AI-54 to AI-60 |
+| I | Agents & Workflows | AI-61 to AI-66 |
+| J | 🆕 AI Engineering Interview Questions | AI-67 to AI-82 |
+| K | System Design | AI-83 to AI-92 |
+| L | Cheat Sheet | AI-93 |
 
 ---
 
-# Part A – AI & Claude Basics
+## Part A — AI & Claude Basics
 
-## 1. AI Basics
+### AI-1. Key AI terms?
 
 | Term | Simple meaning |
 |---|---|
-| **AI Operators** | Companies that **build** AI models (OpenAI, Anthropic, Google) |
-| **AI Builders** | People who **use** AI to build apps and automate work |
+| **AI operators** | companies that **build** models (Anthropic, OpenAI, Google) |
+| **AI builders** | people who **use** AI to build apps and automate work |
 | **GenAI** | AI that **creates** text, images, audio, video, code |
-| **AI Agent** | AI that **takes action** to reach a goal (writes code, makes files), not just a chatbot |
-| **Automation** | **Fixed steps:** Trigger → Action → Output |
-| **Autonomous** | Give only a **goal**; AI decides the steps |
+| **AI agent** | AI that **takes actions** toward a goal, not just chats |
+| **Automation** | **fixed steps:** trigger → action → output |
+| **Autonomous** | give only a **goal**; AI decides the steps |
 
-**How models learn**
-- **SFT (Supervised Fine-Tuning)** → learns from labeled examples
-- **RL (Reinforcement Learning)** → learns by trial and error with rewards (e.g. DeepSeek-R1, strong at coding)
+**Real-life:** automation = a washing machine programme. Autonomous = a housekeeper you tell "make the house clean".
 
----
+### AI-2. How do models learn (SFT vs RL)?
 
-## 2. How an LLM Works
+| Method | Learns from | Real-life |
+|---|---|---|
+| **Pre-training** | huge amounts of text (predict the next token) | reading a whole library |
+| **SFT** (Supervised Fine-Tuning) | labelled examples (input → ideal output) | a teacher showing worked answers |
+| **RL** (Reinforcement Learning) | trial and error with rewards (incl. RLHF from human feedback) | a puppy learning tricks with treats |
 
+🎯 RL-heavy training is what makes "reasoning" models strong at maths and code.
+
+### AI-3. How does an LLM work?
+
+```text
+Input text → Tokenize → Embed → Contextualize → Generate next token → repeat → Decode
 ```
-Input text → Tokenize → Embed → Contextualize → Generate next word → repeat → Decode to words
-```
 
-| Step | Simple meaning |
+| Step | Meaning |
 |---|---|
-| **1. Tokenize** | Split text into **tokens** (a word, part of a word, space or symbol). 5 words ≠ always 5 tokens. |
-| **2. Embed** | Each token → a **list of numbers** holding all its possible meanings. Example: "quantum" = physics unit, very small, quantum computing… |
-| **3. Contextualize** | Uses **nearby words** (self-attention) to pick the right meaning |
-| **4. Generate** | Calculates the probability of every next word, picks one (**probability + a bit of randomness**), adds it, and **repeats** |
-| **5. Decode** | Turns tokens back into words |
+| **Tokenize** | split into tokens (word, part of a word, symbol); 5 words ≠ always 5 tokens |
+| **Embed** | each token → a list of numbers capturing meaning |
+| **Contextualize** | **self-attention** uses nearby words to pick the right meaning |
+| **Generate** | compute the probability of every next token, pick one, repeat |
+| **Decode** | tokens back into text |
 
-**When does Claude stop?** After every token it checks:
-| Condition | Meaning |
+**Real-life:** autocomplete on your phone, but trained on a library and able to keep the whole conversation in mind.
+
+🎯 "An LLM predicts the next token, one at a time, using attention over the context."
+
+### AI-4. When does Claude stop generating?
+
+| Stop reason | Meaning |
 |---|---|
-| **Max tokens** | Hit the limit you set |
-| **End-of-sequence token** | Natural ending |
-| **Stop sequence** | Found a stop phrase you defined |
+| `max_tokens` | hit the limit you set |
+| `end_turn` | natural ending |
+| `stop_sequence` | found a stop phrase you defined |
+| `tool_use` | wants you to run a tool |
+| `refusal` | declined the request |
 
-**Limits & cost**
-- No live access (calendar, APIs) on its own → fix with **agents + connectors/tools**
-- **More tokens = more cost** → skip filler words
+⚠️ Always check `stop_reason`: a `max_tokens` stop means the answer (or JSON) is **cut off**.
 
----
+### AI-5. What are the limits of an LLM, and what does cost depend on?
 
-## 3. Claude Features & Where Claude Lives
+- No live data (calendar, prices) on its own → **tools / connectors**.
+- Knowledge **cutoff** date.
+- Can **hallucinate** (AI-67).
+- **Cost = input tokens + output tokens** (output costs more) → keep prompts lean, cache repeated parts.
 
-**Features in the Claude app**
-| Feature | Simple meaning |
+**Real-life:** a brilliant expert who's been on a desert island since their cutoff date and charges by the word.
+
+### AI-6. Claude app features?
+
+| Feature | Meaning |
 |---|---|
-| **Projects** | Workspace with saved files + instructions |
-| **Artifacts** | Finished outputs: docs, apps, slides, diagrams |
-| **Skills** | Reusable workflows for repeated tasks |
-| **Connectors (MCP)** | Bring in data from your tools (Drive, Gmail, Slack, M365) |
-| **Enterprise search** | Search all company tools at once |
-| **Research** | Deep reports with citations |
-| **Memory** | Remembers past chats |
+| **Projects** | workspace with files + instructions |
+| **Artifacts** | finished outputs: docs, apps, slides, diagrams |
+| **Skills** | reusable workflows for repeated tasks |
+| **Connectors (MCP)** | bring in data from your tools (Drive, Gmail, Slack, M365) |
+| **Research** | deep reports with citations |
+| **Memory** | remembers context from past chats |
 
-**Where Claude lives**
-- Web · Desktop · Mobile
-- **Claude Code** → coding · **Cowork** → desktop tasks
-- Chrome · Excel · PowerPoint
-- Slack via **Claude Tag**
+### AI-7. Where does Claude live?
 
----
+- **Claude app:** web, desktop, mobile (including longer agentic tasks on your desktop files).
+- **Claude Code:** coding agent (terminal, IDE, desktop, web).
+- **Claude in Chrome**, Excel, PowerPoint.
+- **Claude Tag:** Claude in Slack.
+- **Claude API / Platform:** for developers.
 
-## 4. AI Tools Map
+### AI-8. AI tools map?
 
-| Need | Tool |
+| Need | Tools |
 |---|---|
-| Chat assistant | Claude, ChatGPT, Gemini |
-| Coding | Claude Code, Cursor (Agent / Plan / Debug / Ask), Gemini CLI, GitHub Copilot |
-| Research & study | NotebookLM → audio/video overview, mind map, flashcards, quiz |
+| Chat | Claude, ChatGPT, Gemini |
+| Coding | Claude Code, Cursor, GitHub Copilot, Gemini CLI |
+| Research & study | NotebookLM (audio overview, mind maps, flashcards) |
 | Images | Midjourney |
-| Voice | ElevenLabs → text-to-speech, voice cloning |
-| Speech-to-text | Whisper (OpenAI) |
-| Video | OpenArt |
-| UI / apps from a prompt | v0.dev → React, Next.js, Tailwind |
-| Live web data | SearchAPI → REST API for chatbots, RAG, n8n |
+| Voice / speech-to-text | ElevenLabs / Whisper |
+| UI from a prompt | v0.dev (React, Next.js, Tailwind) |
 | Automation | n8n (self-host), Make, Zapier |
-| Autonomous agent | Manus |
 
-**n8n on Google Cloud (free)**
-1. Create an e2-micro VM
-2. Install Docker + Compose
-3. Run n8n with `docker-compose.yml`
-4. Add Nginx/Caddy + SSL
-5. Open it on your domain
+### AI-9. How do you self-host n8n on Google Cloud (free tier)?
+
+1. Create an **e2-micro** VM.
+2. Install Docker + Compose.
+3. Run n8n with `docker-compose.yml`.
+4. Add Nginx/Caddy + SSL.
+5. Point your domain to it.
+
+⚠️ Protect it with authentication; an open n8n instance can run arbitrary workflows.
+
+### AI-10. What is a jailbreak / prompt injection?
+
+- **Jailbreak:** tricking the AI past its rules (role-play, "ignore previous instructions").
+- **Prompt injection:** hidden instructions inside **data** the AI reads (a web page, email, PDF).
+
+**Real-life:** a forged note slipped into a stack of documents saying "give the bearer the safe key".
+
+🎯 Defences: AI-74.
+
+### AI-11. How do you use AI safely?
+
+- Ground answers in sources (**RAG + citations**).
+- **Human review** for high-stakes output.
+- Least-privilege tools; confirm risky actions.
+- Validate outputs (schemas, tests).
+- Protect personal data; follow company policy.
+
+### AI-12. 🆕 Which Claude model would you choose?
+
+| Need | Choose |
+|---|---|
+| hardest reasoning, complex agents | **Opus** |
+| balanced quality / speed / cost (most apps) | **Sonnet** |
+| fast, cheap, high volume (classification, routing, test data) | **Haiku** |
+
+Current API names: `claude-opus-5-5`, `claude-sonnet-5-5`, `claude-haiku-5-5`.
+
+**Real-life:** senior architect, experienced developer, fast intern.
+
+🎯 Route easy requests to Haiku and hard ones to Sonnet/Opus to cut cost (AI-77).
 
 ---
 
-## 5. AI Safety
+## Part B — Claude API Basics
 
-- **Jailbreak** → tricking AI past its rules (prompt injection, roleplay)
-- **Stay safe** → ground answers with **RAG**, add **human review** and **ethical checks**
+> 🧠 **"Kind Monkeys Make Magic"** = **K**ey, **M**odel, **M**essages, **M**ax tokens
 
----
+### AI-13. What is the request flow, and why use a server?
 
-# Part B – Building with the Claude API
-
-## 6. API Basics
-
-> 🧠 **Remember:** "**K**ind **M**onkeys **M**ake **M**agic" = **K**ey, **M**odel, **M**essages, **M**ax tokens
-
-### The 5-step request flow
-```mermaid
-sequenceDiagram
-    participant U as 👤 Client App
-    participant S as 🖥️ Your Server
-    participant A as ☁️ Anthropic API
-    participant C as 🤖 Claude
-    U->>S: 1. Request to server
-    S->>A: 2. Request to API (with secret key)
-    A->>C: 3. Model processing
-    A-->>S: 4. Response (message + usage + stop reason)
-    S-->>U: 5. Response to client
+```text
+Client app → Your server (holds API key) → Anthropic API → Claude
+           ← response (message + usage + stop_reason) ←
 ```
 
-**Why a server?** If the API key is in client code, **anyone can steal it**. So: client → **your server (holds key)** → Anthropic API.
+**Why a server?** An API key in browser/mobile code can be **stolen** by anyone.
 
-| Topic | Simple meaning |
-|---|---|
-| **SDKs** | Python, TypeScript, JavaScript, Go, Ruby (or plain HTTP) |
-| **API Key** | Secret password. Keep it **on the server** in a `.env` file |
-| **Request** | Needs 4 things: **key, model, messages, max_tokens** |
-| **Response** | **Message** (text) + **Usage** (input/output tokens) + **Stop reason** (why it ended) |
-| **Multi-turn** | Claude has **no memory**. Send the **full chat history** every time |
-| **System prompt** | Sets Claude's **role and rules** |
-| **Temperature** | **0.0** = predictable (facts, code). **1.0** = creative (stories) |
-| **Streaming** | Shows the reply **word by word** |
-| **Structured data** | Clean JSON with **prefill** (start) + **stop sequence** (end) |
+**Real-life:** customers order through the waiter (your server); they never get the kitchen keys (API key).
+
+### AI-14. What are the 4 things in every request?
+
+**API key, model, messages, max_tokens.**
 
 ```python
 import anthropic
-client = anthropic.Anthropic()          # reads ANTHROPIC_API_KEY
+client = anthropic.Anthropic()          # reads ANTHROPIC_API_KEY from env
 
 response = client.messages.create(
     model="claude-sonnet-5-5",
     max_tokens=1000,
     system="You are a math tutor. Give hints, not answers.",
-    messages=[{"role": "user", "content": "Hi"}]
+    messages=[{"role": "user", "content": "Hi"}],
 )
 print(response.content[0].text)
+print(response.usage, response.stop_reason)
 ```
 
-**Clean JSON trick**
+SDKs: Python, TypeScript, Java, Go, Ruby, C#, PHP, or plain HTTP.
+
+### AI-15. What comes back in a response?
+
+- **content:** list of blocks (`text`, `tool_use`, `thinking`).
+- **usage:** input/output tokens (and cache tokens).
+- **stop_reason:** why it stopped (AI-4).
+
+⚠️ Read **all** blocks; `content[0]` isn't always text (it may be thinking or a tool call).
+
+### AI-16. Where should the API key live?
+
+On the **server**, in env vars / a secret manager (`.env` locally, never committed). Never in frontend JS, mobile apps, GitHub or logs.
+
+🎯 Rotate keys if leaked; set spend limits per workspace.
+
+### AI-17. How does multi-turn chat work?
+
+Claude has **no memory between requests**. Send the **full history** every time.
+
 ```python
-messages=[
-    {"role": "user", "content": "Give user data as JSON"},
-    {"role": "assistant", "content": "```json"}   # prefill = start
-],
-stop_sequences=["```"]                             # stop = end
+history = [
+    {"role": "user", "content": "My name is Asha."},
+    {"role": "assistant", "content": "Nice to meet you, Asha!"},
+    {"role": "user", "content": "What's my name?"},
+]
+client.messages.create(model="claude-sonnet-5-5", max_tokens=200, messages=history)
 ```
 
-**✅ Quiz answers**
-- 4 things in every request → **API key, model, messages, max tokens**
-- Where to keep the API key → **On your server**, never in JavaScript, GitHub or the browser
-- Claude forgot the earlier question → **Send the whole conversation history**
-- Tutor that gives hints → **System prompt**
-- Very creative stories → **Temperature 1.0**
+**Real-life:** a friend with no memory who reads the whole chat log before each reply.
+
+⚠️ Long histories cost more tokens; trim, summarise or cache them.
+
+### AI-18. What is a system prompt?
+
+Sets Claude's **role, rules and context** for the whole conversation.
+
+```python
+system="You are a support agent for Acme. Answer only about Acme products. Be concise."
+```
+
+**Real-life:** a job description handed to a new employee before their first customer.
+
+### AI-19. 🔄 Temperature: creative vs predictable?
+
+**Course answer:** `temperature` 0.0 = predictable (facts, code), 1.0 = creative (stories).
+
+**🔄 Updated:** on the latest models (e.g. **Sonnet 5.5**), `temperature`, `top_p` and `top_k` **return a 400 error**; remove them. Steer creativity **in the prompt** instead ("give 5 very different, playful ideas").
+
+**Real-life:** temperature was a dial on how adventurous the chef is; now you just tell the chef the style you want.
+
+🎯 Knowing the course answer **and** the change shows you keep up.
+
+### AI-20. What is streaming?
+
+Show the reply **token by token** as it's generated (Server-Sent Events).
+
+```python
+with client.messages.stream(model="claude-sonnet-5-5", max_tokens=500,
+                            messages=[{"role": "user", "content": "Tell me a joke"}]) as stream:
+    for text in stream.text_stream:
+        print(text, end="", flush=True)
+```
+
+**Real-life:** watching someone type in a chat instead of waiting for the whole message.
+
+🎯 Better perceived speed; essential for chat UIs (AI-76).
+
+### AI-21. 🔄 How do you get clean JSON?
+
+**Course answer:** **prefill** the assistant turn with ` ```json ` and use `stop_sequences=["```"]`.
+
+**🔄 Updated:** newer models (Sonnet 4.6+, Sonnet 5.5, Opus 5.5) **reject prefill** with a 400 (*"The conversation must end with a user message."*). Use **structured outputs**:
+
+```python
+from pydantic import BaseModel
+
+class Contact(BaseModel):
+    name: str
+    email: str
+
+resp = client.messages.parse(
+    model="claude-sonnet-5-5",
+    max_tokens=1024,
+    messages=[{"role": "user", "content": "Extract: John (john@x.com) wants a demo."}],
+    output_format=Contact,
+)
+print(resp.parsed_output)  # name='John' email='john@x.com'
+```
+
+Raw schema: `output_config={"format": {"type": "json_schema", "schema": {...}}}`.
+
+⚠️ Check `stop_reason` (`max_tokens` / `refusal` can break the schema). Citations can't be combined with structured outputs.
+
+### AI-22. Quiz answers (API basics)
+
+| Question | Answer |
+|---|---|
+| 4 things in a request | API key, model, messages, max_tokens |
+| Where to keep the key | on your server, never in JS/GitHub/browser |
+| Claude forgot the earlier question | send the whole history |
+| Tutor that gives hints | system prompt |
+| Very creative stories | temperature 1.0 (course) / ask for creativity in the prompt on newest models |
 
 ---
 
-## 7. Prompt Engineering
+## Part C — Prompt Engineering & Evaluation
 
-> 🧠 **Remember:** "**C**ats **S**leep **X**tra **E**arly" = **C**lear, **S**pecific, **X**ML, **E**xamples
+> 🧠 **"Cats Sleep Xtra Early"** = **C**lear, **S**pecific, **X**ML, **E**xamples
+
+### AI-23. What are the core prompting techniques?
 
 | Technique | Rule | Example |
 |---|---|---|
-| **Clear & Direct** | Start with an **action verb** | ❌ "What workout should I do?" ✅ "Create a workout plan" |
-| **Specific** | Add length, audience, format, steps | "30-minute plan for beginners, no equipment" |
-| **XML Tags** | Separate **data** from **instructions** | `<email>...</email>` |
-| **Examples** | Show input → output pairs (one-shot / multi-shot) | Best for tricky things like sarcasm |
+| **Clear & direct** | start with an action verb | ❌ "What workout should I do?" ✅ "Create a workout plan" |
+| **Specific** | length, audience, format, steps | "30-minute plan for beginners, no equipment" |
+| **XML tags** | separate **data** from **instructions** | `<email>…</email>` |
+| **Examples** | input → output pairs (one/multi-shot) | tricky tone, sarcasm, format |
+
+**Real-life:** briefing a new colleague: what, for whom, how long, with a sample.
+
+### AI-24. Why XML tags?
+
+They separate instructions from data so Claude doesn't confuse them.
 
 ```xml
 Summarize the email below in 2 sentences.
@@ -212,42 +329,56 @@ Hi team, the meeting moved to Friday...
 </email>
 ```
 
-### Everyday prompting in the Claude app: T-C-E-F
-- **T**ask – what you want
-- **C**ontext – who, why, constraints
-- **E**xample – show the style you like
-- **F**ormat – length, tone, layout
-- Iterate with short feedback: "shorter", "add a table"
-- Hard problem → "think step by step" · Unsure → "ask me questions first"
+🎯 Multiple inputs: `<reviews>…</reviews>` and `<sales_data>…</sales_data>`.
 
-⚠️ Prompt engineering does **not** train the model. XML tags do **not** make Claude faster.
+⚠️ XML tags don't make Claude **faster**, and prompt engineering doesn't **train** the model.
 
-**✅ Quiz answers**
-- Clearest prompt → **"Write a product description for running shoes."**
-- Reviews + sales data in one prompt → **XML tags `<reviews>` and `<sales_data>`**
+### AI-25. What is T-C-E-F prompting?
 
----
+- **T**ask: what you want.
+- **C**ontext: who, why, constraints.
+- **E**xample: the style you like.
+- **F**ormat: length, tone, layout.
 
-## 8. Prompt Evaluation
+Iterate with short feedback ("shorter", "add a table"). Hard problem → ask it to reason step by step. Unsure → "ask me questions first".
 
-> 🧠 **Remember:** "**D**ogs **T**ake **R**ed **G**ifts **R**epeatedly" = **D**raft → **T**est data → **R**un → **G**rade → **R**epeat
+**Real-life:** ordering a cake: what, for whom, a photo of a design you like, size and colour.
+
+### AI-26. 🆕 Zero-shot vs few-shot vs chain-of-thought?
+
+| Technique | How |
+|---|---|
+| **Zero-shot** | instruction only |
+| **Few-shot** | add 2–5 input → output examples |
+| **Chain-of-thought** | ask it to reason step by step before answering (or use built-in thinking, AI-42) |
+
+🎯 Few-shot for consistent **format**; reasoning for **logic** problems.
+
+### AI-27. What is prompt evaluation?
+
+> 🧠 **"Dogs Take Red Gifts Repeatedly"** = **D**raft → **T**est data → **R**un → **G**rade → **R**epeat
 
 **Engineering = improve** a prompt. **Evaluation = measure** it.
-⚠️ Testing only once is risky. Real users send unexpected inputs.
 
-```
+```text
 1. Draft a prompt
-2. Create a test dataset    ← use a cheap model like Haiku; add edge cases
+2. Create a test dataset (Haiku can generate it; include edge cases)
 3. Run each input through Claude
-4. Grade the responses      ← right after running
-5. Improve → repeat → compare scores
+4. Grade the outputs
+5. Improve → re-run → compare scores
 ```
 
-| Grader | Who checks | Good for |
-|---|---|---|
-| **Code** | A program | Valid JSON, length, keywords |
-| **Model** | AI (Claude) | Quality, clarity, tone |
-| **Human** | A person | Most accurate, but slow |
+**Real-life:** a school exam for your prompt, re-taken after each study session.
+
+⚠️ Testing once with one input is risky; real users send unexpected inputs.
+
+### AI-28. Code vs model vs human graders?
+
+| Grader | Good for |
+|---|---|
+| **Code** | valid JSON, length, keywords, regex (fast, cheap, objective) |
+| **Model** (LLM-as-judge) | quality, tone, helpfulness |
+| **Human** | most accurate, slow, expensive |
 
 💡 Model grader: ask for **strengths, weaknesses and reasoning first, score last**.
 
@@ -259,340 +390,808 @@ for test in dataset:
 print("Average:", sum(results) / len(results))
 ```
 
-**✅ Quiz answers**
-- Measure how well a prompt works → **Prompt evaluation with automated testing**
-- Step after getting responses → **Send them to a grader**
-- Model grader → **Another AI model that scores quality**
-- After changing a prompt → **Run the eval again**
+### AI-29. 🆕 How do you test LLM features in CI?
+
+- Fixed **eval dataset** (golden set) + code graders in CI.
+- Track scores per prompt/model version; block regressions.
+- Snapshot critical outputs; sample production logs into new test cases.
+
+**Real-life:** unit tests for prompts.
+
+### AI-30. Quiz answers (prompting & eval)
+
+| Question | Answer |
+|---|---|
+| Clearest prompt | "Write a product description for running shoes." |
+| Reviews + sales data together | XML tags `<reviews>`, `<sales_data>` |
+| Measure a prompt | prompt evaluation with automated tests |
+| Step after responses | send them to a grader |
+| Model grader | another AI that scores quality |
+| After changing a prompt | run the eval again |
 
 ---
 
-## 9. Tool Use
+## Part D — Tool Use
 
-> 🧠 **Remember:** "**I**n **T**he **D**ark **F**orest" = **I**nitial request → **T**ool request → **D**ata retrieval → **F**inal response
+> 🧠 **"In The Dark Forest"** = **I**nitial request → **T**ool request → **D**ata retrieval → **F**inal response
 
-**Why tools?** Claude only knows its training data. Tools give **real-time info** and **outside systems**.
+### AI-31. Why tools, and how does the loop work?
 
+Claude only knows its training data. Tools give **real-time data** and access to **outside systems**.
+
+```text
+Claude replies with tool_use → your code runs the function → you send tool_result → Claude answers
 ```
-Claude asks (tool_use) → Your code runs it → You send tool_result → Claude answers
-```
 
-| Part | Simple meaning |
+**Real-life:** a manager (Claude) asks an assistant (your code) to check the calendar, then replies with the answer.
+
+⚠️ **Claude doesn't run your tools**; your code does. (Built-in server tools like web search are the exception.)
+
+### AI-32. What are the parts of a tool?
+
+| Part | Meaning |
 |---|---|
-| **Tool function** | A normal Python function that does the work |
-| **Tool schema** | JSON with the tool's **name, purpose, inputs** |
-| **Message blocks** | Reply can have **text + tool_use** together |
-| **tool_result** | Send back with the **same id** |
-| **Loop** | Repeat while `stop_reason == "tool_use"`; `"end_turn"` = done |
-| **Multiple tools** | Claude **picks the right one** |
-| **Batch tool** | Many calls in **one request** = fewer round trips |
-| **Fine-grained** | Streams tool inputs piece by piece (JSON may be incomplete) |
-| **Text editor tool** | Built-in schema, **you write** the file code |
-| **Web search tool** | Built-in, **Anthropic runs it** |
+| **Tool function** | normal code that does the work |
+| **Tool schema** | JSON: name, description, `input_schema` |
+| **tool_use block** | Claude's request (with an `id`) |
+| **tool_result block** | your answer, with the **same `tool_use_id`** |
+| **Loop** | repeat while `stop_reason == "tool_use"`; `end_turn` = done |
 
 ```python
-def get_weather(city):                       # tool function
+def get_weather(city):
     return f"18°C, sunny in {city}"
 
-tool_schema = {                              # tool schema
-  "name": "get_weather",
-  "description": "Get current weather for a city",
-  "input_schema": {
-    "type": "object",
-    "properties": {"city": {"type": "string"}},
-    "required": ["city"]
-  }
-}
+tools = [{
+    "name": "get_weather",
+    "description": "Get current weather for a city",
+    "input_schema": {
+        "type": "object",
+        "properties": {"city": {"type": "string"}},
+        "required": ["city"],
+    },
+}]
 
-while response.stop_reason == "tool_use":    # the loop
-    result = run_tool(response)
-    response = send_result_back(result)
+messages = [{"role": "user", "content": "Weather in Pune?"}]
+response = client.messages.create(model="claude-sonnet-5-5", max_tokens=1024, tools=tools, messages=messages)
+
+while response.stop_reason == "tool_use":
+    messages.append({"role": "assistant", "content": response.content})
+    results = [
+        {"type": "tool_result", "tool_use_id": b.id, "content": get_weather(**b.input)}
+        for b in response.content if b.type == "tool_use"
+    ]
+    messages.append({"role": "user", "content": results})
+    response = client.messages.create(model="claude-sonnet-5-5", max_tokens=1024, tools=tools, messages=messages)
+
+print(response.content[-1].text)
 ```
 
-**✅ Quiz answers**
-- Purpose of tools → **Real-time info and outside systems**
-- Tool function → **A plain function run when Claude needs it**
-- Text + tool_use in one reply → **Multi-block message**
-- Batch tool → **Runs many tool calls together**
+🎯 Good **descriptions** matter most: Claude chooses tools from them.
 
----
+### AI-33. Multiple tools, multi-block replies and batching?
 
-## 10. RAG (Search in Documents)
+- **Multiple tools:** Claude picks the right one from the descriptions.
+- **Multi-block message:** a reply can contain **text + tool_use** together.
+- **Parallel / batch calls:** several tool calls in one reply (or a custom "batch" tool) → fewer round trips.
+- **Fine-grained streaming:** tool inputs stream piece by piece (JSON may be incomplete until done).
 
-> 🧠 **Remember:** "**C**ut, **C**ode, **S**tore, **F**ind, **F**eed" = Chunk → Embed → Store → Find → Feed to Claude
+**Real-life:** asking one assistant to fetch three files in one trip, not three trips.
 
-**RAG = open-book exam.** Give Claude only the useful parts of a big document.
+### AI-34. Built-in tools?
 
-| Term | Simple meaning |
+| Tool | Who runs it |
 |---|---|
-| **Chunking** | Cut documents into pieces (by size, headings, or sentences). Use **overlap**. |
-| **Embedding** | Text → numbers capturing **meaning** ("dog" ≈ "puppy"). Compare with **cosine similarity**. |
-| **Vector DB** | Stores the embeddings |
-| **BM25** | **Keyword** search for **exact words** (IDs, codes). Rare words count more. |
-| **Hybrid search** | Embeddings + BM25 merged = **meaning + exact words** |
+| **Text editor tool** | schema provided by Anthropic, **you** implement the file operations |
+| **Web search / web fetch** | **Anthropic runs it** (server tool) |
+| **Code execution** | Anthropic runs Python in a sandbox |
+| **Computer use** | you run the actions (AI-60) |
 
-```
-SETUP:   Document → Chunk → Embed → Store
-ASK:     Question → Embed → Find closest chunks
-ANSWER:  Question + chunks → Claude → Answer
-```
+🔄 Built-in tool **versions** change with new models (e.g. Sonnet 5.5 needs the newer computer-use toolset); check the docs when upgrading.
+
+### AI-35. 🔄 Forcing a tool, and strict tool use?
+
+- `tool_choice: {"type": "auto"}` → Claude decides (default).
+- **🔄 Updated:** on Sonnet 5.5, forcing (`"any"` / `"tool"`) returns a **400**; use `auto` + clear instructions.
+- **Strict tool use:** `strict: true` on a tool → inputs are validated against the schema.
+
+**Quiz:** purpose of tools → real-time info and outside systems · tool function → plain function run when Claude asks · text + tool_use → multi-block message · batch tool → many calls together.
 
 ---
 
-## 11. Claude Features (API)
+## Part E — RAG (Retrieval-Augmented Generation)
 
-> 🧠 **Remember:** "**T**iny **I**guanas **P**lay **C**hess, **C**limb **C**liffs" = Thinking, Images, PDFs, Citations, Caching, Code execution
+> 🧠 **"Cut, Code, Store, Find, Feed"** = Chunk → Embed → Store → Find → Feed to Claude
 
-| Feature | What it does | Key code |
+### AI-36. What is RAG?
+
+Find the **relevant parts** of your documents and give them to Claude with the question.
+
+**Real-life:** an **open-book exam**: you don't memorise the book, you look up the right page.
+
+```text
+SETUP:   Documents → Chunk → Embed → Store (vector DB)
+ASK:     Question → Embed → Find closest chunks
+ANSWER:  Question + chunks → Claude → Answer (with citations)
+```
+
+🎯 Why: up-to-date, private data; fewer hallucinations; no retraining.
+
+### AI-37. What is chunking?
+
+Cutting documents into pieces (by size, headings or sentences) with **overlap** so ideas aren't cut in half.
+
+**Real-life:** cutting a long video into scenes, with a few seconds overlap so nothing is lost at the cut.
+
+⚠️ Too small → lost context. Too big → noisy, expensive. Typical: a few hundred tokens with 10–20% overlap.
+
+### AI-38. What are embeddings and cosine similarity?
+
+**Embedding:** text → a vector of numbers capturing **meaning** ("dog" ≈ "puppy").
+**Cosine similarity:** how close two vectors point in the same direction (1 = same meaning).
+
+```python
+import math
+def cosine(a, b):
+    dot = sum(x * y for x, y in zip(a, b))
+    return dot / (math.sqrt(sum(x * x for x in a)) * math.sqrt(sum(y * y for y in b)))
+
+cosine([1, 0, 1], [1, 0, 1])  # ≈ 1.0 (same direction)
+```
+
+**Real-life:** placing words on a map where similar meanings live in the same neighbourhood.
+
+### AI-39. What is a vector database?
+
+Stores embeddings and finds the nearest ones fast (approximate nearest neighbour).
+
+Examples: pgvector (Postgres), Pinecone, Weaviate, Qdrant, Chroma, MongoDB Atlas Vector Search.
+
+### AI-40. BM25 vs embeddings vs hybrid search?
+
+| Search | Good at | Weak at |
 |---|---|---|
-| **Extended thinking** | Thinks step by step first | `thinking={"type": "enabled", "budget_tokens": 2000}` |
-| **Images** | Send an image as base64 | `"type": "image"` |
-| **PDFs** | Reads text, tables, charts, images | `"type": "document"` + `"application/pdf"` |
-| **Citations** | Links answers to the source to **verify** | `"citations": {"enabled": True}` |
-| **Prompt caching** | Saves a big repeated prompt → **faster, cheaper** | `"cache_control": {"type": "ephemeral"}` |
-| **Files API** | Upload once, reuse with `file_id` | `client.beta.files.upload(...)` |
-| **Code execution** | Runs Python in a safe container, **no internet** | — |
+| **BM25** (keyword) | exact words, IDs, codes; rare words count more | synonyms |
+| **Embeddings** (semantic) | meaning, paraphrases | exact IDs ("ERR-4021") |
+| **Hybrid** | both, merged (e.g. reciprocal rank fusion) | more setup |
 
-**Caching rules**
+**Real-life:** BM25 = Ctrl+F. Embeddings = asking a librarian who understands what you mean.
+
+🎯 Add a **re-ranker** after retrieval to improve the top results.
+
+### AI-41. 🆕 How do you evaluate and improve a RAG system?
+
+| Check | Question |
+|---|---|
+| Retrieval | did we fetch the right chunks? (recall@k) |
+| Faithfulness | is the answer supported by the chunks? |
+| Answer quality | is it correct and complete? |
+
+**Improve:** better chunking, hybrid search, re-ranking, metadata filters, contextual chunk headers, citations, "say I don't know if not in the documents".
+
+---
+
+## Part F — API Features
+
+> 🧠 **"Tiny Iguanas Play Chess, Climb Cliffs"** = Thinking, Images, PDFs, Citations, Caching, Code execution
+
+### AI-42. 🔄 What is extended / adaptive thinking?
+
+Claude reasons step by step before answering.
+
+**Course answer:** `thinking={"type": "enabled", "budget_tokens": 2000}`.
+
+**🔄 Updated:** `budget_tokens` is **legacy**; Claude 4.7+ models (Opus 5.5, Sonnet 5.5, Haiku 5.5) **reject it with a 400**. Use **adaptive thinking + effort**:
+
+```python
+response = client.messages.create(
+    model="claude-sonnet-5-5",
+    max_tokens=16000,
+    thinking={"type": "adaptive"},
+    output_config={"effort": "high"},   # low / medium / high / …
+    messages=[{"role": "user", "content": "Plan a database migration..."}],
+)
+```
+
+On Sonnet 5.5, thinking is **on by default**, and thinking text is **omitted** unless you ask to display it.
+
+**Real-life:** instead of saying "think for exactly 10 minutes", you say "this is important" and Claude decides how long to think.
+
+### AI-43. Images and PDFs?
+
+```python
+{"type": "image", "source": {"type": "base64", "media_type": "image/png", "data": b64}}
+{"type": "document", "source": {"type": "base64", "media_type": "application/pdf", "data": b64}}
+```
+
+PDFs: Claude reads text, tables, charts and images.
+
+**Real-life:** handing a colleague a photo or a printed report instead of retyping it.
+
+### AI-44. What are citations?
+
+Answers link to the **exact source passages** so users can verify.
+
+```python
+{"type": "document", "source": {...}, "citations": {"enabled": True}}
+```
+
+🎯 Use for legal, medical, support answers. ⚠️ Not combinable with structured outputs.
+
+### AI-45. 🔄 What is prompt caching?
+
+Reuse a big repeated prefix (system prompt, document, tools) → **faster and cheaper**.
+
+```python
+system=[
+    {"type": "text", "text": "You analyse contracts."},
+    {"type": "text", "text": LONG_CONTRACT, "cache_control": {"type": "ephemeral"}},
+]
+```
+
 | Rule | Value |
 |---|---|
-| Minimum size | ~1024 tokens (varies by model). Smaller = not cached, no error |
-| Lifetime | 5 minutes (refreshes on use) |
-| Max breakpoints | 4 |
-| What's cached | Everything **before** the breakpoint (tools → system → messages) |
-| Breaks if | Anything before the breakpoint changes |
+| Order cached | **tools → system → messages** (everything before the breakpoint) |
+| Lifetime | **5 min** (refreshes on use) or **1 hour** (`"ttl": "1h"`) |
+| Max breakpoints | **4** |
+| Minimum size | **512** tokens on 5.x models (1,024–4,096 on older); smaller = silently not cached |
+| Breaks when | anything before the breakpoint changes |
+| Cost | write 1.25× (5 min) / 2× (1 h); **read ~0.05–0.1×** base input |
+| Automatic | top-level `cache_control` moves the breakpoint as a chat grows |
 
-**✅ Quiz answers**
-- Verify facts from documents → **Citations**
-- Same long document, many questions → **Prompt caching**
+**Real-life:** keeping the reference book open on your desk instead of fetching it from the library each time.
+
+⚠️ Verify with `usage.cache_read_input_tokens`; put **changing content last**.
+
+### AI-46. Files API and code execution?
+
+- **Files API (beta):** upload once, reuse by `file_id`.
+- **Code execution:** Claude runs Python in a sandbox (data analysis, charts), **no internet access**.
+
+**Real-life:** Files API = a shared drive link instead of emailing the same attachment every time.
+
+### AI-47. Quiz answers (features)
+
+| Question | Answer |
+|---|---|
+| Verify facts from documents | citations |
+| Same long document, many questions | prompt caching |
+| Think step by step (newest models) | adaptive thinking + effort |
+| Strict JSON | structured outputs |
 
 ---
 
-## 12. MCP (Model Context Protocol)
+## Part G — MCP (Model Context Protocol)
 
-**MCP** = a standard way to connect Claude to outside tools and data **without writing all the integration code yourself**. In the Claude app, these are called **Connectors**.
+### AI-48. What is MCP?
 
+An **open standard** to connect AI apps to tools and data **without custom integration code for each app**. In the Claude app these are **Connectors**.
+
+```text
+Your app (host) → MCP client → MCP server → tools, resources, prompts
 ```
-Your App → MCP Client → MCP Server → (tools, resources, prompts)
-```
+
+**Real-life:** **USB-C for AI**: one standard plug works with any device.
+
+🎯 Without MCP you write and maintain every integration yourself.
+
+### AI-49. MCP server vs client?
 
 | Part | Role |
 |---|---|
-| **MCP Server** | Holds **tools, resources, prompts** |
-| **MCP Client** | The **bridge**: **your Client class + the SDK's Client Session** |
-| **Transport agnostic** | Works over **stdio** (local) or **HTTP** (remote) |
+| **MCP server** | exposes **tools, resources, prompts** |
+| **MCP client** | the bridge: your Client class + the SDK's **ClientSession** |
+| **Transport** | **stdio** (local) or **Streamable HTTP** (remote): "transport agnostic" |
 
-**Who controls what?**
+### AI-50. Tools vs resources vs prompts: who controls what?
+
 | Primitive | Controlled by | Example |
 |---|---|---|
-| **Tools** | **Model** | Claude calls `read_doc_contents` |
-| **Resources** | **App** | App loads a document |
-| **Prompts** | **User** | User clicks "Summarize document" |
+| **Tools** | **model** | Claude calls `read_doc_contents` |
+| **Resources** | **app** | app loads a document into context |
+| **Prompts** | **user** | user clicks "Summarize document" |
 
-- **Direct resource:** fixed URI → `docs://documents`
-- **Templated resource:** `docs://documents/{doc_id}`
-- `ListToolsRequest` = what tools exist? · `CallToolRequest` = run a tool
+**Real-life:** tools = what the chef can use; resources = ingredients the restaurant provides; prompts = set menu items a customer picks.
+
+### AI-51. How do you write an MCP server?
 
 ```python
+from mcp.server.fastmcp import FastMCP
+from pydantic import Field
+
+mcp = FastMCP("docs")
+docs = {"plan": "Q3 plan...", "spec": "API spec..."}
+
 @mcp.tool(name="read_doc_contents", description="Read a document")
 def read_document(doc_id: str = Field(description="Id of the document")):
-    return docs[doc_id]                  # SDK makes the JSON schema
+    return docs[doc_id]                      # SDK generates the JSON schema
 
-@mcp.resource("docs://documents/{doc_id}")
+@mcp.resource("docs://documents")            # direct resource
+def list_docs() -> list[str]:
+    return list(docs)
+
+@mcp.resource("docs://documents/{doc_id}")   # templated resource
 def fetch_doc(doc_id: str) -> str:
     return docs[doc_id]
 ```
 
-**Test your server:** `mcp dev mcp_server.py` → opens the **MCP Inspector**.
+### AI-52. How do you test an MCP server?
 
-**✅ Quiz answers**
-- What is MCP → **Communication layer for tools and context without integration code**
-- Problem without MCP → **You write and maintain all tool code yourself**
-- Server vs client → **Server holds tools/prompts/resources; client is the bridge**
-- Transport agnostic → **HTTP or stdio**
-- Easiest way to define a tool → **`@mcp.tool()` decorator**
-- Test before building an app → **MCP Inspector**
-- Two parts of a client → **MCP Client class + Client Session**
-- Find available tools → **`ListToolsRequest`**
-- Fetch a doc by ID → **Templated resource**
-- User clicks a button to start a workflow → **Prompt**
+```bash
+mcp dev mcp_server.py   # opens the MCP Inspector
+```
+
+- `ListToolsRequest` → what tools exist?
+- `CallToolRequest` → run a tool.
+
+### AI-53. 🆕 MCP security?
+
+- Only install **trusted** servers; they run code and see data.
+- Least privilege (read-only where possible), scoped tokens / OAuth.
+- Treat tool outputs as **untrusted** (prompt injection).
+- Human confirmation for destructive actions.
+
+**Quiz:** MCP → communication layer for tools/context · without MCP → you maintain all tool code · test → MCP Inspector · tool definition → `@mcp.tool()` · find tools → `ListToolsRequest` · doc by ID → templated resource · user button → prompt.
 
 ---
 
-## 13. Claude Code & Computer Use
+## Part H — Claude Code & Computer Use
 
-*Includes notes from the [Claude Code 101](https://academy.claude.com/courses/claude-code-101) course.*
+### AI-54. What is Claude Code?
 
-### What is Claude Code?
-An **AI coding agent** that reads, writes and edits code and runs commands.
-- **Runs in:** terminal, VS Code, JetBrains, Claude Desktop, web
-- **Agentic loop:** gather context → take action → verify → repeat until done
-- **Tools** = what Claude **can** do · **Permissions** = what it's **allowed** to do without asking
-- **Context window** = everything Claude can see now. When full, it **auto-compacts** (summarizes older chat)
+An **AI coding agent** that reads, writes and edits code, runs commands and tests. Runs in the terminal, VS Code, JetBrains, the desktop app and the web.
 
-### Modes (switch with `Shift+Tab`)
-| Mode | What it does | Oversight |
+**Agentic loop:** gather context → take action → verify → repeat.
+
+- **Tools** = what Claude **can** do.
+- **Permissions** = what it's **allowed** to do without asking.
+- **Context window** = what it can see now; **auto-compacts** when full.
+
+**Real-life:** a pair programmer who can actually type and run the tests.
+
+### AI-55. 🔄 What are the permission modes?
+
+`Shift+Tab` cycles modes in the CLI.
+
+| Mode | Runs without asking | Use |
 |---|---|---|
-| **Manual** | Asks before each edit or command | Most |
-| **Auto-accept** | Applies edits without asking | Less |
-| **Plan Mode** | Read-only: researches and proposes a plan | Review before acting |
+| **Manual** (`default`) | reads only | review every action |
+| **Accept edits** | file edits + common file commands | iterating on code you review |
+| **Plan** | reads/exploration; edits blocked until you approve a plan | think before changing |
+| **Auto** | everything, with a classifier reviewing actions | long tasks, fewer prompts |
+| `dontAsk` | only pre-approved tools | locked-down CI |
+| `bypassPermissions` | everything | isolated containers/VMs only |
 
-### Daily workflow: Explore → Plan → Code → Commit
-1. **Explore** – read files and docs, no code yet
-2. **Plan** – Claude proposes an approach; you review
-3. **Code** – implement and verify (run tests)
-4. **Commit** – commit, open a PR, update docs
+⚠️ Never bypass permissions on your real machine.
 
-**Code review:** check changes yourself, and use a **fresh-context reviewer** (new session or subagent that didn't write the code).
+### AI-56. What's the daily workflow?
 
-### Context commands
+**Explore → Plan → Code → Commit**
+
+1. **Explore:** read files/docs, no code yet.
+2. **Plan:** Claude proposes; you review (Plan mode).
+3. **Code:** implement and **verify** (run tests).
+4. **Commit:** commit, PR, docs.
+
+🎯 Review with a **fresh-context reviewer** (new session or subagent that didn't write the code).
+
+### AI-57. Context commands?
+
 | Command | Purpose |
 |---|---|
-| `/compact` | Summarize the chat to free space |
-| `/clear` | Start fresh |
-| `/context` | Show what's using the context window |
-| `/init` | Create a starter `CLAUDE.md` |
+| `/compact` | summarise the chat to free space |
+| `/clear` | start fresh |
+| `/context` | see what's using the context |
+| `/init` | create a starter `CLAUDE.md` |
 
-### Customizing
-| Feature | Simple meaning |
+**Real-life:** `/compact` = writing meeting minutes and throwing away the full transcript.
+
+### AI-58. How do you customise Claude Code?
+
+| Feature | Meaning |
 |---|---|
-| **CLAUDE.md** | Project memory (commands, rules, structure). Read at the start of **every session** |
-| **Subagents** | Helpers with their **own context**; keep the main context clean |
-| **Skills** | Reusable instructions for repeated tasks |
-| **MCP servers** | Connect outside tools (databases, issue trackers, APIs) |
-| **Hooks** | Scripts that run **automatically** at set points (auto-format, block commands, notify) |
+| **CLAUDE.md** | project memory: commands, rules, structure; read every session |
+| **Subagents** | helpers with their **own context** (keeps main context clean) |
+| **Skills** | reusable instructions for repeated tasks |
+| **MCP servers** | connect DBs, issue trackers, APIs |
+| **Hooks** | scripts that run automatically (format on save, block commands, notify) |
+| **Slash commands** | saved prompts you trigger by name |
 
-### Computer Use
-Claude uses a computer **like a human**: screenshots, mouse, keyboard. It gets a screenshot after every action.
+**Real-life:** CLAUDE.md = the onboarding doc you give every new team member.
 
-**✅ Quiz answers**
-- Computer Use → **Claude interacts with a desktop like a human would**
+### AI-59. 🆕 Best practices for AI coding assistants in a team?
+
+- Keep `CLAUDE.md` short and accurate (build/test commands, conventions).
+- Small, reviewable changes; always run tests.
+- Never paste secrets; respect permissions.
+- Human code review stays mandatory.
+- Use hooks/CI for lint, format and tests.
+
+### AI-60. What is Computer Use?
+
+Claude operates a computer **like a human**: screenshots, mouse, keyboard. It gets a **screenshot after every action** to check the result.
+
+**Real-life:** a remote assistant controlling your screen via screen-share.
+
+⚠️ Slower and riskier than APIs; use a sandboxed VM and confirm sensitive actions. Tool versions change between models.
 
 ---
 
-## 14. Agents & Workflows
+## Part I — Agents & Workflows
 
-**Used for tasks Claude can't finish in one request.**
+### AI-61. Workflow vs agent?
 
-| | **Workflow** | **Agent** |
+| | Workflow | Agent |
 |---|---|---|
-| Steps | **Fixed**, decided by you | Claude **decides** |
-| Use when | You **know** the steps | Task is **unknown** |
-| Strength | Reliable, testable | Flexible |
-| Weakness | Less flexible | Less reliable, costs more |
+| Steps | **fixed**, by you | Claude **decides** |
+| Use when | steps are known | task is open-ended |
+| Strength | reliable, testable, cheaper | flexible |
+| Weakness | rigid | less predictable, costs more |
 
-### Workflow patterns
-| Pattern | Simple meaning | Example | Use when |
-|---|---|---|---|
-| **Parallelization** | Split, run **at the same time**, combine | Check a part for each material at once → pick the best | Independent checks |
-| **Chaining** | Steps **one after another** | Topic → research → script → video → post | Many rules; steps depend on each other |
-| **Routing** | **Sort first**, then send to **one** special prompt | "Python functions" → Educational | Many request types |
-| **Evaluator-Optimizer** | **Make → check → fix → repeat** | Image → 3D model → compare → fix | Output must pass a quality bar |
+**Real-life:** workflow = a recipe. Agent = a chef told "make dinner from what's in the fridge".
 
-💡 **Long prompt problem (Chaining fix):** Step 1, write the article. Step 2, ask Claude **only** to fix broken rules.
+🎯 "Start with the simplest thing that works; use agents only when you need the flexibility."
 
-### Agents
-- **Goal + tools**, and Claude finds the steps
-- **Combines simple tools:** get time + add days + set reminder → "What day is it in 11 days?"
-- **Asks for missing info:** "When does my 90-day warranty end?" → asks when you bought it
-- **Keep tools general:** Claude Code uses `bash`, `read`, `write`, `edit`, `glob`, `grep`
+### AI-62. What are the workflow patterns?
 
-### Environment inspection
-Claude must **see the result** of each action, or it works blind.
-- Computer Use → screenshot after each click
-- Files → **read before write**
-- Video → check captions (whisper.cpp) and screenshots (FFmpeg)
+| Pattern | Meaning | Use when |
+|---|---|---|
+| **Chaining** | steps one after another | steps depend on each other; long prompts with many rules |
+| **Routing** | classify first, send to one specialist prompt | many request types |
+| **Parallelization** | run independent parts at once, combine | independent checks, voting |
+| **Orchestrator-workers** | one model splits the task, workers do parts | unknown sub-tasks |
+| **Evaluator-optimizer** | make → check → fix → repeat | output must pass a quality bar |
+
+**Real-life:** chaining = an assembly line; routing = a hospital reception sending you to the right department; parallelization = several chefs cooking dishes at once; evaluator-optimizer = a writer and an editor.
+
+💡 Long prompt ignored rules? **Chain:** step 1 writes, step 2 only fixes rule violations.
+
+### AI-63. What makes a good agent?
+
+- **Goal + tools**; Claude finds the steps.
+- **Combines simple, general tools** (Claude Code uses `bash`, `read`, `write`, `edit`, `glob`, `grep`).
+- **Asks for missing info** ("When did you buy it?" for a warranty question).
+- Clear stopping conditions and budgets.
+
+### AI-64. What is environment inspection?
+
+The agent must **see the result** of each action, or it works blind.
+
+- Computer use → screenshot after each click.
+- Files → **read before write**.
+- Code → run tests after editing.
 
 🔑 **Golden question:** "How will Claude know if this action worked?"
 
-**✅ Quiz answers**
-- Know the exact steps / reliability matters → **Workflow**
-- Car damage photo → repair estimate → **Workflow with fixed steps**
-- Compare many materials → **Parallelization**
-- Claude ignores rules in a long prompt → **Chaining**
-- Educational vs entertainment content → **Routing**
-- Write → check → improve → **Evaluator-Optimizer**
-- Most flexible agent tools → **Abstract tools (`read_file`, `write_file`, `run_command`)**
-- Why environment inspection → **Agent sees the results of its actions**
+### AI-65. 🆕 What are subagents / multi-agent systems?
 
----
+A lead agent hands sub-tasks to **subagents** with their own context, then combines results.
 
-# Part C – System Design
+✅ Parallel work, clean context, specialisation. ❌ More tokens, coordination overhead.
 
-## 15. System Design Basics
+**Real-life:** a project lead delegating research to three team members and merging their reports.
 
-**System design** = planning the parts of a system and how they work together.
-
-**Steps:** Understand the problem → Set the scope → Study existing systems → Draw the architecture → Test, improve, document
-
-| Concept | Simple meaning |
-|---|---|
-| **Performance vs Scalability** | Fast for one user vs still works with many users |
-| **Latency vs Throughput** | Time for one response vs requests handled at once |
-| **Availability vs Consistency** | System stays up vs data is the same everywhere (strong / weak / eventual) |
-
-| Need | API pattern |
-|---|---|
-| Simple request/response | REST |
-| Fetch exactly the fields you need | GraphQL |
-| Fast, typed service-to-service | gRPC / tRPC |
-| Real-time two-way | WebSockets |
-| Server notifies you | Webhooks |
-| Simple periodic check | Polling |
-
-**Frontend performance**
-- Code splitting, tree shaking, compression
-- Lazy load on scroll or click, prefetch/preload, virtual lists
-- **Web Vitals:** LCP (load speed), INP (response to clicks), CLS (layout jumps)
-
-**Images:** WebP/AVIF, `srcset` / `<picture>`, `loading="lazy"`, CDN.
-```html
-<picture>
-  <source srcset="image-1600.webp" type="image/webp">
-  <img src="image-800.webp" alt="Description" loading="lazy" width="800">
-</picture>
-```
-
-**Testing & monitoring:** Unit → Integration → E2E. Load tests with k6 or JMeter. Logs, metrics, tracing.
-
-**Accessibility:** semantic HTML, ARIA, keyboard navigation, color contrast. Check with axe or Lighthouse.
-
-📌 **To fix:** `Frontend System Design Yatra1.png` is empty (0 bytes). Re-upload the real image.
-
-**Resources:** [System Design Roadmap](https://roadmap.sh/system-design) · [Excalidraw board](https://app.excalidraw.com/l/8lwXEYCWFUz/5BWKjqfiBK6)
-
----
-
-# ⚡ One-Page Cheat Sheet
+### AI-66. Quiz answers (agents)
 
 | Question | Answer |
 |---|---|
-| Automation vs autonomous? | Fixed steps vs AI decides the steps |
-| LLM steps? | Tokenize → Embed → Contextualize → Generate → Decode |
-| When does Claude stop? | Max tokens, end token, or stop sequence |
+| Known steps / reliability matters | workflow |
+| Car photo → repair estimate | workflow with fixed steps |
+| Compare many materials | parallelization |
+| Claude ignores rules in a long prompt | chaining |
+| Educational vs entertainment | routing |
+| Write → check → improve | evaluator-optimizer |
+| Most flexible agent tools | abstract tools (`read_file`, `write_file`, `run_command`) |
+| Why environment inspection | the agent sees the results of its actions |
+
+---
+
+## Part J — 🆕 AI Engineering Interview Questions
+
+### AI-67. 🆕 What are hallucinations and how do you reduce them?
+
+The model states something **confident but false**.
+
+**Real-life:** a student bluffing an exam answer instead of saying "I don't know".
+
+**Reduce:**
+
+- Ground with **RAG** + **citations**.
+- Allow "I don't know" in the prompt.
+- Ask for quotes from the source before answering.
+- Tools for facts (search, DB) instead of memory.
+- Evals that check faithfulness; human review for high stakes.
+
+### AI-68. 🆕 What are tokens and the context window?
+
+- **Token:** a chunk of text (~¾ of an English word on average).
+- **Context window:** the max tokens (input + output) the model can see in one request.
+
+**Real-life:** the context window is a desk; everything must fit on it at once.
+
+⚠️ Long contexts cost more and can bury key details; put important instructions clearly, use RAG instead of dumping everything.
+🎯 Newer models tokenise differently (e.g. Sonnet 5.5 produces ~30% more tokens for the same text than Sonnet 4.6), so **re-check cost estimates when upgrading**.
+
+### AI-69. 🆕 Prompting vs RAG vs fine-tuning?
+
+| Approach | Changes | Use when |
+|---|---|---|
+| **Prompting** | instructions/examples | first choice; fast, cheap |
+| **RAG** | data given at request time | private / changing knowledge, citations |
+| **Fine-tuning** | model weights | consistent style/format at scale, narrow tasks |
+
+**Real-life:** prompting = giving instructions; RAG = handing over the manual; fine-tuning = sending the employee to a training course.
+
+🎯 Try prompting → RAG → fine-tuning, in that order.
+
+### AI-70. 🆕 Embeddings: what else are they used for?
+
+Semantic search, recommendations ("similar products"), clustering, deduplication, classification, anomaly detection.
+
+### AI-71. 🆕 What are guardrails?
+
+Checks **around** the model:
+
+- **Input:** block abusive or off-topic requests, PII redaction, prompt-injection filters.
+- **Output:** schema validation, policy/toxicity checks, fact checks.
+- **Action:** permission rules and human approval for risky tool calls.
+
+**Real-life:** safety rails on a mountain road.
+
+### AI-72. 🆕 How do you handle rate limits and errors?
+
+- Respect `429` and `529` (overloaded) with **exponential backoff + jitter** (SDKs retry automatically).
+- Queue requests; cap concurrency.
+- Timeouts and fallbacks (smaller model, cached answer, friendly message).
+- Use the **Batch API** for non-urgent bulk jobs (cheaper).
+
+**Real-life:** a busy restaurant: wait a bit longer each time before asking again.
+
+### AI-73. 🆕 How do you control cost?
+
+- Right model for the job (route easy tasks to **Haiku**).
+- **Prompt caching** for repeated prefixes.
+- Trim history; summarise old turns.
+- Limit `max_tokens`; concise output instructions.
+- **Batch API** for offline jobs.
+- Monitor tokens per feature/user.
+
+### AI-74. 🆕 How do you defend against prompt injection?
+
+- Treat all retrieved content, emails, web pages and tool outputs as **untrusted data**.
+- Wrap data in tags and tell the model it's data, not instructions.
+- **Least privilege** tools; no secrets in prompts.
+- Human confirmation for sensitive actions (payments, deleting, sending emails).
+- Output filtering; log and monitor.
+
+**Real-life:** a bank teller follows the bank's rules, not instructions written on a customer's deposit slip.
+
+### AI-75. 🆕 How do you design an LLM feature in a web app (architecture)?
+
+```text
+React/Next.js UI → your API (auth, rate limit, guardrails)
+                 → prompt builder (system + RAG context + history)
+                 → Claude API (streaming)
+                 → validation → UI
+                 → logs, evals, cost tracking
+```
+
+🎯 Mention: server-side keys, streaming, retries, caching, evals, monitoring, fallbacks, privacy.
+
+### AI-76. 🆕 How do you stream AI responses to a React UI?
+
+```ts
+// app/api/chat/route.ts (Next.js)
+import Anthropic from "@anthropic-ai/sdk";
+const client = new Anthropic();
+
+export async function POST(req: Request) {
+  const { messages } = await req.json();
+  const stream = client.messages.stream({ model: "claude-sonnet-5-5", max_tokens: 1024, messages });
+  const encoder = new TextEncoder();
+  return new Response(new ReadableStream({
+    async start(controller) {
+      for await (const event of stream) {
+        if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
+          controller.enqueue(encoder.encode(event.delta.text));
+        }
+      }
+      controller.close();
+    },
+  }));
+}
+```
+
+```tsx
+// client
+const res = await fetch("/api/chat", { method: "POST", body: JSON.stringify({ messages }) });
+const reader = res.body!.getReader();
+const decoder = new TextDecoder();
+while (true) {
+  const { done, value } = await reader.read();
+  if (done) break;
+  setAnswer((a) => a + decoder.decode(value));
+}
+```
+
+**Real-life:** a live commentary instead of a match report afterwards.
+
+🎯 UX: show a stop button (`AbortController`), render Markdown safely, auto-scroll, handle errors mid-stream.
+
+### AI-77. 🆕 What is model routing?
+
+A cheap model (or classifier) decides which model/prompt handles each request.
+
+**Real-life:** a hospital triage nurse sending simple cases to a GP and complex ones to a specialist.
+
+### AI-78. 🆕 What should you log and monitor?
+
+Latency (time to first token, total), token usage and cost, error/refusal rates, `stop_reason` distribution, tool-call failures, user feedback (👍/👎), eval scores over time.
+
+⚠️ Don't log sensitive personal data; mask PII.
+
+### AI-79. 🆕 What is human-in-the-loop?
+
+A person approves or edits AI output at key points (before sending emails, payments, publishing).
+
+**Real-life:** an autopilot that still needs the pilot for take-off and landing.
+
+### AI-80. 🆕 How do you handle AI bias and responsible AI?
+
+- Test with diverse inputs; measure outcomes across groups.
+- Clear disclosure that AI is involved.
+- Avoid fully automated high-stakes decisions (hiring, credit) without review.
+- Data privacy and retention policies.
+
+### AI-81. 🆕 What is the Batch API?
+
+Send many requests **asynchronously**; results come back later (within hours) at a **lower price**.
+
+**Real-life:** posting parcels by economy mail instead of express.
+
+**Use:** evals, bulk classification, embeddings jobs, nightly reports.
+
+### AI-82. 🆕 How do you keep up with fast-changing AI APIs?
+
+- Read model **migration guides** and release notes before upgrading.
+- Pin model versions; re-run evals on upgrade.
+- Watch for breaking changes (e.g. temperature, prefill, thinking budgets now 400 on Sonnet 5.5).
+
+---
+
+## Part K — System Design
+
+### AI-83. What is system design, and how do you approach it?
+
+Planning the parts of a system and how they work together.
+
+**Steps:** understand requirements → set scope (functional + non-functional) → estimate scale → high-level architecture → deep-dive components → trade-offs → bottlenecks, monitoring.
+
+**Real-life:** designing a restaurant: menu, kitchen, seating, staff, peak-hour plan.
+
+### AI-84. Performance vs scalability? Latency vs throughput?
+
+| Pair | Meaning |
+|---|---|
+| Performance vs scalability | fast for one user vs still fast with many users |
+| Latency vs throughput | time for one response vs requests handled per second |
+
+**Real-life:** latency = how long one car takes on the road; throughput = how many cars pass per hour.
+
+### AI-85. Availability vs consistency (CAP)?
+
+- **Consistency:** everyone sees the same data.
+- **Availability:** the system always responds.
+- **CAP:** during a network **partition**, choose consistency **or** availability.
+- Consistency levels: **strong**, **weak**, **eventual**.
+
+**Real-life:** bank balance → consistency. Social media like count → availability (eventual).
+
+### AI-86. 🆕 Horizontal vs vertical scaling?
+
+| Vertical | Horizontal |
+|---|---|
+| bigger machine | more machines |
+| simple, has a ceiling | scales further, needs load balancing + stateless apps |
+
+**Real-life:** a bigger bus vs more buses.
+
+### AI-87. 🆕 Caching layers?
+
+Browser → CDN → reverse proxy → app (Redis) → database.
+
+⚠️ Hardest part: **invalidation**. Patterns: cache-aside, TTLs, write-through.
+
+### AI-88. Which API pattern when?
+
+| Need | Pattern |
+|---|---|
+| simple request/response | REST |
+| exact fields, many clients | GraphQL |
+| fast typed service-to-service | gRPC / tRPC |
+| real-time two-way | WebSockets |
+| server pushes one way (incl. LLM streaming) | SSE |
+| server notifies your server | webhooks |
+| simple periodic check | polling |
+
+### AI-89. Frontend performance?
+
+- Code splitting, tree shaking, compression (Brotli).
+- Lazy load, prefetch/preload, virtual lists.
+- **Web Vitals:** LCP (load), INP (responsiveness), CLS (stability).
+- Images: WebP/AVIF, `srcset`/`<picture>`, `loading="lazy"`, CDN.
+
+```html
+<picture>
+  <source srcset="image-1600.webp" type="image/webp">
+  <img src="image-800.webp" alt="Description" loading="lazy" width="800" height="450">
+</picture>
+```
+
+⚠️ Always set `width` and `height` to avoid layout shift (CLS).
+
+### AI-90. 🆕 Frontend system design framework (e.g. "Design a chat app / news feed")?
+
+1. **Requirements:** features, devices, scale, offline, a11y.
+2. **Architecture:** components, routing, rendering (CSR/SSR).
+3. **Data model & state:** server vs client state, caching.
+4. **API:** REST/GraphQL, pagination, real-time (WebSocket/SSE).
+5. **Performance:** virtualisation, code splitting, images.
+6. **Accessibility & i18n.**
+7. **Security:** XSS, auth, CSP.
+8. **Testing & monitoring.**
+
+**Real-life:** a building plan: rooms (components), plumbing (data flow), fire exits (error handling).
+
+### AI-91. Testing and monitoring?
+
+- Unit → integration → E2E; load tests (k6, JMeter).
+- Logs, metrics, tracing (OpenTelemetry); alerts on SLOs.
+
+### AI-92. Accessibility?
+
+Semantic HTML, ARIA only when needed, keyboard navigation, focus management, colour contrast. Check with axe and Lighthouse.
+
+📌 **To fix in your notes:** `Frontend System Design Yatra1.png` is empty (0 bytes); re-upload the real image.
+
+**Resources:** [System Design Roadmap](https://roadmap.sh/system-design) · [Your Excalidraw board](https://app.excalidraw.com/l/8lwXEYCWFUz/5BWKjqfiBK6)
+
+---
+
+## Part L — Cheat Sheet
+
+### AI-93. One-line answers
+
+| Question | Answer |
+|---|---|
+| Automation vs autonomous? | fixed steps vs AI decides |
+| LLM steps? | tokenize → embed → contextualize → generate → decode |
+| When does Claude stop? | max tokens, end turn, stop sequence, tool use, refusal |
 | Good chat prompt? | Task + Context + Example + Format |
-| Why a server? | Keep the API key secret |
-| 4 things in a request? | Key, model, messages, max_tokens |
-| What comes back? | Message + usage + stop reason |
-| Claude forgets? | Send full history |
-| Set role/rules? | System prompt |
-| Creative? / Factual? | Temp 1.0 / Temp 0.0 |
-| Clean JSON? | Prefill + stop sequence |
-| Improve vs measure a prompt? | Engineering vs Evaluation |
-| After running eval? | Grade the responses |
+| Why a server? | keep the API key secret |
+| 4 things in a request? | key, model, messages, max_tokens |
+| What comes back? | content blocks + usage + stop reason |
+| Claude forgets? | send full history |
+| Set role/rules? | system prompt |
+| Creative vs factual? | temp 1.0 / 0.0 (course); newest models: say it in the prompt (temperature → 400) |
+| Clean JSON? | structured outputs (`output_config.format`); prefill → 400 on newest models |
+| Step-by-step reasoning? | adaptive thinking + `effort` (`budget_tokens` legacy) |
+| Improve vs measure a prompt? | engineering vs evaluation |
 | Separate data in a prompt? | XML tags |
-| Tool loop check? | `stop_reason == "tool_use"` |
-| Fewer tool round trips? | Batch tool |
-| Exact IDs in search? / Meaning? | BM25 / Embeddings |
-| Verify facts from docs? | Citations |
-| Same big doc many times? | Prompt caching |
-| Tools / Resources / Prompts controlled by? | Model / App / User |
-| Test MCP server? | `mcp dev mcp_server.py` |
-| Claude Code project memory? | `CLAUDE.md` |
-| Read-only planning mode? | Plan Mode (`Shift+Tab`) |
-| Free up context? | `/compact` (or `/clear` to restart) |
-| Auto-run scripts in Claude Code? | Hooks |
-| Known steps? / Unknown task? | Workflow / Agent |
-| Same time? / Step after step? | Parallelization / Chaining |
-| Sort first? / Make → check → fix? | Routing / Evaluator-Optimizer |
-| Agent must see results? | Environment inspection |
+| Tool loop? | while `stop_reason == "tool_use"` |
+| Exact IDs vs meaning? | BM25 vs embeddings → hybrid |
+| Verify facts from docs? | citations |
+| Same big doc many times? | prompt caching (5 min / 1 h, max 4 breakpoints) |
+| Tools / resources / prompts? | model / app / user controlled |
+| Test MCP server? | `mcp dev mcp_server.py` (Inspector) |
+| Claude Code memory? | `CLAUDE.md` |
+| Read-only planning? | Plan mode (`Shift+Tab`) |
+| Free up context? | `/compact` (or `/clear`) |
+| Auto-run scripts? | hooks |
+| Known steps vs open task? | workflow vs agent |
+| Same time / step after step? | parallelization / chaining |
+| Sort first / make → check → fix? | routing / evaluator-optimizer |
+| Agent must see results? | environment inspection |
+| Prompt vs RAG vs fine-tune? | instructions / fresh data / retrain weights |
+| Reduce hallucinations? | RAG + citations + "I don't know" + evals |
+| Prompt injection? | treat data as untrusted, least privilege, human approval |
+| Cut cost? | right model, caching, Batch API, trim history |
