@@ -1,435 +1,2747 @@
-# DMS Backend — Learning Path (Frontend → Full-Stack)
+# 🐍 Python for dms-backend: The Complete Learning Path
 
-A structured path to learn Python and every tool used in this repo, written for a
-frontend (React/TypeScript) developer.
+Written for a **complete Python beginner** who knows JavaScript/React, with one goal:
+**work confidently in `dms-backend`** (FastAPI + SQLAlchemy + MySQL + Redis + Celery).
 
-- **Pace:** ~1–1.5 hrs/day → ~12 weeks
-- **Each phase:** 📘 Learn · 📂 In this repo · ✅ Checkpoint
-- Tick the boxes as you go.
+## How to use this file
+- **Topics** are numbered **T1, T2, T3…** and **quiz questions** **Q1, Q2, Q3…** across the whole file.
+  Just tell Claude: *"teach T16"*, *"explain Q23"* or *"quiz me on Day 3"*.
+- Every topic has: 🧠 what it is · 🏠 a real-life example · 💻 code · 🟨 JS/Node comparison · ⚠️ gotchas · 🏢 where it is in dms-backend.
+- Every day ends with a **quiz**. Answers are hidden in a ▶ *Answers* box; guess first, then open it.
+- Mark quiz questions: ✅ = I got it myself · 📖 = I needed an explanation (revise these!)
+- Practice code goes in [`example/`](example/) (`day2.py`, `day3.py`…).
+- After **all days + quizzes** are done → we build the **🏗️ Final Project** (at the end of this file).
 
----
-
-## Table of Contents
-
-1. [The Stack at a Glance](#the-stack-at-a-glance)
-2. [How a Request Flows](#how-a-request-flows)
-3. [Phase 0 — Setup](#phase-0--setup-23-days)
-4. [Phase 1 — Python Core](#phase-1--python-core-weeks-12)
-5. [Phase 2 — Intermediate Python](#phase-2--intermediate-python-week-3)
-6. [Phase 3 — HTTP & REST](#phase-3--http--rest-week-4)
-7. [Phase 4 — FastAPI](#phase-4--fastapi-weeks-45)
-8. [Phase 5 — Pydantic](#phase-5--pydantic-week-5)
-9. [Phase 6 — SQL & MySQL](#phase-6--sql--mysql-weeks-67)
-10. [Phase 7 — SQLAlchemy ORM](#phase-7--sqlalchemy-orm-week-8)
-11. [Phase 8 — Alembic Migrations](#phase-8--alembic-migrations-week-8)
-12. [Phase 9 — Auth & Security](#phase-9--auth--security-week-9)
-13. [Phase 10 — Redis & Celery](#phase-10--redis--celery-weeks-910)
-14. [Phase 11 — Testing (pytest)](#phase-11--testing-pytest-week-10)
-15. [Phase 12 — Integrations & Utilities](#phase-12--integrations--utilities-week-11)
-16. [Phase 13 — DevOps & Team Workflow](#phase-13--devops--team-workflow-week-12)
-17. [Capstone](#capstone)
-18. [Python ↔ JavaScript Cheat Sheet](#python--javascript-cheat-sheet)
-19. [Resources](#resources)
+dms-backend lives at `~/Documents/BJS/PROJECTS/backend/dms-backend`.
 
 ---
 
-## The Stack at a Glance
-
-| Backend (this repo) | What it does | Frontend analogy |
-|---|---|---|
-| **Python 3.12** | Language | JavaScript / TypeScript |
-| **Poetry** (`pyproject.toml`, `poetry.lock`) | Dependency manager | npm + `package.json` / lockfile |
-| **FastAPI** | Web framework (URL → function) | Express / Next.js API routes |
-| **Uvicorn / Gunicorn** | Server process | `node server.js` / `next start` |
-| **Pydantic** (`schemas/`) | Validate & shape request/response data | TS interfaces + Zod |
-| **SQLAlchemy** (`models/`) | ORM: Python classes ↔ DB tables | Prisma / TypeORM |
-| **Alembic** (`alembic/versions/`) | DB migrations | Prisma migrate |
-| **MySQL** | Main database (master + read replica) | — |
-| **Redis** | Cache + Celery job queue | Shared server-side `localStorage` |
-| **Celery** (`celery_task.py`) | Background jobs (emails, imports, PDFs) | Web worker on a server |
-| **pytest** (`tests/`) | Tests | Jest / Vitest |
-| **Docker** (`docker/local/`) | Runs MySQL + Redis locally | — |
-
-**Database:** MySQL via the `pymysql` driver. The default local URL is
-`mysql+pymysql://root:root@localhost:3306/DMS_backend` (see
-`app/dependencies/config/config.py`). GET requests read from a replica (slave), and
-writes go to the master. See `app/dependencies/config/database.py`.
+## 🗺️ Index
+| Day | Topic | Topics | Quiz | Status |
+|---|---|---|---|---|
+| **Part A: Python Core** |||||
+| 1 | Basics: variables, types, f-strings, if, truthiness | T1–T15 | Q1–Q17 | ✅ |
+| 2 | Collections: list, dict, tuple, set | T16–T21 | Q18–Q27 | ⏳ |
+| 3 | Loops + comprehensions | T22–T28 | Q28–Q37 | ⏳ |
+| 4 | Functions | T29–T34 | Q38–Q47 | ⏳ |
+| 5 | Errors & exceptions | T35–T39 | Q48–Q55 | ⏳ |
+| 6 | Modules, imports, pip, venv, Poetry | T40–T44 | Q56–Q63 | ⏳ |
+| 7 | Files + JSON + Week-1 test | T45–T47 | Q64–Q70 | ⏳ |
+| **Part B: Intermediate Python** |||||
+| 8 | Classes & OOP | T48–T54 | Q71–Q80 | ⏳ |
+| 9 | Type hints | T55–T59 | Q81–Q88 | ⏳ |
+| 10 | Decorators | T60–T64 | Q89–Q96 | ⏳ |
+| 11 | Iterators, generators, `with` | T65–T69 | Q97–Q103 | ⏳ |
+| 12 | async/await + datetime, Decimal, enum, logging | T70–T76 | Q104–Q113 | ⏳ |
+| **Part C: Backend in dms-backend** |||||
+| 13 | HTTP & REST + run dms-backend locally | T77–T80 | Q114–Q121 | ⏳ |
+| 14 | FastAPI: routes, path & query params, routers | T81–T85 | Q122–Q129 | ⏳ |
+| 15 | FastAPI: body, `Depends`, request/response | T86–T90 | Q130–Q137 | ⏳ |
+| 16 | Pydantic schemas | T91–T96 | Q138–Q145 | ⏳ |
+| 17 | SQL basics (MySQL) | T97–T100 | Q146–Q153 | ⏳ |
+| 18 | SQL: joins, group by, indexes, transactions | T101–T104 | Q154–Q161 | ⏳ |
+| 19 | SQLAlchemy: models & sessions | T105–T109 | Q162–Q169 | ⏳ |
+| 20 | SQLAlchemy: queries & writes | T110–T114 | Q170–Q177 | ⏳ |
+| 21 | Alembic migrations | T115–T118 | Q178–Q184 | ⏳ |
+| 22 | Auth: hashing, JWT, permissions | T119–T123 | Q185–Q192 | ⏳ |
+| 23 | Redis + Celery | T124–T128 | Q193–Q200 | ⏳ |
+| 24 | Testing with pytest | T129–T133 | Q201–Q208 | ⏳ |
+| **Part D: Real-world** |||||
+| 25 | Integrations: HTTP clients, retries, S3, Kafka, config | T134–T138 | Q209–Q216 | ⏳ |
+| 26 | Team workflow: git, pre-commit, Docker, CI | T139–T143 | Q217–Q224 | ⏳ |
+| 🏗️ | **Final Project**: build a feature in dms-backend | — | — | ⏳ |
 
 ---
+---
 
-## How a Request Flows
+# 📅 Day 1: The building blocks
 
-Learn this one path well; every module in `app/services/` follows the same pattern.
+### T1. What is Python?
+🧠 Python is a programming language, and `python3` is the program that **runs** Python code, the same way `node` runs JavaScript.
+- **Interpreted:** it reads and runs your file line by line, from top to bottom. No compile step.
+- **Used for:** backends (dms-backend uses FastAPI), automation scripts, data work and AI.
+- File extension: `.py`
 
-```
-Frontend axios call
-  → app/main.py                         registers routers + middleware (auth, CORS, rate-limit)
-  → app/services/order/router.py        groups the order routes
-  → app/services/order/routers/v0/order_product/get.py   ← endpoint function
-       ├─ Depends(get_db)         → DB session     (app/dependencies/config/database.py)
-       ├─ Depends(XPagination())  → reads `x-pagination` header
-       ├─ Depends(XFilter())      → reads `x-filters` header
-       ├─ queries models/order_products.py   (SQLAlchemy → MySQL table "OrderProducts")
-       └─ returns schemas/order_products_schema.py  (Pydantic → JSON)
-```
+🏠 Python is the cook and your `.py` file is the recipe. The cook follows it one line at a time, top to bottom.
 
-**Standard module layout** (`app/services/<module>/`):
-
-| Folder / file | Purpose |
+### T2. Installing and running
+| Node.js | Python |
 |---|---|
-| `router.py` | Groups the module's routes |
-| `routers/v0`, `routers/v1` | Endpoint functions (versioned) |
-| `models/` | Database tables |
-| `schemas/` | Request/response shapes |
-| `helpers/` | Business logic |
-| `celery_task.py` | Background jobs |
-| `crons/` | Scheduled jobs |
-
----
-
-## Phase 0 — Setup (2–3 days)
-
-📘 **Learn**
-- Install Python 3.12, Poetry, and Docker
-- VS Code + **Python** and **Pylance** extensions
-- Virtual environments (`.venv` ≈ project-local `node_modules`)
-
-📂 **In this repo:** `README.md` (setup steps), `pyproject.toml`, `Makefile`,
-`docker/local/docker-compose.yml`, `docker/local/example.env`
-
-✅ **Checkpoint**
-- [ ] `poetry install` succeeds
-- [ ] App runs (`make run` or `poetry run uvicorn app.main:app --reload --port 8000`)
-- [ ] `http://localhost:8000/docs` (Swagger) opens
-- [ ] Local MySQL is connected in **DBeaver** / MySQL Workbench
-
----
-
-## Phase 1 — Python Core (Weeks 1–2)
-
-📘 **Learn**
-
-| Topic | JS equivalent |
-|---|---|
-| `int`, `float`, `str`, `bool`, `None` | `null` → `None` |
-| `list`, `dict`, `tuple`, `set` | array, object, frozen array, `Set` |
-| `if` / `elif` / `for` / `while`, indentation | `{}` blocks |
-| Functions, default args, `*args`, `**kwargs` | rest / spread |
-| f-strings: `f"order {order_id}"` | template literals |
-| List/dict comprehensions | `.map()` / `.filter()` |
-| `try` / `except` / `finally`, `raise` | `try` / `catch`, `throw` |
-| Modules, imports, `__init__.py` | ES modules, `index.js` |
-| Truthiness, `is` vs `==` | `===` |
-
-Resource: [Official Python tutorial](https://docs.python.org/3/tutorial/), chapters 3–9.
-
-✅ **Checkpoint**
-- [ ] Write a script that reads a JSON file of orders, filters them, groups them by
-      customer, and prints the totals
-
----
-
-## Phase 2 — Intermediate Python (Week 3)
-
-📘 **Learn**
-- **Classes**: `__init__`, `self`, inheritance, class vs instance attributes
-- **Type hints**: `Optional`, `List`, `Dict`, `Union`, `Any`
-- **Decorators** (`@`): how `@router.get`, `@celery.task`, `@check_permission` work
-- **Context managers** (`with`)
-- **Generators** (`yield`), which `get_db()` uses
-- **`async` / `await`**, the event loop, and `def` vs `async def` in FastAPI
-  (a sync `def` runs in a threadpool, while an `async def` must not block)
-- Std-lib: `datetime`, `decimal.Decimal`, `enum`, `json`, `logging`
-
-📂 **In this repo**
-- `app/dependencies/timestampmixin.py`: inheritance / mixins
-- `app/services/sso_login/decorator.py`: decorators
-- `app/dependencies/config/database.py` → `get_db`: generator
-- `app/utils/datetime_util.py`
-
-✅ **Checkpoint**
-- [ ] Explain what `@check_permission` does
-- [ ] Write your own decorator that logs a function's execution time
-
----
-
-## Phase 3 — HTTP & REST (Week 4)
-
-📘 **Learn**
-- HTTP methods and status codes (200, 201, 400, 401, 403, 404, 422, 500)
-- Headers, query params, path params, request body
-- REST design and API versioning (the reason for `v0` / `v1` / `v2` here)
-- CORS from the server side (`CORSMiddleware` in `app/main.py`)
-- JWT auth flow
-
-✅ **Checkpoint**
-- [ ] Explain, from the server's side, why the frontend gets a CORS error or a 422
-
----
-
-## Phase 4 — FastAPI (Weeks 4–5)
-
-📘 **Learn:** the [FastAPI Tutorial – User Guide](https://fastapi.tiangolo.com/tutorial/), all of it:
-`APIRouter`, path/query/body params, **`Depends()`**, `HTTPException`,
-`response_model`, middleware, lifespan (startup/shutdown), file uploads.
-
-📂 **In this repo**
-- `app/main.py`: router registration + middleware
-- `app/services/order/router.py` → `routers/v0/order_product/get.py`
-- `app/dependencies/pagination/`: backend of the `x-pagination` header
-- `app/dependencies/x_filter/`: backend of the `x-filters` header
-- `app/dependencies/config/middlewares.py` (AuthMiddleware), `rate_limit_middleware.py`
-- `app/custom_response/`: the standard response envelope
-
-✅ **Checkpoint**
-- [ ] Build a toy FastAPI app (outside the repo) with CRUD for "notes"
-- [ ] Trace one API the frontend uses, end to end, in this repo
-
----
-
-## Phase 5 — Pydantic (Week 5)
-
-📘 **Learn:** Pydantic v2: `BaseModel`, `Optional` defaults, `Field`,
-`field_validator` / `model_validator`, `computed_field`,
-`from_attributes=True` (ORM → schema), `model_dump()`.
-
-📂 **In this repo**
-- `app/services/order/schemas/order_products_schema.py`
-- `app/dependencies/pydantic/`
-- `app/utils/validations/`
-
-✅ **Checkpoint**
-- [ ] Add a field to a response schema and see it appear in `/docs`
-- [ ] Explain why a given request returned 422
-
----
-
-## Phase 6 — SQL & MySQL (Weeks 6–7)
-
-> This is the biggest gap for frontend developers, so take your time here.
-
-📘 **Learn**
-- `SELECT`, `WHERE`, `ORDER BY`, `LIMIT`, `INSERT`, `UPDATE`, `DELETE`
-- `JOIN` (inner / left), `GROUP BY`, `HAVING`, subqueries
-- Primary / foreign keys, normalization basics
-- **Indexes** and `EXPLAIN`, to understand why queries are slow
-- **Transactions**, row locks, deadlocks
-- Soft deletes (the `isdeleted` columns used throughout this repo)
-- Replication: master vs read replica
-
-Practice: [SQLBolt](https://sqlbolt.com) → [PGExercises](https://pgexercises.com) → your local DB in DBeaver.
-
-📂 **In this repo**
-- Browse the `Orders`, `OrderProducts`, `Customers` tables
-- Read the index comment in `app/services/order/models/order_products.py`
-  (a real-world performance lesson)
-
-✅ **Checkpoint**
-- [ ] Write raw SQL: all products for an order, with the customer name
-- [ ] Run `EXPLAIN` on it and interpret the result
-
----
-
-## Phase 7 — SQLAlchemy ORM (Week 8)
-
-📘 **Learn:** the [SQLAlchemy 2.0 Unified Tutorial](https://docs.sqlalchemy.org/en/20/tutorial/):
-`Column`, types, `ForeignKey`, `relationship`; sessions (`add`, `commit`,
-`rollback`); `db.query(...).filter(...).first()/.all()` (the 1.x style, which is common here);
-`and_` / `or_`; joins; `joinedload` (to avoid N+1); raw `text()` SQL.
-
-📂 **In this repo**
-- `app/dependencies/base.py`
-- `app/services/order/models/*.py`
-- `app/utils/utility.py` → `Query.get_filter_paginate`
-- `app/dependencies/config/database.py`: master/slave sessions and session lifecycle
-
-✅ **Checkpoint**
-- [ ] Rewrite the Phase 6 query in SQLAlchemy
-- [ ] Find an N+1 query pattern in an existing endpoint
-
----
-
-## Phase 8 — Alembic Migrations (Week 8)
-
-📘 **Learn:** `alembic revision --autogenerate -m "..."`, `alembic upgrade head`,
-`alembic downgrade -1`, revision chains (`down_revision`), safe migrations on big tables.
-
-📂 **In this repo:** `alembic.ini`, `alembic/env.py`, `alembic/versions/` (read 3 files)
-
-✅ **Checkpoint**
-- [ ] Locally: add a column → generate a migration → upgrade → downgrade
-
----
-
-## Phase 9 — Auth & Security (Week 9)
-
-📘 **Learn:** JWT (sign, verify, expiry), password hashing (argon2 / bcrypt),
-permission checks, token revocation, OWASP basics (SQL injection, mass assignment,
-secrets in env vars).
-
-📂 **In this repo**
-- `app/services/sso_login/`: login and permission decorators
-- `app/revocation.py`
-- `app/utils/security/`
-- `app/services/user_management/helpers/user_helpers.py` → `fetch_accessible_customer_ids`
-
-✅ **Checkpoint**
-- [ ] Explain, step by step, what happens when a request arrives with an expired token
-
----
-
-## Phase 10 — Redis & Celery (Weeks 9–10)
-
-📘 **Learn**
-- Redis: GET/SET, TTL, cache invalidation
-- Celery: tasks, broker, workers, retries, scheduled jobs
-- Flower (a Celery monitoring dashboard)
-- Why slow work must not run inside a request
-
-📂 **In this repo**
-- `app/dependencies/_redis/`, `app/utils/cache_key_builders.py`
-- `app/dependencies/celery/`
-- `app/services/file_operations/celery_task.py`: `bind=True`, `max_retries`
-- `app/services/order/crons/`, `app/services/cron_manager/`
-
-✅ **Checkpoint**
-- [ ] Trigger a Celery task locally and watch it in Flower
-
----
-
-## Phase 11 — Testing (pytest) (Week 10)
-
-📘 **Learn:** pytest, fixtures, `conftest.py`, `@pytest.mark.parametrize`,
-`unittest.mock.patch`, factory_boy, httpx `AsyncClient` for API tests, coverage.
-
-📂 **In this repo**
-- `tests/conftest.py`: test DB + fixtures
-- `tests/factories/`
-- `tests/api/v0`, `tests/api/v1`
-- `make test_only`, `make test_debug`
-
-✅ **Checkpoint**
-- [ ] Write tests for one endpoint: one success case and one 404 case
-
----
-
-## Phase 12 — Integrations & Utilities (Week 11)
-
-| Library | Used for | Where to look |
-|---|---|---|
-| `httpx` / `requests` | Calling other services (GSIT etc.) | `app/utils/internal_requests/` |
-| `tenacity` | Retries | `grep -rn tenacity app` |
-| `boto3` | AWS S3 files | `app/services/s3_resource/` |
-| `pandas` / `openpyxl` | CSV / Excel import-export | `app/services/file_operations/` |
-| `fastapi-mail` + Jinja | Emails | `app/templates/`, `app/services/communications/` |
-| `borb`, `python-docx`, `python-barcode` | PDFs, docs, labels | `grep -rln "borb\|barcode" app` |
-| Stripe | Payments | `app/services/integrations/` |
-| Socket.IO | Real-time push | `app/dependencies/socketio/` |
-| `loguru`, Slack logger, Prometheus | Logging & metrics | `app/dependencies/loggers/`, `app/main.py` |
-
-✅ **Checkpoint**
-- [ ] Follow one CSV import: upload → Celery task → DB
-
----
-
-## Phase 13 — DevOps & Team Workflow (Week 12)
-
-📘 **Learn:** Docker / docker-compose, `.env` config, Git branching and Bitbucket PRs,
-CI (`bitbucket-pipelines.yml`), linting (`make lint`: flake8, isort, mypy),
-Gunicorn/Uvicorn workers (`start.sh`), reading production logs, debugging 500s.
-
-✅ **Checkpoint**
-- [ ] Open a small PR that passes the pipeline and review
-
----
-
-## Capstone
-
-Pick one small ticket that touches **both frontend and backend** and do every layer yourself:
-
+| `node -v` | `python3 --version` |
+| `node` (REPL) | `python3` (REPL, `>>>` prompt) |
+| `node app.js` | `python3 app.py` |
+| `npm install x` | `pip install x` / `poetry add x` |
+| `package.json` | `pyproject.toml` |
+| `node_modules/` | virtual env (`.venv/`) |
+| `nvm` (switch versions) | `pyenv` (switch versions) |
+
+📌 **`python3`, not `python`, on Ubuntu:** older Linux systems used `python` for **Python 2**, which is outdated and incompatible with Python 3. To avoid breaking old scripts, Ubuntu names the modern one `python3` (and `pip3`).
+Inside an active virtual env (or with `poetry run`), plain `python` works and points to the env's Python 3.
+_Node comparison:_ Node never split like this. There's just `node`, and you switch versions with `nvm`.
+
+```bash
+python3 --version     # Python 3.12.3
+which python3         # /usr/bin/python3, where it's installed
+python3               # opens the REPL; try 2 + 3, then exit() to leave
+python3 day1.py       # runs your file
 ```
-model → migration → schema → endpoint → test → frontend integration
-```
+💡 **REPL** = "Read, Eval, Print, Loop": type a line and see the result immediately, like the Chrome DevTools console.
 
-- [ ] Capstone shipped 🎉
-
----
-
-## Python ↔ JavaScript Cheat Sheet
-
+### T3. Comments
 ```python
-# Variables & types
-name: str = "BJS"                 # const name: string = "BJS"
-order_id: Optional[int] = None    # let orderId: number | null = null
+# single-line comment                 (JS: // comment)
 
-# Collections
-ids = [1, 2, 3]                   # const ids = [1, 2, 3]
-order = {"id": 1, "qty": 2}       # const order = { id: 1, qty: 2 }
-order["qty"]                      # order.qty
-order.get("missing", 0)           # order.missing ?? 0
-
-# map / filter
-doubled = [x * 2 for x in ids]            # ids.map(x => x * 2)
-evens = [x for x in ids if x % 2 == 0]    # ids.filter(x => x % 2 === 0)
-
-# Functions
-def total(qty: int, price: float = 0.0) -> float:
-    return qty * price
-
-# Lambda
-square = lambda x: x * x          # const square = x => x * x
-
-# Errors
-try:
-    risky()
-except ValueError as e:           # catch (e)
-    raise HTTPException(status_code=400, detail=str(e))
-
-# Async
-async def fetch_data():
-    result = await client.get(url)
-
-# Classes
-class OrderSchema(BaseModel):     # interface OrderSchema { id: number; qty?: number }
-    id: int
-    qty: Optional[int] = None
-
-# Decorator (wraps a function, like a HOC)
-@router.get("/orders/{order_id}")
-def get_order(order_id: int, db: Session = Depends(get_db)):
-    return db.query(Orders).filter(Orders.id == order_id).first()
+"""
+multi-line string, used as a
+multi-line comment or a "docstring"   (JS: /* ... */)
+"""
 ```
 
+### T4. `print()`: showing output
+🧠 Python's `console.log()`.
+```python
+print("Hello")                    # Hello
+print("Job", 5001, "assigned")    # Job 5001 assigned  ← commas add a space and convert types for you
+print("a", "b", sep="-")          # a-b                ← sep = what goes BETWEEN the values (default " ")
+print("Loading", end="...")       # Loading...         ← end = what goes at the END (default: new line)
+print()                           # an empty line
+```
+🟨 `console.log("Job", 5001)` is the same, but JS has no `sep`/`end` (use `.join()`).
+💡 `sep=" | "` is a **keyword argument** (a value passed by name). It's the same idea as `status_code=200` in FastAPI.
+
+### T5. Variables
+🧠 A variable is a **name that points to a value**.
+🏠 A labelled box on a warehouse shelf: the label is the name, the item inside is the value, and you can swap the item at any time.
+```python
+job_id = 5001
+driver_name = "Ravi"
+driver_name = "Amit"          # reassign
+```
+| JavaScript | Python |
+|---|---|
+| `let x = 5;` / `const x = 5;` | `x = 5` |
+| `const` stops reassignment | ❌ no `const`; everything can be reassigned |
+| `MAX_QTY` | `MAX_QTY = 10`: ALL_CAPS = "treat as a constant" (convention only) |
+| `camelCase` | `snake_case` |
+
+**Naming rules** (breaking these = error):
+| Rule | ✅ OK | ❌ Error |
+|---|---|---|
+| Letters, digits, `_` only | `order_id` | `order-id` (read as minus!) |
+| Can't start with a digit | `driver_2` | `2nd_driver` → `SyntaxError: invalid decimal literal` |
+| No spaces | `job_id` | `job id` |
+| Not a keyword | `class_name` | `class`, `if`, `for`, `None` |
+| Case-sensitive | `name` ≠ `Name` | (a common bug) |
+🟨 JS allows `$` in names; Python doesn't.
+
+**dms-backend naming style:**
+| What | Style | Example |
+|---|---|---|
+| variables, functions | `snake_case` | `order_id`, `get_db()` |
+| classes | `PascalCase` | `EscalationReasons` |
+| constants | `UPPER_CASE` | `CLIENT_ID` |
+| internal/private | starts with `_` | `_TOOLBOX_SCAN_FIELDS` |
+
+**Handy tricks:**
+```python
+x, y = 10, 20          # several at once (matched by position)
+x, y = y, x            # swap: the right side is worked out FIRST, then assigned
+a = b = 0
+x, y = 1, 2, 3         # ❌ ValueError: too many values to unpack
+```
+⚠️ **Dynamic typing:** a variable can change type (`job = 5001`, then `job = "five"`).
+
+### T6. Data types
+🏠 A delivery job: customer name (text), item count (whole number), weight (decimal), paid? (yes/no), driver (nothing yet).
+```python
+customer = "Ravi"     # str    text, "double" or 'single' quotes
+items = 3             # int    whole number
+weight = 12.5         # float  decimal number
+paid = True           # bool   True / False (capital!)
+driver = None         # None   "no value"
+type(items)           # <class 'int'>
+```
 | JS | Python |
 |---|---|
-| `null` / `undefined` | `None` |
+| `string` | `str` |
+| `number` (one type) | `int` **and** `float` |
 | `true` / `false` | `True` / `False` |
-| `&&` / `\|\|` / `!` | `and` / `or` / `not` |
-| `===` | `==` (value), `is` (identity, e.g. `is None`) |
-| `arr.length` | `len(arr)` |
-| `console.log()` | `print()` / `logger.info()` |
-| `JSON.parse` / `JSON.stringify` | `json.loads` / `json.dumps` |
-| `npm install x` | `poetry add x` |
-| `package.json` | `pyproject.toml` |
+| `null` **and** `undefined` | just `None` |
+| `typeof x` | `type(x)` |
+
+**Maths:**
+```python
+10 / 2     # 5.0  ← / ALWAYS gives a float
+10 // 3    # 3    ← whole-number division
+10 % 3     # 1    ← remainder
+2 ** 3     # 8    ← power
+"5" * 2    # "55" ← text * int = REPEAT
+```
+🏢 If you need a whole number (page, qty, id), use `//` or `int()`, not `/`.
+
+### T7. Type conversion
+```python
+int("5")        # 5
+float("12.5")   # 12.5
+str(5001)       # "5001"
+int("3.5")      # ❌ ValueError
+int("abc")      # ❌ ValueError
+"5" + 1         # ❌ TypeError   (JS gives "51")
+```
+⚠️ Python **never** silently converts types. That means fewer hidden bugs.
+
+### T8. `input()`: reading from the keyboard
+🧠 It **always returns a `str`**, whatever is typed. The argument is just the **prompt text** (`input(123)` shows "123"; it's not the value).
+```python
+qty = int(input("Qty: "))     # convert straight away
+```
+🟨 Same as browser `prompt()`, which also returns a string.
+🏢 dms-backend doesn't use `input()`. Data comes from API requests, and FastAPI converts it using type hints (`page: int`).
+
+### T9. f-strings
+🏠 A fill-in-the-blanks SMS: "Hi {name}, your job {id} is out for delivery."
+```python
+name, job_id, price = "Ravi", 5001, 49.5
+f"Hi {name}, job {job_id}"     # Hi Ravi, job 5001
+f"Total: {price * 2}"          # maths inside {}
+f"Price: {price:.2f}"          # 49.50 ← 2 decimal places
+"Hi {name}"                    # ⚠️ no f → prints "Hi {name}" literally
+```
+🟨 JS: `` `Hi ${name}` ``. Python uses `f"..."` + `{}` with no `$`.
+🏢 `logger.info(f"Order {order_id} assigned to driver {driver_id}")`
+
+### T10. Indentation = Python's `{ }`
+```python
+if paid:
+    print("Dispatch")     # inside (4 spaces)
+print("Done")             # outside
+```
+⚠️ A line ending with `:` → the next line **must** be indented, otherwise `IndentationError`.
+
+### T11. `if` / `elif` / `else`
+```python
+if total > 1000:
+    fee = 0
+elif total > 500:         # JS: else if
+    fee = 50
+else:
+    fee = 100
+```
+- Every condition line ends with **`:`** · no `( )` needed · `==` / `!=` instead of `===` / `!==`
+- In a chain, **only the first True branch runs**.
+- Two separate rules that can **both** apply → use two separate `if`s, not `elif`.
+
+### T12. `and` / `or` / `not`
+```python
+if paid and driver and not cancelled:
+    print("Dispatch")
+```
+| JS | Python |
+|---|---|
+| `&&` `\|\|` `!` | `and` `or` `not` |
+
+### T13. Truthiness
+**Falsy:** `False`, `None`, `0`, `0.0`, `""`, `[]`, `{}`, `set()` · everything else is truthy (`[0]`, `" "`, `"0"`, `"False"` are all **truthy**).
+```python
+if not orders:
+    print("No orders today")
+```
+⚠️ `[]` and `{}` are **falsy** in Python but **truthy** in JS.
+⚠️ When `0` is a valid value (discount = 0), use `if x is None:`, not `if not x:`.
+🏢 `if not order: raise HTTPException(404, "Order not found")`
+
+### T14. `is None` vs `==`
+🧠 `==` = same **value** · `is` = the **same object** in memory.
+```python
+a = [1, 2]; b = [1, 2]; c = a
+a == b    # True   same contents
+a is b    # False  different lists
+a is c    # True   one list, two names
+```
+Always write `x is None` / `x is not None`:
+1. There's only one `None` object.
+2. `==` can be customised by a class and can lie; `is` can't.
+3. flake8 (used in dms-backend) flags `== None` as **E711**.
+
+⚠️ Use `is` only with `None`/`True`/`False`, never with numbers or strings.
+🏢 **The exception, SQLAlchemy filters:** `.filter(Model.column.is_(None))`, which becomes SQL `IS NULL`.
+
+### T15. Reading errors (tracebacks)
+Read **from the bottom up**: the last line says **what** went wrong, and the line above it says **where**.
+```
+  File "day1.py", line 3, in <module>
+    print("Job " + 5001)
+TypeError: can only concatenate str (not "int") to str
+```
+| Error | Usually means |
+|---|---|
+| `NameError` | a typo / not created yet (Python 3.12 suggests: *Did you mean…?*) |
+| `TypeError` | mixing types |
+| `IndentationError` | wrong spacing |
+| `SyntaxError` | a missing `:`, quote or bracket |
+| `ValueError` | `int("abc")` |
+
+### ⚡ Day 1 in one breath
+`python3 file.py` · no `let`/`const`/`;`/`{}` · `snake_case` · `True/False/None` · `/` gives a float · no silent type mixing · `input()` returns a str · `f"{x}"` · indent after `:` · `elif` · `and/or/not` · `[]` is falsy · `is None` · read errors bottom-up.
+
+## 📝 Quiz: Day 1 (Q1–Q17)
+| # | Question | Answer | Why |
+|---|---|---|---|
+| Q1 ✅ | `print(type(10 / 2))` | `<class 'float'>` | `/` always gives a float |
+| Q2 ✅ | `print(7 // 2, 7 % 2)` | `3 1` | whole-number division, remainder |
+| Q3 📖 | `print("Job", 5001, "done", sep=" \| ")` | `Job \| 5001 \| done` | `sep` goes between the values |
+| Q4 📖 | `name="Ravi"; print("Hi {name}")` | `Hi {name}` | no `f` |
+| Q5 📖 | `x,y=1,2; x,y=y,x; print(x,y)` | `2 1` | right side first, then assign |
+| Q6 📖 | `x=0` → `if x: yes else no` | `no` | `0` is falsy |
+| Q7 📖 | `bool("False"), bool(""), bool([]), bool(" ")` | `True False False True` | non-empty text is truthy |
+| Q8 📖 | `a=[1]; b=[1]; print(a==b, a is b)` | `True False` | same value, different objects |
+| Q9 📖 | `driver = null` valid? | ❌ | `NameError`: use `None` |
+| Q10 📖 | `2nd_driver` valid name? | ❌ | can't start with a digit |
+| Q11 📖 | `Name` same as `name`? | ❌ | case-sensitive |
+| Q12 📖 | `input()` gives an int for numbers? | ❌ | always a str |
+| Q13 📖 | `[]` acts as True? | ❌ | empty = falsy |
+| Q14 📖 | bug: `"Job " + job_id` (int) | TypeError | `f"Job {job_id}"` |
+| Q15 📖 | bug: `paid = true` / `if paid` | 2 bugs | `True` + the missing `:` |
+| Q16 📖 | bug: `qty = input(); qty * 49.5` | TypeError | `int(input())` |
+| Q17 🟡 | write: driver / two-man job / weight | see below | |
+
+```python
+weight, is_fragile, driver = 18.5, True, None
+if driver is None:
+    print("Assign a driver first")
+elif weight > 20 or is_fragile:
+    print("Two-man job")
+else:
+    print("One-man job")
+print(f"Weight: {weight:.2f} kg")     # always runs (not indented)
+```
+My mistakes: the typo `'wo-man job'` and a forgotten final print. **Read the whole requirement before finishing.**
 
 ---
+---
 
-## Resources
+# 📅 Day 2: Collections (list, dict, tuple, set)
+🏢 **Why it matters:** API data is almost always **lists of dicts**. JSON `[{"id": 101}]` becomes a Python list of dicts.
 
-| Topic | Link |
+| Python | JS | Real life |
+|---|---|---|
+| `list` `[ ]` | Array | today's delivery run, in order |
+| `dict` `{ }` | Object | one order form: field → value |
+| `tuple` `( )` | a frozen array | a postcode that must not change |
+| `set` `{ }` | `Set` | the unique cities on today's run |
+
+### T16. `list`: create, index, slice
+🧠 An **ordered** collection you **can change**.
+🏠 Today's delivery run: stops in order.
+```python
+stops = ["sofa", "bed", "table"]
+stops[0]        # "sofa"   ← index starts at 0
+stops[-1]       # "table"  ← negative = from the end (JS: .at(-1))
+stops[0:2]      # ["sofa", "bed"]  ← slice [start:stop], stop NOT included
+stops[1:]       # ["bed", "table"]
+stops[::-1]     # reversed copy
+len(stops)      # 3  ← a function, not .length
+stops[10]       # ❌ IndexError: list index out of range  (JS gives undefined)
+```
+🟨 A list can hold mixed types like a JS array, but in practice keep one type per list.
+
+### T17. List methods + the copy trap
+```python
+stops.append("chair")       # add to the end              JS: push
+stops.insert(0, "lamp")     # add at a position            JS: splice(0,0,x)
+stops.extend(["a", "b"])    # add many                     JS: push(...arr)
+stops.pop()                 # remove + return the last     JS: pop
+stops.pop(0)                # remove + return index 0      JS: shift
+stops.remove("bed")         # remove by VALUE (first match; ValueError if missing)
+"bed" in stops              # True/False                   JS: includes
+stops.index("sofa")         # position                     JS: indexOf (but ValueError if missing)
+stops.sort()                # sorts IN PLACE, returns None ⚠️
+sorted(stops)               # returns a NEW sorted list
+stops + ["x"]               # join two lists → new list    JS: [...a, ...b]
+```
+⚠️ `stops = stops.sort()` → `stops` becomes `None`! `.sort()` changes the list and returns nothing.
+⚠️ **The copy trap:**
+```python
+a = [1, 2]
+b = a            # NOT a copy: same list
+b.append(3)      # a is now [1, 2, 3] too!
+c = a.copy()     # ✅ real copy (also: a[:] or list(a))   JS: [...a]
+```
+
+### T18. `dict`: key → value
+🧠 Like a JS object. Keys are usually strings.
+🏠 One order form: each field has a value.
+```python
+order = {"id": 101, "customer": "Ravi", "qty": 2}
+order["customer"]                   # "Ravi"
+order["driver"]                     # ❌ KeyError: 'driver'
+order.get("driver")                 # None (safe)
+order.get("driver", "unassigned")   # default   JS: order.driver ?? "unassigned"
+order["driver"] = "Amit"            # add or update
+del order["qty"]                    # delete
+order.pop("qty", None)              # delete safely + return the value
+"qty" in order                      # checks KEYS
+order.update({"qty": 3, "paid": True})   # merge   JS: Object.assign / {...a, ...b}
+{**order, "qty": 5}                 # spread copy JS: {...order, qty: 5}
+order.keys(), order.values(), order.items()   # JS: Object.keys/values/entries
+```
+| JS | Python |
 |---|---|
-| Python | https://docs.python.org/3/tutorial/ |
-| FastAPI | https://fastapi.tiangolo.com/tutorial/ |
-| Pydantic v2 | https://docs.pydantic.dev/latest/ |
-| SQL practice | https://sqlbolt.com |
-| SQLAlchemy 2.0 | https://docs.sqlalchemy.org/en/20/tutorial/ |
-| Alembic | https://alembic.sqlalchemy.org/en/latest/tutorial.html |
-| Celery | https://docs.celeryq.dev/en/stable/getting-started/ |
-| pytest | https://docs.pytest.org/en/stable/getting-started.html |
-| Redis | https://redis.io/docs/latest/develop/ |
+| `order.customer` | `order["customer"]` ⚠️ **no dot access** on dicts |
+| missing key → `undefined` | missing key → **KeyError** (use `.get`) |
+| `{id: 1}` | `{"id": 1}` (keys need quotes) |
+🏢 `app/main.py`: `sample.labels.get("handler", "unknown")`
 
-### Weekly habits
-1. Read one teammate's backend PR every week and understand every line.
+### T19. `tuple`: fixed list
+🧠 Ordered, **can't change** (immutable).
+🏠 A postcode / GPS point: set once, never edited.
+```python
+depot = ("Leeds", "LS1 4AP")
+depot[0]           # "Leeds"
+depot[0] = "York"  # ❌ TypeError: 'tuple' object does not support item assignment
+city, postcode = depot     # unpacking
+single = ("x",)    # ⚠️ a 1-item tuple NEEDS the comma; ("x") is just a string
+```
+Use a **tuple** for fixed records, function returns with several values, and dict keys. Use a **list** when the contents change.
+🏢 `get_permission()` in `sso_login/decorator.py` returns a tuple: `return user, permissions`.
+
+### T20. `set`: unique items
+🧠 **No duplicates**, **no order**, super-fast `in` checks.
+🏠 Cities on today's run: London appears 5 times, but you list it once.
+```python
+cities = {"London", "Leeds", "London"}   # {'London', 'Leeds'}
+cities.add("York")
+cities.discard("Paris")     # remove, no error if missing
+unique = set(["a", "a", "b"])   # remove duplicates from a list
+a, b = {1, 2, 3}, {2, 3, 4}
+a & b    # {2, 3}       in both          (intersection)
+a | b    # {1, 2, 3, 4} in either        (union)
+a - b    # {1}          in a, not b      (difference)
+```
+⚠️ `{}` is an empty **dict**. An empty set is `set()`.
+⚠️ Sets have no index: `cities[0]` → TypeError.
+🏢 `warehouse_loading_scan.py`: `_TOOLBOX_SCAN_FIELDS = {"is_received", "picked", ...}`, used for `if field in _TOOLBOX_SCAN_FIELDS`.
+
+### T21. Nesting: a list of dicts (the real API shape)
+```python
+orders = [
+    {"id": 101, "customer": "Ravi", "city": "London", "items": ["sofa", "bed"]},
+    {"id": 102, "customer": "Sara", "city": "Leeds",  "items": ["table"]},
+]
+orders[1]["customer"]        # "Sara"
+orders[0]["items"][-1]       # "bed"
+orders.append({"id": 103, "customer": "Amit", "city": "York", "items": []})
+len(orders)                  # 3
+```
+🟨 Same as JS `orders[1].customer`, but with `["key"]`.
+🏢 When FastAPI receives a JSON body or you build a response, this is exactly the shape you work with.
+
+## 📝 Quiz: Day 2 (Q18–Q27)
+**Q18.** `stops = ["a","b","c","d"]`: what is `stops[1:3]`? And `stops[-2]`?
+**Q19.** What does this print?
+```python
+a = [1, 2]
+b = a
+b.append(3)
+print(a)
+```
+**Q20.** `order = {"id": 1}`: what's the difference between `order["driver"]` and `order.get("driver")`?
+**Q21.** What's wrong? `stops = stops.sort()`
+**Q22.** Create an empty set. (Careful!)
+**Q23.** `print(len({"London", "Leeds", "London"}))`
+**Q24.** True or False: you can change `depot[0]` if `depot = ("Leeds", "LS1")`.
+**Q25.** `("x")`: what type is it? And `("x",)`?
+**Q26.** Using `orders` from T21, write the code to print `"bed"`.
+**Q27.** Write: given `order = {"id": 101, "qty": 2}`, print the driver or `"Not assigned"`, then set `qty` to 3 and add `"paid": True` in **one** line.
+
+<details><summary>▶ Answers</summary>
+
+- **Q18.** `["b", "c"]` (stop index 3 not included) · `"c"`
+- **Q19.** `[1, 2, 3]`: `b` is the same list, not a copy
+- **Q20.** `["driver"]` raises **KeyError**; `.get("driver")` returns `None`
+- **Q21.** `.sort()` returns `None`, so `stops` becomes `None`. Use `stops.sort()` alone, or `stops = sorted(stops)`
+- **Q22.** `set()` (`{}` is an empty dict)
+- **Q23.** `2`
+- **Q24.** False: tuples are immutable (TypeError)
+- **Q25.** `str` · `tuple`
+- **Q26.** `print(orders[0]["items"][-1])` (or `[1]`)
+- **Q27.**
+```python
+print(order.get("driver", "Not assigned"))
+order.update({"qty": 3, "paid": True})
+```
+</details>
+
+---
+---
+
+# 📅 Day 3: Loops + comprehensions
+
+### T22. `for` loop + `range()`
+🧠 `for x in collection:` visits each item in turn. There's no `i++` counter loop.
+🏠 A driver visiting each stop on the run.
+```python
+for stop in ["sofa", "bed", "table"]:
+    print("Deliver", stop)
+
+for i in range(3):        # 0, 1, 2           JS: for (let i=0; i<3; i++)
+for i in range(1, 6):     # 1..5 (stop not included)
+for i in range(0, 10, 2): # 0, 2, 4, 6, 8 (step 2)
+for ch in "SW1A":         # strings are loopable too
+```
+🟨 Python's `for…in` = JS's `for…of` (values). ⚠️ JS's `for…in` gives **keys**; Python's gives **values**.
+
+### T23. `enumerate()` and `zip()`
+```python
+for i, stop in enumerate(stops):          # index + value   JS: stops.forEach((stop, i) => ...)
+    print(i, stop)
+for i, stop in enumerate(stops, start=1): # start counting at 1
+
+ids = [101, 102]; names = ["Ravi", "Sara"]
+for order_id, name in zip(ids, names):     # walk two lists together
+    print(order_id, name)
+```
+⚠️ `zip` stops at the **shorter** list.
+
+### T24. `while`, `break`, `continue`, `else`
+```python
+attempts = 0
+while attempts < 3:            # repeat while True
+    attempts += 1              # ⚠️ no ++ in Python; use += 1
+
+for order in orders:
+    if order["status"] == "cancelled":
+        continue               # skip this one, go to the next
+    if order["id"] == 999:
+        break                  # stop the loop completely
+```
+💡 `for ... else:` the `else` runs only if the loop **didn't** `break` ("searched and not found").
+⚠️ Forgetting `attempts += 1` → an infinite loop (Ctrl+C to stop).
+
+### T25. Looping over dicts
+```python
+order = {"id": 101, "customer": "Ravi"}
+for key in order:                 # keys
+for value in order.values():      # values
+for key, value in order.items():  # both ← most common
+    print(f"{key}: {value}")
+```
+⚠️ Don't add or remove keys of a dict **while** looping over it (RuntimeError). Loop over `list(order.items())` instead.
+🏢 `gsit/models/order_create_logs.py`: `for k, v in u.items():`
+
+### T26. List comprehensions
+🧠 Build a new list in **one line**: `[expression for item in collection if condition]`.
+🏠 "From today's orders, give me the IDs of the London ones."
+```python
+ids = [o["id"] for o in orders]                          # JS: orders.map(o => o.id)
+london = [o for o in orders if o["city"] == "London"]    # JS: orders.filter(...)
+london_ids = [o["id"] for o in orders if o["city"] == "London"]   # filter + map
+squares = [n * n for n in range(5)]                      # [0, 1, 4, 9, 16]
+labels = ["big" if q > 5 else "small" for q in qtys]     # if/else goes BEFORE the for
+```
+⚠️ Keep them short. If it needs two lines to read, use a normal loop.
+
+### T27. dict & set comprehensions
+```python
+by_id = {o["id"]: o for o in orders}           # lookup table   JS: Object.fromEntries(...)
+by_id[102]["customer"]                         # fast lookup by id
+cities = {o["city"] for o in orders}           # unique values (a set)
+prices = {"sofa": 500, "bed": 300}
+with_vat = {k: v * 1.2 for k, v in prices.items()}
+```
+🏢 Building `{id: row}` lookups to avoid repeated DB queries is very common in dms-backend.
+
+### T28. Useful built-ins for collections
+```python
+sum([2, 3, 5])                       # 10
+min(qtys), max(qtys)
+sum(o["qty"] for o in orders)        # total qty (no [] needed inside sum)
+sorted(orders, key=lambda o: o["qty"], reverse=True)   # sort dicts by a field
+max(orders, key=lambda o: o["qty"])  # the order with the biggest qty
+any(o["urgent"] for o in orders)     # at least one True   JS: .some()
+all(o["paid"] for o in orders)       # every one True      JS: .every()
+```
+(`lambda` = a tiny inline function: T33.)
+
+## 📝 Quiz: Day 3 (Q28–Q37)
+**Q28.** What numbers does `range(2, 8, 2)` give?
+**Q29.** What does this print?
+```python
+for i, s in enumerate(["a", "b"], start=1):
+    print(i, s)
+```
+**Q30.** Python has no `i++`. What do you write instead?
+**Q31.** Difference between `break` and `continue`?
+**Q32.** Rewrite with a comprehension:
+```python
+result = []
+for o in orders:
+    if o["qty"] > 2:
+        result.append(o["id"])
+```
+**Q33.** `{o["city"] for o in orders}`: what type is the result, and why use it?
+**Q34.** In JS, `for (const k in ["a","b"])` gives `"0","1"`. What does Python's `for k in ["a","b"]` give?
+**Q35.** Write one line that builds `{101: "Ravi", 102: "Sara"}` from `orders`.
+**Q36.** How do you sort `orders` by `qty`, biggest first?
+**Q37.** Write: loop over `orders`, skip cancelled ones, print `"#101 Ravi - 2 items"` for the rest, and finally print the total qty of the non-cancelled orders.
+
+<details><summary>▶ Answers</summary>
+
+- **Q28.** `2, 4, 6` (8 not included)
+- **Q29.** `1 a` then `2 b`
+- **Q30.** `i += 1`
+- **Q31.** `break` exits the whole loop; `continue` skips to the next item
+- **Q32.** `result = [o["id"] for o in orders if o["qty"] > 2]`
+- **Q33.** a `set`: the unique cities (duplicates removed)
+- **Q34.** the **values** `"a"`, `"b"`
+- **Q35.** `{o["id"]: o["customer"] for o in orders}`
+- **Q36.** `sorted(orders, key=lambda o: o["qty"], reverse=True)`
+- **Q37.**
+```python
+total = 0
+for o in orders:
+    if o["status"] == "cancelled":
+        continue
+    print(f"#{o['id']} {o['customer']} - {o['qty']} items")
+    total += o["qty"]
+print("Total:", total)
+```
+💡 Inside an f-string with `"…"`, use single quotes for keys: `o['id']`.
+</details>
+
+---
+---
+
+# 📅 Day 4: Functions
+🏢 **Why it matters:** every API endpoint in dms-backend is a function.
+
+### T29. `def` and `return`
+```python
+def delivery_fee(total):          # JS: function deliveryFee(total) {
+    if total > 1000:
+        return 0
+    return 100
+
+fee = delivery_fee(650)           # 100
+```
+- A function with no `return` returns **`None`** (JS returns `undefined`).
+- `return a, b` returns a **tuple** → `x, y = func()`.
+- The body is indented; `def` ends with `:`.
+🏠 A function is a machine at the depot: put an order in, get a label out.
+
+### T30. Parameters: defaults & keyword arguments
+```python
+def make_label(customer, qty=1, express=False):
+    return f"{customer} x{qty}{' EXPRESS' if express else ''}"
+
+make_label("Ravi")                        # positional + defaults
+make_label("Ravi", 3)
+make_label("Ravi", express=True)          # keyword argument: skip qty
+make_label(qty=2, customer="Sara")        # any order when using names
+```
+⚠️ Parameters with defaults must come **after** those without.
+⚠️ **Mutable default trap:**
+```python
+def add_stop(stop, stops=[]):     # ❌ the SAME list is reused on every call!
+def add_stop(stop, stops=None):   # ✅
+    if stops is None:
+        stops = []
+```
+🏢 `def retrieve_order(request: Request, order_id: int, db: Session = Depends(get_db), ...)`: defaults everywhere.
+
+### T31. `*args` and `**kwargs`
+```python
+def total(*prices):                # any number of positional args → a TUPLE
+    return sum(prices)
+total(10, 20, 30)                  # 60      JS: function total(...prices)
+
+def log_event(event, **details):   # any number of keyword args → a DICT
+    print(event, details)
+log_event("delivered", order_id=101, driver="Amit")
+# delivered {'order_id': 101, 'driver': 'Amit'}
+
+nums = [1, 2]; opts = {"qty": 3}
+total(*nums)                       # unpack a list into args    JS: f(...nums)
+make_label("Ravi", **opts)         # unpack a dict into keyword args
+```
+🏢 Decorators in dms-backend use `def wrapper(*args, **kwargs):` to pass **anything** through (Day 10).
+
+### T32. Scope
+```python
+COMPANY = "BJS"            # global (module level)
+def f():
+    x = 1                  # local: only exists inside f
+    print(COMPANY)         # reading a global is fine
+```
+⚠️ Assigning to a global inside a function creates a **new local** unless you write `global COMPANY` (avoid this; pass values in and return them instead).
+🟨 Python has **no block scope**: a variable made inside `if`/`for` is visible after it, in the same function.
+
+### T33. `lambda`
+```python
+square = lambda x: x * x                         # JS: const square = x => x * x
+sorted(orders, key=lambda o: o["qty"])
+```
+Only **one expression**, with no statements. For anything bigger, use `def`.
+🏢 `default=lambda: datetime.now(timezone.utc)` in `timestampmixin.py`: a function called each time a row is created.
+
+### T34. Docstrings & clean functions
+```python
+def delivery_fee(total: float) -> int:
+    """Return the delivery fee in pounds for an order total."""
+    ...
+```
+- The first string inside a function = its **docstring** (shown by `help()` and editors).
+- One function = one job. Name it with a verb: `get_order`, `calculate_fee`.
+🏢 `retrieve_order` in `order/routers/v0/get.py` has a long docstring with Parameters/Returns/Raises.
+
+## 📝 Quiz: Day 4 (Q38–Q47)
+**Q38.** What does a function return if it has no `return`?
+**Q39.** What does `make_label("Ravi", express=True)` mean? Which parameter got the default?
+**Q40.** Is this valid? `def f(a=1, b):`
+**Q41.** Inside `def f(*args)`, what type is `args`? And `kwargs` inside `def f(**kwargs)`?
+**Q42.** What's the bug?
+```python
+def add_item(item, cart=[]):
+    cart.append(item)
+    return cart
+```
+**Q43.** `def pair(): return 1, 2`. How do you get both values into `a` and `b`?
+**Q44.** Convert to a lambda: `def double(x): return x * 2`
+**Q45.** What does `f(*[1, 2, 3])` do?
+**Q46.** In JS, `if (true) { let x = 1 }` → `x` is not visible outside. In Python, after `if True: x = 1`, is `x` visible?
+**Q47.** Write `calculate_total(qty, unit_price, coupon=None, express=False)` that returns the total: 10% off if there's a coupon, plus 150 if express.
+
+<details><summary>▶ Answers</summary>
+
+- **Q38.** `None`
+- **Q39.** keyword argument `express=True`; `qty` used its default `1`
+- **Q40.** ❌ SyntaxError: defaults must come after non-defaults
+- **Q41.** `tuple` · `dict`
+- **Q42.** mutable default: the same list is shared between calls. Use `cart=None` and create a list inside.
+- **Q43.** `a, b = pair()`
+- **Q44.** `double = lambda x: x * 2`
+- **Q45.** unpacks the list: same as `f(1, 2, 3)`
+- **Q46.** ✅ yes: no block scope in Python
+- **Q47.**
+```python
+def calculate_total(qty, unit_price, coupon=None, express=False):
+    total = qty * unit_price
+    if coupon:
+        total *= 0.9
+    if express:
+        total += 150
+    return total
+```
+</details>
+
+---
+---
+
+# 📅 Day 5: Errors & exceptions
+🏢 **Why it matters:** every dms-backend route uses `try/except` and returns 404/400 errors.
+
+### T35. What an exception is
+🧠 An error that **stops** the program unless you **catch** it.
+🏠 A parcel is damaged: either someone handles it (catch), or the whole line stops (crash).
+Common ones: `ValueError`, `TypeError`, `KeyError`, `IndexError`, `ZeroDivisionError`, `FileNotFoundError`, `AttributeError` (`None.upper()`).
+
+### T36. `try` / `except` / `else` / `finally`
+```python
+try:
+    qty = int(user_input)
+except ValueError:                       # catch a SPECIFIC error
+    qty = 1
+except (KeyError, TypeError) as e:       # several types; e = the error object
+    print("Problem:", e)
+else:
+    print("ran only if NO error")
+finally:
+    print("ALWAYS runs (cleanup)")       # JS: finally
+```
+🟨 JS: `try {} catch (e) {}` catches **everything**. Python catches **by type**.
+⚠️ Avoid a bare `except:` or a broad `except Exception:` that hides bugs. If you must, **log** it.
+⚠️ Order matters: put specific exceptions before general ones.
+
+### T37. `raise`
+```python
+def set_qty(qty):
+    if qty <= 0:
+        raise ValueError("qty must be positive")     # JS: throw new Error(...)
+    return qty
+
+try:
+    ...
+except ValueError:
+    raise                         # re-raise the same error after logging it
+```
+
+### T38. Custom exceptions
+```python
+class OrderNotFound(Exception):
+    pass
+
+raise OrderNotFound(f"Order {order_id} not found")
+```
+🧠 A class that **inherits** from `Exception` (classes: Day 8). Callers can catch exactly this case.
+
+### T39. Errors in FastAPI
+```python
+from fastapi import HTTPException, status
+
+if not order:
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Order not found")
+```
+- FastAPI turns `HTTPException` into a JSON response: `{"detail": "Order not found"}` with status 404.
+- An uncaught exception → **500 Internal Server Error**.
+🏢 `retrieve_order` (`order/routers/v0/get.py`) sets `response.status_code = 404` and returns `CustomResponseSchema(code=404, error="Order Not Found")`. That's the team's **custom response style**; follow whichever pattern the file you're editing already uses.
+
+## 📝 Quiz: Day 5 (Q48–Q55)
+**Q48.** Which exception does `int("abc")` raise? And `{"a": 1}["b"]`?
+**Q49.** When does the `finally` block run?
+**Q50.** When does the `else` block of a `try` run?
+**Q51.** What's the JS `throw new Error("x")` in Python?
+**Q52.** Why is `except:` (bare) bad?
+**Q53.** What HTTP status does FastAPI return for an uncaught exception?
+**Q54.** Fix it so that bad input prints `"Invalid qty"` instead of crashing: `qty = int(input("Qty: "))`
+**Q55.** Write `get_order(orders, order_id)` that returns the matching dict or raises `ValueError(f"Order {order_id} not found")`.
+
+<details><summary>▶ Answers</summary>
+
+- **Q48.** `ValueError` · `KeyError`
+- **Q49.** always: error or not
+- **Q50.** only when the `try` block raised **no** error
+- **Q51.** `raise Exception("x")` (better: a specific type like `ValueError`)
+- **Q52.** it catches everything, even typos and Ctrl+C, and hides real bugs
+- **Q53.** 500
+- **Q54.**
+```python
+try:
+    qty = int(input("Qty: "))
+except ValueError:
+    print("Invalid qty")
+```
+- **Q55.**
+```python
+def get_order(orders, order_id):
+    for o in orders:
+        if o["id"] == order_id:
+            return o
+    raise ValueError(f"Order {order_id} not found")
+```
+</details>
+
+---
+---
+
+# 📅 Day 6: Modules, imports, pip, venv, Poetry
+
+### T40. Importing
+```python
+import json                          # whole module → json.dumps(...)
+from datetime import datetime        # one name     → datetime.now()
+from typing import List, Optional    # several names
+import pandas as pd                  # alias
+```
+| JS (ES modules) | Python |
+|---|---|
+| `import fs from "fs"` | `import os` |
+| `import { a, b } from "./x"` | `from x import a, b` |
+| `import * as pd from "pandas"` | `import pandas as pd` |
+| `export` | nothing needed: every top-level name is importable |
+⚠️ Avoid `from x import *` (you can't tell where names came from).
+
+### T41. Packages, `__init__.py`, absolute imports
+🧠 **module** = one `.py` file · **package** = a folder with an `__init__.py` file (like `index.js`).
+🏢 dms-backend uses **absolute imports from `app`**:
+```python
+from app.dependencies.config.database import get_db
+from app.services.order.models.escalation_reasons import EscalationReasons
+```
+`app/services/order/routers/v0/get.py` maps to the import path `app.services.order.routers.v0.get` (dots instead of slashes, no `.py`).
+⚠️ A circular import (A imports B, B imports A) causes `ImportError`. Move shared code into a third module.
+
+### T42. `if __name__ == "__main__":`
+```python
+def main():
+    print("running")
+
+if __name__ == "__main__":     # True only when this file is RUN directly
+    main()                     # False when it's IMPORTED by another file
+```
+🟨 Like Node's `if (require.main === module)`.
+🏢 Seeder: `python app/dependencies/seeder/seed.py` (with `PYTHONPATH` set so `app.` imports work).
+
+### T43. pip & virtual environments
+🧠 **pip** installs packages. A **virtual env (venv)** is a private folder of packages for **one project**, so projects don't clash.
+```bash
+python3 -m venv .venv          # create      (like a local node_modules)
+source .venv/bin/activate      # activate    (the prompt shows (.venv))
+pip install requests           # install into the venv only
+pip freeze > requirements.txt  # list installed packages
+deactivate
+```
+⚠️ Never `sudo pip install`: it breaks the system Python.
+
+### T44. Poetry (what dms-backend uses)
+| npm | Poetry |
+|---|---|
+| `package.json` | `pyproject.toml` |
+| `package-lock.json` | `poetry.lock` |
+| `npm install` | `poetry install` |
+| `npm install x` | `poetry add x` |
+| `npm run dev` | `poetry run uvicorn app.main:app --reload` |
+| `npx x` | `poetry run x` |
+```bash
+cd ~/Documents/BJS/PROJECTS/backend/dms-backend
+poetry env use python3.12
+poetry install
+poetry env info          # where the venv is
+poetry run python -c "import fastapi; print(fastapi.__version__)"
+```
+🏢 `pyproject.toml` lists fastapi, sqlalchemy, alembic, celery, redis, pydantic and more. Python `^3.12`.
+
+## 📝 Quiz: Day 6 (Q56–Q63)
+**Q56.** What makes a folder a Python package?
+**Q57.** Write the import for `get_db` from `app/dependencies/config/database.py`.
+**Q58.** What is `__name__` when a file is imported rather than run?
+**Q59.** Why use a virtual environment?
+**Q60.** Poetry's equivalent of `package-lock.json`?
+**Q61.** How do you run uvicorn with the project's venv using Poetry?
+**Q62.** Difference between `import json` and `from json import dumps`?
+**Q63.** What's wrong with `sudo pip install fastapi`?
+
+<details><summary>▶ Answers</summary>
+
+- **Q56.** an `__init__.py` file inside it
+- **Q57.** `from app.dependencies.config.database import get_db`
+- **Q58.** the module's import name (e.g. `"app.utils.x"`), not `"__main__"`
+- **Q59.** each project gets its own package versions, with no clashes and no system breakage
+- **Q60.** `poetry.lock`
+- **Q61.** `poetry run uvicorn app.main:app --reload`
+- **Q62.** the first gives you `json.dumps(...)`; the second gives you `dumps(...)` directly
+- **Q63.** it installs into the system Python, which can break the OS. Use a venv/Poetry
+</details>
+
+---
+---
+
+# 📅 Day 7: Files + JSON + Week-1 test
+
+### T45. Reading & writing files with `with`
+```python
+with open("orders.txt", "w") as f:        # w = write (overwrite) · a = append · r = read (default)
+    f.write("101,Ravi\n")
+
+with open("orders.txt") as f:
+    for line in f:                        # line by line (memory-friendly)
+        print(line.strip())               # strip() removes the trailing \n
+```
+🧠 `with` **closes the file automatically**, even after an error (more on `with`: T68).
+🟨 Node: `fs.readFileSync` / `fs.writeFileSync`.
+⚠️ `"w"` erases the file first! Add `encoding="utf-8"` for non-English text.
+
+### T46. JSON
+```python
+import json
+text = '{"id": 101, "driver": null, "paid": true}'
+data = json.loads(text)        # str → dict   {'id': 101, 'driver': None, 'paid': True}
+back = json.dumps(data)        # dict → str   JS: JSON.stringify
+json.dumps(data, indent=2)     # pretty
+
+with open("orders.json") as f:
+    orders = json.load(f)      # file → Python      (no s = file)
+with open("out.json", "w") as f:
+    json.dump(orders, f, indent=2)
+```
+| JSON | Python |
+|---|---|
+| object `{}` | `dict` |
+| array `[]` | `list` |
+| `null` / `true` / `false` | `None` / `True` / `False` |
+⚠️ `json.dumps` fails on `datetime` and `Decimal` → convert them first (`str(x)`), or use `default=str`.
+🏢 `department.py`: `redis_client.set(key, json.dumps(...))` and `json.loads(redis_client.get(key))`.
+
+### T47. `pathlib`
+```python
+from pathlib import Path
+p = Path("data") / "orders.json"      # join paths with /
+p.exists(); p.read_text(); p.write_text("hi"); p.suffix   # ".json"
+Path(__file__).parent                 # the folder of the current file
+```
+🏢 `escalation_reasons.py` imports `Path` and `get_project_root()` to locate seed JSON files.
+
+## 📝 Quiz: Day 7 (Q64–Q70)
+**Q64.** Why use `with open(...)` instead of `f = open(...)`?
+**Q65.** Difference between `json.loads` and `json.load`?
+**Q66.** What does JSON `null` become in Python?
+**Q67.** What does mode `"w"` do to an existing file?
+**Q68.** `json.dumps({"at": datetime.now()})` fails. Why, and what's the fix?
+**Q69.** How do you build the path `data/orders.json` with pathlib?
+**Q70.** ⭐ **Week-1 test** (Days 1–7). Write `example/week1.py`:
+1. Load `orders.json` (create it: a list of 5 orders with `id`, `customer`, `city`, `qty`, `status`).
+2. Skip cancelled orders.
+3. Group by city: `{"London": 6, "Leeds": 1}` (total qty per city).
+4. Write a function `fee(qty)` (qty > 5 → 0, else 50) and print each city with its total and fee.
+5. Handle a missing file with `try/except FileNotFoundError`.
+6. Save the summary to `summary.json`.
+
+<details><summary>▶ Answers</summary>
+
+- **Q64.** the file always gets closed, even if an error happens
+- **Q65.** `loads` reads from a **string**; `load` reads from a **file**
+- **Q66.** `None`
+- **Q67.** empties it first (overwrites)
+- **Q68.** a datetime isn't JSON-serialisable → `json.dumps(data, default=str)` or `.isoformat()`
+- **Q69.** `Path("data") / "orders.json"`
+- **Q70.** a reviewed solution goes here after you write it ✍️
+</details>
+
+---
+---
+
+# 📅 Day 8: Classes & OOP
+🏢 **Why it matters:** every database table in dms-backend is a class (`class EscalationReasons(TimestampMixin, Module)`), and so is every schema.
+
+### T48. `class`, `__init__`, `self`
+🧠 A **class** is a blueprint; an **object (instance)** is one thing built from it.
+🏠 "Order form" is the class; order #101 filled in for Ravi is an instance.
+```python
+class Order:
+    def __init__(self, order_id, customer, qty=1):   # constructor   JS: constructor(...)
+        self.order_id = order_id                       # self = this object   JS: this
+        self.customer = customer
+        self.qty = qty
+
+o = Order(101, "Ravi", 2)      # no `new` keyword!
+o.customer                     # "Ravi"  ← dot access on objects (unlike dicts)
+```
+| JS | Python |
+|---|---|
+| `constructor(a)` | `def __init__(self, a)` |
+| `this.a` | `self.a` |
+| `new Order(1)` | `Order(1)` |
+⚠️ `self` must be the **first parameter** of every method, written explicitly. Forgetting it → `TypeError: takes 0 positional arguments but 1 was given`.
+
+### T49. Methods
+```python
+class Order:
+    def __init__(self, qty, unit_price):
+        self.qty = qty
+        self.unit_price = unit_price
+
+    def total(self):                      # method = a function inside a class
+        return self.qty * self.unit_price
+
+    def add_items(self, n):
+        self.qty += n                     # changes this object
+
+o = Order(2, 50); o.add_items(1); o.total()   # 150
+```
+
+### T50. Class vs instance attributes
+```python
+class Order:
+    __tablename__ = "Orders"      # CLASS attribute: shared by all orders
+    def __init__(self, qty):
+        self.qty = qty            # INSTANCE attribute: one per order
+```
+⚠️ Never use a mutable class attribute (`items = []`) for per-object data: it's shared by every instance.
+🏢 SQLAlchemy models use class attributes: `id = Column(Integer, primary_key=True)` (T107).
+
+### T51. Inheritance & `super()`
+```python
+class Job:
+    def __init__(self, job_id):
+        self.job_id = job_id
+    def describe(self):
+        return f"Job {self.job_id}"
+
+class Delivery(Job):                      # Delivery IS A Job   JS: class Delivery extends Job
+    def __init__(self, job_id, address):
+        super().__init__(job_id)          # run the parent's __init__
+        self.address = address
+    def describe(self):                   # override
+        return super().describe() + f" to {self.address}"
+```
+`isinstance(d, Job)` → True.
+
+### T52. Multiple inheritance & mixins
+🧠 Python lets a class inherit from **several** parents. A **mixin** is a small class that only adds some reusable fields or methods.
+🏢 `app/dependencies/timestampmixin.py`:
+```python
+class ClientMixin:
+    __abstract__ = True
+    client_id = Column(Integer, index=True)
+
+class TimestampMixin(Base, BaseMixin, ClientMixin):
+    __abstract__ = True                 # no table of its own
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc)...)
+    created_by = Column(String(length=500))
+    updated_at = ...; updated_by = ...
+
+class EscalationReasons(TimestampMixin, Module):   # gets all those columns for free
+```
+🟨 JS classes can only `extend` one parent; mixins in JS are done by hand.
+
+### T53. Dunder (magic) methods
+```python
+class Order:
+    def __init__(self, oid): self.oid = oid
+    def __repr__(self):  return f"Order({self.oid})"   # how it looks when printed/debugged
+    def __eq__(self, other): return self.oid == other.oid   # what == means
+    def __len__(self): ...                              # what len() means
+```
+"Dunder" = **d**ouble **under**score. They're what makes `print(o)`, `==` and `len(o)` work.
+
+### T54. `@staticmethod`, `@classmethod`, `@property`
+```python
+class Order:
+    VAT = 0.2
+    def __init__(self, net): self.net = net
+
+    @property
+    def gross(self):                 # called like an attribute: o.gross (no ())
+        return self.net * (1 + self.VAT)
+
+    @classmethod
+    def from_dict(cls, d):           # cls = the class → an alternative constructor
+        return cls(d["net"])
+
+    @staticmethod
+    def is_valid_postcode(pc):       # no self/cls: just a function grouped in the class
+        return len(pc) >= 5
+```
+🏢 `EscalationReasons.last_perform_seeder_date()` is a `@staticmethod`; `gsit/models/microservice_keys.py` uses `@classmethod`.
+
+## 📝 Quiz: Day 8 (Q71–Q80)
+**Q71.** What's Python's version of `this`? And of `constructor`?
+**Q72.** How do you create an object: `new Order(1)` or `Order(1)`?
+**Q73.** What error do you get if you forget `self` in `def total():`?
+**Q74.** Class attribute vs instance attribute: which one is shared by all objects?
+**Q75.** What does `super().__init__(job_id)` do?
+**Q76.** What is a mixin? Name the one used by most dms-backend models.
+**Q77.** How do you call a `@property` called `gross`?
+**Q78.** Which method controls what `print(obj)` shows?
+**Q79.** What's the difference between `@classmethod` and `@staticmethod`?
+**Q80.** Write a `Driver` class: `name`, `van`, `jobs` (empty list per driver); `assign(job_id)` adds a job; `@property is_busy` is True when there are 3+ jobs; `__repr__` gives `Driver(Amit, 2 jobs)`.
+
+<details><summary>▶ Answers</summary>
+
+- **Q71.** `self` · `__init__`
+- **Q72.** `Order(1)`: no `new`
+- **Q73.** `TypeError: total() takes 0 positional arguments but 1 was given`
+- **Q74.** the class attribute
+- **Q75.** runs the parent class's `__init__` so it sets up its own attributes
+- **Q76.** a small class that adds reusable fields/methods · `TimestampMixin`
+- **Q77.** `o.gross` (no brackets)
+- **Q78.** `__repr__` (or `__str__`)
+- **Q79.** classmethod gets the class (`cls`), so it's used for alternative constructors; staticmethod gets nothing
+- **Q80.**
+```python
+class Driver:
+    def __init__(self, name, van):
+        self.name = name
+        self.van = van
+        self.jobs = []
+    def assign(self, job_id):
+        self.jobs.append(job_id)
+    @property
+    def is_busy(self):
+        return len(self.jobs) >= 3
+    def __repr__(self):
+        return f"Driver({self.name}, {len(self.jobs)} jobs)"
+```
+</details>
+
+---
+---
+
+# 📅 Day 9: Type hints
+🏢 **Why it matters:** FastAPI **reads your type hints** to validate requests and build the docs.
+
+### T55. Basic type hints
+```python
+order_id: int = 101
+customer: str = "Ravi"
+def fee(total: float, express: bool = False) -> int:   # -> = return type
+    ...
+```
+🧠 Hints **don't change how Python runs** (no runtime error if you pass the wrong type). They help your editor, mypy (`make lint`) and **FastAPI/Pydantic**, which **do** enforce them.
+🟨 Very close to TypeScript: `function fee(total: number): number`.
+
+### T56. `Optional`, `Union`, `|`
+```python
+from typing import Optional, Union
+driver: Optional[str] = None     # str OR None       TS: string | null
+qty: Union[int, float]           # int OR float      TS: number
+driver: str | None = None        # modern syntax (Python 3.10+), same meaning
+```
+⚠️ `Optional[str]` means **"can be None"**. It does NOT make a parameter optional; the default value `= None` does that.
+
+### T57. Collection types
+```python
+from typing import List, Dict, Tuple, Set
+ids: List[int] = [1, 2]             # or list[int] (modern)
+order: Dict[str, int] = {"qty": 2}  # or dict[str, int]
+point: Tuple[float, float]          # exactly 2 floats
+tags: Set[str]
+```
+🏢 `customer_ids: Optional[List[int]] = Depends(fetch_accessible_customer_ids)` in `retrieve_order`.
+
+### T58. `Any`, `Callable`, type aliases
+```python
+from typing import Any, Callable
+data: Any                           # anything (TS: any). Use rarely
+handler: Callable[[int], str]       # a function taking an int, returning a str
+OrderDict = Dict[str, Any]          # alias: a short name for a long type
+```
+🏢 `def check_permission(...) -> Callable:` returns a decorator function (Day 10).
+
+### T59. How FastAPI uses hints
+```python
+@router.get("/{order_id}")
+def retrieve_order(order_id: int, page: int = 1, search: Optional[str] = None):
+```
+- `/orders/abc` → FastAPI sees `int`, fails validation → **422** response automatically.
+- `?page=2` → the text `"2"` is converted to the int `2` for you.
+- Hints also generate the **Swagger docs** at `/docs`.
+
+## 📝 Quiz: Day 9 (Q81–Q88)
+**Q81.** Does `x: int = "hello"` crash when run with plain Python?
+**Q82.** What does `-> int` mean in `def fee(...) -> int:`?
+**Q83.** Write the hint for "a string or None" in two ways.
+**Q84.** True or False: `Optional[str]` alone makes the parameter optional.
+**Q85.** Hint for a list of order IDs? For a dict of name → qty?
+**Q86.** What does FastAPI return if `order_id: int` receives `"abc"`?
+**Q87.** What is `Callable[[int], str]`?
+**Q88.** Add type hints: `def calculate_total(qty, unit_price, coupon=None, express=False):`
+
+<details><summary>▶ Answers</summary>
+
+- **Q81.** No: hints aren't enforced by Python itself
+- **Q82.** the function returns an int
+- **Q83.** `Optional[str]` · `str | None`
+- **Q84.** False: the default `= None` makes it optional
+- **Q85.** `List[int]` (or `list[int]`) · `Dict[str, int]`
+- **Q86.** 422 Unprocessable Entity (validation error)
+- **Q87.** a function that takes one int and returns a str
+- **Q88.** `def calculate_total(qty: int, unit_price: float, coupon: Optional[str] = None, express: bool = False) -> float:`
+</details>
+
+---
+---
+
+# 📅 Day 10: Decorators
+🏢 **Why it matters:** `@router.get(...)`, `@check_permission(...)`, `@staticmethod` and `@celery.task` are all decorators.
+
+### T60. Functions are values
+```python
+def shout(text): return text.upper()
+yell = shout              # no () → the function itself, not a call
+yell("hi")                # "HI"
+def apply(fn, value): return fn(value)
+apply(shout, "go")        # pass a function as an argument
+```
+🟨 Same as JS: functions are first-class.
+
+### T61. Closures (a function inside a function)
+```python
+def make_fee(amount):
+    def fee(order):              # inner function remembers `amount`
+        return amount
+    return fee                   # return the function, not a call
+
+express_fee = make_fee(150)
+express_fee({"id": 1})           # 150
+```
+
+### T62. Writing a decorator
+🧠 A decorator is a function that **takes a function and returns a new function** that wraps it with extra behaviour.
+🏠 Gift-wrapping a parcel: the parcel (your function) is unchanged, but there's an extra layer around it (logging, timing, permission check).
+```python
+import time
+def timer(fn):
+    def wrapper(*args, **kwargs):        # accept ANY arguments
+        start = time.time()
+        result = fn(*args, **kwargs)     # call the original
+        print(f"{fn.__name__} took {time.time() - start:.3f}s")
+        return result                    # don't forget to return!
+    return wrapper
+
+@timer                    # same as: load_orders = timer(load_orders)
+def load_orders():
+    ...
+```
+🟨 Like a React **Higher-Order Component**: `withAuth(Component)`.
+
+### T63. `functools.wraps`
+```python
+import functools
+def timer(fn):
+    @functools.wraps(fn)          # keeps fn's name, docstring and signature
+    def wrapper(*args, **kwargs):
+        ...
+```
+⚠️ Without `@wraps`, FastAPI sees `wrapper` instead of your function's parameters, which breaks routes. dms-backend always uses it.
+
+### T64. Decorators with arguments (`check_permission`)
+🧠 Three layers: **arguments → decorator → wrapper**.
+🏢 Simplified from `app/services/sso_login/decorator.py`:
+```python
+def check_permission(primary_permission, fallback_permissions=None):   # 1. takes the arguments
+    def decorator(func):                                               # 2. takes the function
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):                                  # 3. runs on each call
+            request = args[0] if args else kwargs.get("request")
+            all_permissions = [primary_permission] + (fallback_permissions or [])
+            # ... if the user has none of them → 403 response
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+@router.get("/{order_id}")
+@check_permission("dms.order.view.read", ["dms.portal.order.view.read"])
+def retrieve_order(request: Request, order_id: int, ...):
+```
+⚠️ **Order matters:** decorators apply from the bottom up. `@router.get` must be on top, so the route registers the **permission-checked** function.
+⚠️ The route **must accept `request: Request`**, otherwise `check_permission` returns 400 "Request object is missing".
+
+## 📝 Quiz: Day 10 (Q89–Q96)
+**Q89.** `yell = shout` vs `yell = shout()`: what's the difference?
+**Q90.** In one sentence: what is a decorator?
+**Q91.** `@timer` above `def f()` is the same as which line of code?
+**Q92.** Why does `wrapper` use `*args, **kwargs`?
+**Q93.** What goes wrong if `wrapper` forgets `return fn(*args, **kwargs)` and only calls it?
+**Q94.** Why use `@functools.wraps(fn)`?
+**Q95.** How many nested functions does a decorator **with arguments** need?
+**Q96.** Write a `@log_call` decorator that prints `Calling <name> with <args>` before running the function, and returns its result.
+
+<details><summary>▶ Answers</summary>
+
+- **Q89.** the first assigns the function itself; the second calls it and stores the result
+- **Q90.** a function that takes a function and returns a wrapped version with extra behaviour
+- **Q91.** `f = timer(f)`
+- **Q92.** to accept and pass on any arguments, whatever the original function needs
+- **Q93.** the decorated function always returns `None`
+- **Q94.** keeps the original name/docstring/signature (FastAPI needs the signature)
+- **Q95.** three: args → decorator → wrapper
+- **Q96.**
+```python
+import functools
+def log_call(fn):
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        print(f"Calling {fn.__name__} with {args} {kwargs}")
+        return fn(*args, **kwargs)
+    return wrapper
+```
+</details>
+
+---
+---
+
+# 📅 Day 11: Iterators, generators, `with`
+
+### T65. Iterables & iterators
+🧠 An **iterable** is anything a `for` loop can walk over (list, dict, str, file, range). `iter()` gives an **iterator**, and `next()` takes the next item until `StopIteration`.
+```python
+it = iter([1, 2])
+next(it)   # 1
+next(it)   # 2
+next(it)   # ❌ StopIteration
+```
+🟨 JS: `arr[Symbol.iterator]()` and `.next()`.
+
+### T66. Generators (`yield`)
+🧠 A function with `yield` produces values **one at a time, lazily**. It pauses at each `yield` and continues on the next `next()`.
+🏠 A conveyor belt: one parcel at a time, not the whole warehouse at once.
+```python
+def order_ids(start, end):
+    for i in range(start, end):
+        yield i                      # hand out one value, pause here
+
+for oid in order_ids(100, 103):      # 100, 101, 102
+    print(oid)
+
+big = (o["qty"] for o in orders)     # generator expression: ( ) instead of [ ]
+total = sum(big)                     # memory-friendly for millions of rows
+```
+🟨 JS: `function*` and `yield`.
+
+### T67. `get_db()`: the real generator in dms-backend
+🏢 `app/dependencies/config/database.py` (simplified idea):
+```python
+def get_db():
+    db = SessionLocal()          # 1. open a DB session
+    try:
+        yield db                 # 2. hand it to the route; PAUSE while the route runs
+    finally:
+        db.close()               # 3. after the response, ALWAYS close it
+
+def retrieve_order(order_id: int, db: Session = Depends(get_db)):
+    ...                          # FastAPI runs get_db up to the yield, gives you db, then finishes it after
+```
+The real version also reuses an "ambient" session that middleware may already have set up, but the idea is the same: **setup → yield → cleanup**.
+
+### T68. Context managers: `with`
+🧠 `with` guarantees **setup before** and **cleanup after**, even if an error happens.
+```python
+with open("a.txt") as f:      # opens → you use f → closes automatically
+    data = f.read()
+```
+Common uses: files, DB sessions/transactions, locks, temporary settings.
+🟨 Like JS `try { ... } finally { cleanup() }`, packaged into one keyword.
+
+### T69. Writing one with `@contextmanager`
+```python
+from contextlib import contextmanager
+@contextmanager
+def timer(label):
+    start = time.time()
+    yield                                  # the with-block runs here
+    print(f"{label}: {time.time() - start:.2f}s")
+
+with timer("load orders"):
+    load_orders()
+```
+🏢 `app/main.py` uses `@asynccontextmanager async def lifespan(app)`: start Redis/DB/cache → `yield` (the app runs) → shut down.
+
+## 📝 Quiz: Day 11 (Q97–Q103)
+**Q97.** What happens when `next()` runs out of items?
+**Q98.** What's the difference between `return` and `yield`?
+**Q99.** `[x for x in rows]` vs `(x for x in rows)`: what's the difference?
+**Q100.** In `get_db()`, what runs before `yield` and what runs after?
+**Q101.** Why does `get_db` use `try/finally` around the `yield`?
+**Q102.** What does `with` guarantee?
+**Q103.** Write a generator `batches(items, size)` that yields lists of `size` items (e.g. 2 → `[1,2]`, `[3,4]`, `[5]`).
+
+<details><summary>▶ Answers</summary>
+
+- **Q97.** `StopIteration` is raised (a `for` loop handles it for you)
+- **Q98.** `return` ends the function once; `yield` gives a value and pauses, so it can continue
+- **Q99.** the list builds everything in memory now; the generator produces items lazily, one by one
+- **Q100.** before: open a session; after (when the request finishes): close it
+- **Q101.** so the session is closed even if the route raised an error
+- **Q102.** cleanup always runs (file closed, session closed) even on errors
+- **Q103.**
+```python
+def batches(items, size):
+    for i in range(0, len(items), size):
+        yield items[i:i + size]
+```
+</details>
+
+---
+---
+
+# 📅 Day 12: async/await + datetime, Decimal, enum, logging
+
+### T70. `async` / `await`
+🧠 Lets the program **work on something else while waiting** (for a DB, an HTTP call or Redis) instead of blocking.
+🏠 A dispatcher calls a driver and, while it rings, handles another job instead of staring at the phone.
+```python
+import asyncio
+async def fetch_driver(did):          # async def → a "coroutine"
+    await asyncio.sleep(1)            # await = wait without blocking others
+    return {"id": did}
+
+asyncio.run(fetch_driver(1))          # run from normal code
+```
+🟨 Almost identical to JS `async/await`, but calling `fetch_driver(1)` **without** `await` doesn't run it (in JS it starts a Promise).
+
+### T71. Running things in parallel: `asyncio.gather`
+```python
+results = await asyncio.gather(fetch_driver(1), fetch_driver(2))   # JS: Promise.all
+```
+🏢 `app/resources.py`: `await asyncio.gather(connect_redis(), start_database(), dms_cache())`
+
+### T72. `def` vs `async def` in FastAPI ⚠️ important
+| You write | FastAPI runs it | Rule |
+|---|---|---|
+| `def route()` | in a **thread pool** | blocking calls (normal SQLAlchemy, `requests`) are OK |
+| `async def route()` | on the **event loop** | must **only** `await` non-blocking things |
+⚠️ A blocking call (`time.sleep`, sync DB query, `requests.get`) inside `async def` **freezes the whole server** for everyone.
+🏢 Most dms-backend routes are plain `def` with a sync `Session`. That's why `check_permission` and `check_permission_async` exist side by side.
+
+### T73. `datetime` & time zones
+```python
+from datetime import datetime, date, timedelta, timezone
+now = datetime.now(timezone.utc)                 # ✅ timezone-aware UTC
+tomorrow = now + timedelta(days=1)
+now.strftime("%Y-%m-%d %H:%M")                    # datetime → text
+datetime.strptime("2026-11-24", "%Y-%m-%d")       # text → datetime
+now.isoformat()                                   # "2026-11-24T09:41:00+00:00"
+```
+⚠️ Store **UTC** in the database, and convert to UK time only for display.
+🏢 `TimestampMixin`: `datetime.now(timezone.utc).replace(microsecond=0)`
+
+### T74. `Decimal` for money
+```python
+0.1 + 0.2                          # 0.30000000000000004 ❌ float rounding
+from decimal import Decimal
+Decimal("0.1") + Decimal("0.2")    # Decimal('0.3') ✅
+```
+⚠️ Create Decimals **from strings**, not floats (`Decimal(0.1)` copies the float error).
+
+### T75. `enum`
+```python
+from enum import Enum
+class PDAStatusEnum(str, Enum):      # 🏢 app/services/assets/schemas/asset_schema.py
+    ACTIVE = "Active"
+    FAULT = "Fault"
+
+PDAStatusEnum.ACTIVE.value            # "Active"
+PDAStatusEnum("Fault")                # PDAStatusEnum.FAULT
+```
+🧠 A fixed set of allowed values, so there are no typo'd status strings. Inheriting from `str` makes it JSON-friendly, and FastAPI validates against it (anything else → 422).
+🟨 TS: `enum` / `"Active" | "Fault"`.
+
+### T76. Logging
+```python
+import logging
+logger = logging.getLogger(__name__)
+logger.info("Order %s created", order_id)
+logger.warning("Driver missing for %s", order_id)
+logger.exception("Failed")          # inside except: logs the full traceback
+```
+Levels: `DEBUG < INFO < WARNING < ERROR < CRITICAL`.
+⚠️ Use the logger, not `print()`, in backend code.
+🏢 `app/dependencies/logger.py` sets up the root logger; dms-backend also has `loguru` and a Slack logger (`config/slack_logger.py`).
+
+## 📝 Quiz: Day 12 (Q104–Q113)
+**Q104.** What's the Python equivalent of `Promise.all`?
+**Q105.** What happens if you call an `async def` function without `await`?
+**Q106.** Why is `time.sleep(5)` inside an `async def` route dangerous?
+**Q107.** dms-backend routes are mostly `def` or `async def`? Why is that OK?
+**Q108.** How do you get the current UTC time?
+**Q109.** Why use `Decimal` for money? How should you create one?
+**Q110.** What does `PDAStatusEnum.ACTIVE.value` return?
+**Q111.** Which logger call records the full traceback inside `except`?
+**Q112.** `datetime → "2026-11-24"`: which method? And the reverse?
+**Q113.** Write an `async def` that "fetches" 3 drivers in parallel using `asyncio.sleep(1)` each, and finishes in about 1 second, not 3.
+
+<details><summary>▶ Answers</summary>
+
+- **Q104.** `asyncio.gather(...)`
+- **Q105.** nothing runs; you get a coroutine object (plus a "never awaited" warning)
+- **Q106.** it blocks the event loop, so every request on the server freezes
+- **Q107.** `def`, and FastAPI runs them in a thread pool, so sync SQLAlchemy calls are fine
+- **Q108.** `datetime.now(timezone.utc)`
+- **Q109.** floats have rounding errors · `Decimal("12.50")` from a string
+- **Q110.** `"Active"`
+- **Q111.** `logger.exception(...)`
+- **Q112.** `.strftime("%Y-%m-%d")` · `datetime.strptime(text, "%Y-%m-%d")`
+- **Q113.**
+```python
+import asyncio
+async def fetch(i):
+    await asyncio.sleep(1)
+    return i
+async def main():
+    print(await asyncio.gather(fetch(1), fetch(2), fetch(3)))
+asyncio.run(main())
+```
+</details>
+
+---
+---
+
+# 📅 Day 13: HTTP & REST + run dms-backend locally
+
+### T77. HTTP methods & status codes
+| Method | Meaning | DMS example |
+|---|---|---|
+| `GET` | read | `GET /orders/101` |
+| `POST` | create / an action | `POST /orders/create` |
+| `PUT` / `PATCH` | update (all / part) | `PUT /product/update` |
+| `DELETE` | remove | `DELETE /product/delete` |
+
+| Code | Meaning | When |
+|---|---|---|
+| 200 | OK | successful read/update |
+| 201 | Created | after a POST creates something |
+| 400 | Bad Request | invalid business input |
+| 401 | Unauthorized | not logged in / bad token |
+| 403 | Forbidden | logged in but **no permission** |
+| 404 | Not Found | order doesn't exist |
+| 422 | Unprocessable Entity | FastAPI/Pydantic validation failed |
+| 500 | Server Error | an uncaught exception (a bug) |
+🟨 You already use these from React with axios. Now you're on the **other side**.
+
+### T78. Parts of a request
+```
+POST /orders/101/notes?notify=true        ← path + path param (101) + query param (notify)
+Authorization: Bearer eyJhbGci...         ← headers (auth token, content type)
+Content-Type: application/json
+
+{"note": "Leave at door"}                 ← body (JSON)
+```
+🏠 A parcel: the **address** is the path, **delivery instructions** are the query params, the **label on the box** is the headers, and the **contents** are the body.
+
+### T79. REST design
+- URLs are **nouns**, methods are **verbs**: `GET /orders`, not `GET /getOrders`.
+- Plural collections: `/orders`, `/orders/{id}`.
+- Filters, pagination and search go in **query params**: `/orders?page=2&status=D`.
+- 🏢 dms-backend is pragmatic: it also has action-style URLs (`/product/create`, `/getStaticData/all/`) and versions (`v0`, `v1`). Follow the style of the module you're working in.
+
+### T80. Run dms-backend locally
+```bash
+cd ~/Documents/BJS/PROJECTS/backend/dms-backend
+poetry env use python3.12          # 1. create/select the venv
+poetry install                     # 2. install the dependencies
+# 3. config: env vars for MySQL + Redis (ask the team for the right values)
+cp docker/local/example.env docker/local/.env
+export $(grep -v '^#' docker/local/.env | xargs -d '\n')
+# 4. run
+poetry run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+- `app.main:app` = **module** `app/main.py` : **variable** `app`.
+- `--reload` = restart on file changes (like `nodemon`).
+- Open **http://localhost:8000/docs** for the Swagger UI, where you can try every endpoint.
+- Migrations: `alembic upgrade head` (Day 21).
+⚠️ Startup errors are usually: MySQL/Redis not running, or a missing env var. Read the traceback bottom-up (T15).
+
+## 📝 Quiz: Day 13 (Q114–Q121)
+**Q114.** Which status code for "logged in but not allowed"? And for "not logged in"?
+**Q115.** Which status code does FastAPI return when the body fails validation?
+**Q116.** In `/orders/101?include=products`, which part is the path param and which is the query param?
+**Q117.** Where does the auth token usually go?
+**Q118.** Is `GET /getAllOrders` good REST? What's better?
+**Q119.** What does `app.main:app` mean in the uvicorn command?
+**Q120.** What does `--reload` do?
+**Q121.** Which URL opens the interactive API docs?
+
+<details><summary>▶ Answers</summary>
+
+- **Q114.** 403 · 401
+- **Q115.** 422
+- **Q116.** `101` = path param · `include=products` = query param
+- **Q117.** the `Authorization: Bearer <token>` header
+- **Q118.** no: `GET /orders`
+- **Q119.** the module `app/main.py`, and the variable `app` inside it
+- **Q120.** restarts the server when code changes
+- **Q121.** `http://localhost:8000/docs`
+</details>
+
+---
+---
+
+# 📅 Day 14: FastAPI routes, params & routers
+
+### T81. The app & the first route
+```python
+from fastapi import FastAPI
+app = FastAPI()
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}        # dict → JSON automatically
+```
+🟨 Express: `app.get("/health", (req, res) => res.json({status: "ok"}))`. In FastAPI you just **return** the data.
+🏢 `app/main.py`: `app = ModFastAPI(title="DMS-backend", ..., lifespan=lifespan)` (a customised FastAPI subclass).
+
+### T82. Path parameters
+```python
+@router.get("/{order_id}")
+def retrieve_order(order_id: int):     # the name must match {order_id}; int → auto-converted + validated
+    ...
+```
+`/orders/abc` → **422** automatically.
+⚠️ Route order matters: define `/orders/static` **before** `/orders/{order_id}`, otherwise "static" is treated as an id.
+
+### T83. Query parameters
+🧠 Any function parameter that **isn't** in the path is a **query param**.
+```python
+from fastapi import Query
+@router.get("/")
+def get_all_orders(page: int = 1, status: Optional[str] = None,
+                   limit: int = Query(20, le=100)):     # with validation: max 100
+    ...
+# GET /orders/?page=2&status=D
+```
+- A default value → optional; no default → **required**.
+🏢 dms-backend wraps pagination and filters into reusable dependencies: `pagination = Depends(XPagination())`, `x_filters = Depends(XFilter())`.
+
+### T84. Swagger docs `/docs`
+FastAPI builds the docs from your **paths + type hints + schemas + docstrings**.
+`tags=["Orders"]` groups the endpoints. Use "Try it out" to call your API without Postman.
+
+### T85. `APIRouter` and `include_router`
+🧠 Split routes into files/modules, then plug them into the app.
+🏢 How dms-backend wires the orders routes:
+```python
+# app/services/order/routers/v0/__init__.py
+router = APIRouter(prefix='/orders', tags=["Orders"])
+
+# app/services/order/routers/v0/get.py
+from app.services.order.routers.v0 import router
+@router.get("/{order_id}")            # full URL: /orders/{order_id}
+def retrieve_order(...): ...
+
+# app/services/order/router.py → imports all the route modules (that registers them)
+# app/main.py
+routers = [ ... ]
+for router in routers:
+    app.include_router(router, dependencies=[Depends(Revocations)])   # every route also checks revoked tokens
+```
+🟨 Express: `const router = express.Router(); app.use("/orders", router)`.
+⚠️ A new route file must be **imported** somewhere (e.g. in `router.py`), otherwise its routes never register.
+
+## 📝 Quiz: Day 14 (Q122–Q129)
+**Q122.** How does a FastAPI route send JSON back?
+**Q123.** What does FastAPI do with `/orders/abc` if the route has `order_id: int`?
+**Q124.** In `def f(order_id: int, page: int = 1)` with path `/{order_id}`, what kind of parameter is `page`?
+**Q125.** How do you make a query param required?
+**Q126.** Why must `/orders/static` be defined before `/orders/{order_id}`?
+**Q127.** With `APIRouter(prefix="/orders")` and `@router.get("/{order_id}")`, what's the full URL?
+**Q128.** You created a new route file but the endpoint is missing from `/docs`. What did you probably forget?
+**Q129.** Write a router with `GET /drivers/{driver_id}` (int) that returns `{"id": driver_id, "active": active}`, where `active` is an optional bool query param defaulting to True.
+
+<details><summary>▶ Answers</summary>
+
+- **Q122.** just `return` a dict/list/model; FastAPI converts it to JSON
+- **Q123.** returns 422 (validation error)
+- **Q124.** an optional query param
+- **Q125.** don't give it a default value
+- **Q126.** routes match top-down; otherwise "static" is captured as `{order_id}` (and fails as an int)
+- **Q127.** `/orders/{order_id}`
+- **Q128.** importing the module (e.g. in the service's `router.py`), or adding the router to `main.py`'s list
+- **Q129.**
+```python
+from fastapi import APIRouter
+router = APIRouter(prefix="/drivers", tags=["Drivers"])
+
+@router.get("/{driver_id}")
+def get_driver(driver_id: int, active: bool = True):
+    return {"id": driver_id, "active": active}
+```
+</details>
+
+---
+---
+
+# 📅 Day 15: Request body, `Depends`, request/response
+
+### T86. Request body
+🧠 A parameter typed as a **Pydantic model** is read from the **JSON body**.
+```python
+from pydantic import BaseModel
+class NoteCreate(BaseModel):
+    note: str
+    notify: bool = False
+
+@router.post("/{order_id}/notes", status_code=201)
+def create_note(order_id: int, payload: NoteCreate):   # path param + body
+    return {"order_id": order_id, "note": payload.note}
+```
+FastAPI decides where each value comes from: **path** (`{}` in the URL) · **body** (a Pydantic model) · **query** (everything else).
+
+### T87. Dependency injection: `Depends`
+🧠 "Before running this route, run **that** function and give me its result."
+🏠 Before a driver leaves, the depot hands them a van and a scanner. The driver doesn't fetch them.
+```python
+def get_db(): ...                       # T67
+def fetch_dms_user(request: Request): ...
+
+@router.get("/{order_id}")
+def retrieve_order(
+    request: Request,
+    order_id: int,
+    db: Session = Depends(get_db),                            # a DB session
+    dms_user: DMSUserSchema = Depends(fetch_dms_user),        # the logged-in user
+    customer_ids: Optional[List[int]] = Depends(fetch_accessible_customer_ids),
+): ...
+```
+🟨 Like React's `useContext` / Express middleware that attaches `req.user`, but per-parameter and typed.
+- Dependencies can depend on other dependencies.
+- In tests you can **swap** them (`app.dependency_overrides[get_db] = fake_db`), see Day 24.
+
+### T88. `Request` and `Response` objects
+```python
+from fastapi import Request, Response
+def route(request: Request, response: Response = None):
+    request.headers.get("Authorization")
+    request.state.permissions            # data that middleware/decorators attached
+    response.status_code = 404           # change the status without raising
+```
+🏢 `retrieve_order` sets `response.status_code = status.HTTP_404_NOT_FOUND` and returns `CustomResponseSchema(...)`.
+
+### T89. `response_model` & status codes
+```python
+@router.get("/{order_id}", response_model=CustomOrderDetailResponseSchema)
+```
+- `response_model` **filters and validates the output**: only the schema's fields are returned (no leaking of internal columns).
+- `status.HTTP_404_NOT_FOUND` constants are clearer than bare numbers.
+🏢 Most DMS routes return `CustomResponseSchema(message=..., code=..., data=..., error=...)`, a **standard envelope** that the React frontend relies on.
+
+### T90. Middleware
+🧠 Code that runs **around every request** (before and after the route).
+🏢 `app/main.py` adds `AuthMiddleware`, `DBSession`, `RateLimitMiddleware` and CORS.
+🟨 Express: `app.use((req, res, next) => ...)`.
+⚠️ Middleware order matters: the last added runs first (outermost).
+
+## 📝 Quiz: Day 15 (Q130–Q137)
+**Q130.** How does FastAPI know a parameter should come from the JSON body?
+**Q131.** In one sentence, what does `Depends(get_db)` do?
+**Q132.** Why is dependency injection useful for testing?
+**Q133.** How do you return a 404 without raising an exception?
+**Q134.** What does `response_model` do to the output?
+**Q135.** What's `CustomResponseSchema` used for in dms-backend?
+**Q136.** Name two middlewares in dms-backend's `main.py`.
+**Q137.** Write a `POST /drivers/` route that takes a body `{name: str, van: str | None}` and returns it with status 201.
+
+<details><summary>▶ Answers</summary>
+
+- **Q130.** its type is a Pydantic `BaseModel`
+- **Q131.** runs `get_db` first and passes its result (a DB session) into the route
+- **Q132.** you can override a dependency with a fake (e.g. a test DB)
+- **Q133.** take `response: Response` and set `response.status_code = 404`
+- **Q134.** filters and validates the output to the schema's fields
+- **Q135.** a standard response envelope (message, code, data, error) for the frontend
+- **Q136.** `AuthMiddleware`, `DBSession`, `RateLimitMiddleware`, CORS
+- **Q137.**
+```python
+class DriverCreate(BaseModel):
+    name: str
+    van: str | None = None
+
+@router.post("/", status_code=201)
+def create_driver(payload: DriverCreate):
+    return payload
+```
+</details>
+
+---
+---
+
+# 📅 Day 16: Pydantic schemas
+🏢 dms-backend uses **Pydantic v2** (2.12). Schemas live in `app/services/<module>/schemas/`.
+
+### T91. `BaseModel`
+```python
+from pydantic import BaseModel
+class EscalationReasonsSchema(BaseModel):      # 🏢 order/schemas/escalation_reasons_schema.py
+    id: int
+    order_reason_id: int
+    escalation_type_id: int
+
+s = EscalationReasonsSchema(id=1, order_reason_id=2, escalation_type_id=3)
+s.id                          # 1
+s.model_dump()                # → dict       (v1: .dict())
+s.model_dump_json()           # → JSON str
+```
+🟨 Like a **TypeScript interface + runtime validation** (zod / yup) in one.
+
+### T92. Validation & conversion
+```python
+EscalationReasonsSchema(id="5", order_reason_id=2, escalation_type_id=3)   # "5" → 5 ✅ (converted)
+EscalationReasonsSchema(id="abc", ...)    # ❌ ValidationError → in FastAPI: 422 with details
+```
+The 422 body tells the frontend exactly which field failed and why.
+
+### T93. Optional fields, defaults, `Field`
+```python
+from typing import Optional
+from pydantic import BaseModel, Field
+class OrderCreate(BaseModel):
+    customer_id: int                               # required
+    note: Optional[str] = None                     # optional
+    qty: int = Field(1, ge=1, le=50)               # default 1, must be 1..50
+    postcode: str = Field(..., min_length=5)       # ... = required
+```
+⚠️ `Optional[str]` without `= None` is still **required** (it just may be null).
+
+### T94. Nested models & lists
+```python
+class ProductIn(BaseModel):
+    name: str
+    qty: int
+class OrderIn(BaseModel):
+    customer_id: int
+    products: list[ProductIn]          # validates every item
+```
+
+### T95. From ORM objects: `from_attributes`
+🧠 Lets a schema read from a **SQLAlchemy object** (attributes) instead of a dict.
+```python
+class EscalationReasonsSchema(BaseModel):
+    ...
+    class Config:
+        orm_mode = True            # Pydantic v1 name (old)
+        from_attributes = True     # Pydantic v2 name ✅
+
+EscalationReasonsSchema.model_validate(db_row)     # ORM row → schema
+```
+🏢 dms-backend has both names in old files. In **new** code use v2: `model_config = ConfigDict(from_attributes=True)`.
+
+### T96. Create vs Update vs Response schemas
+| Schema | Purpose | Typical fields |
+|---|---|---|
+| `XCreate` | POST body | required fields, no `id` |
+| `XUpdate` | PUT/PATCH body | everything `Optional` |
+| `XResponse` | output | `id`, timestamps, safe fields only |
+⚠️ Never return passwords, tokens or internal flags. The response schema is your filter.
+🏢 Validators: `@model_validator` (v2) for cross-field rules; see `assets/schemas/asset_schema.py`.
+
+## 📝 Quiz: Day 16 (Q138–Q145)
+**Q138.** What's the TypeScript/JS equivalent of a Pydantic model?
+**Q139.** What happens with `id="5"` for an `int` field? And with `id="abc"`?
+**Q140.** v1 `.dict()` is called what in v2?
+**Q141.** Is `note: Optional[str]` (no default) required?
+**Q142.** How do you say "qty between 1 and 50, default 1"?
+**Q143.** What does `from_attributes=True` allow?
+**Q144.** Why have separate Create and Response schemas?
+**Q145.** Write `DriverCreate` (name 2–50 chars, van optional, max_jobs int default 10, ≥1) and `DriverResponse` (id + name + van).
+
+<details><summary>▶ Answers</summary>
+
+- **Q138.** a TS interface plus a runtime validator (zod/yup)
+- **Q139.** converted to `5` · ValidationError (422 in FastAPI)
+- **Q140.** `.model_dump()`
+- **Q141.** yes: required, but it may be `None`
+- **Q142.** `qty: int = Field(1, ge=1, le=50)`
+- **Q143.** building the schema from an object's attributes (a SQLAlchemy row)
+- **Q144.** input and output need different fields; the response hides internal/sensitive data
+- **Q145.**
+```python
+class DriverCreate(BaseModel):
+    name: str = Field(..., min_length=2, max_length=50)
+    van: Optional[str] = None
+    max_jobs: int = Field(10, ge=1)
+
+class DriverResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    name: str
+    van: Optional[str] = None
+```
+</details>
+
+---
+---
+
+# 📅 Day 17: SQL basics (MySQL)
+🏢 dms-backend uses **MySQL**. Table names are PascalCase: `Orders`, `EscalationReasons`.
+
+### T97. Tables, rows, columns, keys
+🏠 A table is a spreadsheet: **columns** = fields, **rows** = records.
+- **Primary key** (`id`): unique per row.
+- **Foreign key** (`customer_id` → `Customers.id`): a link to another table.
+- **NULL** = no value (Python `None`).
+
+### T98. `SELECT`
+```sql
+SELECT id, customer_id, status
+FROM Orders
+WHERE status = 'D' AND client_id = 1
+ORDER BY created_at DESC
+LIMIT 20 OFFSET 40;               -- page 3 of 20
+
+SELECT * FROM Orders WHERE id IN (101, 102);
+SELECT * FROM Orders WHERE postcode LIKE 'SW1%';   -- starts with SW1
+SELECT * FROM Orders WHERE created_at BETWEEN '2026-11-01' AND '2026-11-30';
+```
+🟨 It's like `.filter().sort().slice()`, but run by the database.
+
+### T99. `INSERT`, `UPDATE`, `DELETE`
+```sql
+INSERT INTO Notes (order_id, note) VALUES (101, 'Leave at door');
+UPDATE Orders SET status = 'C' WHERE id = 101;
+DELETE FROM Notes WHERE id = 5;
+```
+⚠️ **UPDATE/DELETE without WHERE changes EVERY row.** Always write the `WHERE` first.
+🏢 dms-backend usually **soft-deletes**: `UPDATE ... SET is_deleted = 1, deleted_at = NOW()` instead of `DELETE` (T109).
+
+### T100. NULL handling
+```sql
+WHERE driver_id IS NULL           -- ✅
+WHERE driver_id = NULL            -- ❌ always false!
+COALESCE(note, 'no note')         -- default for NULL    (Python: x or "no note")
+```
+🏢 Same idea as T14: in SQLAlchemy `Model.col.is_(None)` becomes `IS NULL`.
+
+## 📝 Quiz: Day 17 (Q146–Q153)
+**Q146.** What is a primary key? A foreign key?
+**Q147.** Write SQL: the 10 newest orders with status `'D'`.
+**Q148.** What's dangerous about `UPDATE Orders SET status='C';`?
+**Q149.** Why doesn't `WHERE driver_id = NULL` work?
+**Q150.** Find postcodes starting with `LS`.
+**Q151.** What is "soft delete"?
+**Q152.** Page 2 with 25 per page: `LIMIT ? OFFSET ?`
+**Q153.** Write SQL: count orders per status. (Preview of Day 18: try it!)
+
+<details><summary>▶ Answers</summary>
+
+- **Q146.** PK = the unique id of each row · FK = a column pointing to another table's PK
+- **Q147.** `SELECT * FROM Orders WHERE status='D' ORDER BY created_at DESC LIMIT 10;`
+- **Q148.** no WHERE → every order is changed
+- **Q149.** NULL isn't equal to anything; use `IS NULL`
+- **Q150.** `WHERE postcode LIKE 'LS%'`
+- **Q151.** mark a row deleted (`is_deleted=1`, `deleted_at`) instead of removing it
+- **Q152.** `LIMIT 25 OFFSET 25`
+- **Q153.** `SELECT status, COUNT(*) FROM Orders GROUP BY status;`
+</details>
+
+---
+---
+
+# 📅 Day 18: Joins, GROUP BY, indexes, transactions
+
+### T101. JOINs
+```sql
+SELECT o.id, c.name
+FROM Orders o
+JOIN Customers c ON c.id = o.customer_id;        -- INNER: only orders WITH a customer
+
+SELECT o.id, d.name
+FROM Orders o
+LEFT JOIN Drivers d ON d.id = o.driver_id;       -- LEFT: ALL orders, d.name NULL if no driver
+```
+🏠 INNER = only parcels that have a matching label · LEFT = all parcels, with a blank label where there's none.
+
+### T102. `GROUP BY`, aggregates, `HAVING`
+```sql
+SELECT customer_id, COUNT(*) AS orders, SUM(qty) AS items
+FROM Orders
+WHERE status <> 'C'
+GROUP BY customer_id
+HAVING COUNT(*) > 5              -- filter AFTER grouping (WHERE filters before)
+ORDER BY orders DESC;
+```
+Aggregates: `COUNT`, `SUM`, `AVG`, `MIN`, `MAX`.
+🟨 Like `reduce` grouping in JS (T27 + T28 in Python).
+
+### T103. Indexes
+🧠 An index is like a book's index: it makes `WHERE`/`JOIN`/`ORDER BY` on that column fast.
+- Index the columns you filter/join on (`customer_id`, `status`, `created_at`).
+- Too many indexes slow down writes.
+🏢 `TimestampMixin` adds `index=True` on `created_at`, `client_id`, etc. `EXPLAIN SELECT ...` shows whether an index is used.
+
+### T104. Transactions
+🧠 Several changes that **all succeed or all fail** together.
+```sql
+START TRANSACTION;
+UPDATE Stock SET qty = qty - 1 WHERE product_id = 7;
+INSERT INTO OrderProducts (order_id, product_id) VALUES (101, 7);
+COMMIT;        -- or ROLLBACK; to undo both
+```
+🏠 A bank transfer: money leaves one account **and** arrives in the other, or neither happens.
+🏢 SQLAlchemy: `db.commit()` / `db.rollback()` (T112). Row locks: a recent dms-backend commit "Fail fast on master Orders row-lock waits", which is why long transactions are dangerous.
+
+## 📝 Quiz: Day 18 (Q154–Q161)
+**Q154.** INNER JOIN vs LEFT JOIN?
+**Q155.** WHERE vs HAVING?
+**Q156.** Write SQL: total qty per city, only for cities with more than 100 items.
+**Q157.** What does an index speed up? What does it slow down?
+**Q158.** How do you check whether a query uses an index?
+**Q159.** What is a transaction?
+**Q160.** What does ROLLBACK do?
+**Q161.** Write SQL: all orders with the driver's name, including orders with no driver.
+
+<details><summary>▶ Answers</summary>
+
+- **Q154.** INNER = only matching rows · LEFT = all left rows, NULLs where there's no match
+- **Q155.** WHERE filters rows before grouping; HAVING filters groups after
+- **Q156.** `SELECT city, SUM(qty) FROM Orders GROUP BY city HAVING SUM(qty) > 100;`
+- **Q157.** speeds up reads (WHERE/JOIN/ORDER BY) · slows down writes
+- **Q158.** `EXPLAIN SELECT ...`
+- **Q159.** a group of changes that all succeed or all fail
+- **Q160.** undoes everything since the transaction started
+- **Q161.** `SELECT o.*, d.name FROM Orders o LEFT JOIN Drivers d ON d.id = o.driver_id;`
+</details>
+
+---
+---
+
+# 📅 Day 19: SQLAlchemy models & sessions
+🏢 dms-backend uses **SQLAlchemy 2.0** with the classic `db.query(...)` style. Models live in `app/services/<module>/models/`.
+
+### T105. What an ORM is
+🧠 **O**bject **R**elational **M**apper: work with **Python classes/objects** instead of writing SQL strings.
+| SQL | SQLAlchemy |
+|---|---|
+| table `Orders` | class `Orders` |
+| a row | an `Orders` object |
+| a column | a class attribute: `Orders.status` |
+🟨 Like Prisma / TypeORM / Sequelize in Node.
+
+### T106. Engine & Session
+🧠 **Engine** = the connection pool to MySQL (one per app) · **Session** = one unit of work: queries + changes, then commit.
+🏠 The engine is the depot's phone line; a session is one phone call where you place and confirm orders.
+🏢 `app/dependencies/config/database.py` creates the engines (`get_db_url(role)` uses separate read/write roles, see `db_router.py`); routes get a session through `db: Session = Depends(get_db)`.
+⚠️ Never create sessions by hand in routes. Always use `get_db`.
+
+### T107. Defining a model
+🏢 Real model, `app/services/order/models/escalation_reasons.py`:
+```python
+class EscalationReasons(TimestampMixin, Module):
+    __tablename__ = "EscalationReasons"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    order_reason_id = Column(Integer, ForeignKey("OrderReasons.id"))
+    escalation_type_id = Column(Integer, ForeignKey("EscalationTypes.id"))
+    failure_reason_id = Column(Integer, nullable=True)
+    is_deleted = Column(Boolean, default=False, server_default=text("0"), nullable=False)
+    deleted_at = Column(DateTime, nullable=True)
+```
+| Column type | Python | MySQL |
+|---|---|---|
+| `Integer` | int | INT |
+| `String(50)` | str | VARCHAR(50) |
+| `Boolean` | bool | TINYINT(1) |
+| `DateTime` | datetime | DATETIME |
+| `Numeric(10, 2)` | Decimal | DECIMAL |
+Options: `primary_key`, `nullable`, `default` (Python side), `server_default` (DB side), `index`, `unique`.
+
+### T108. `ForeignKey` & `relationship`
+```python
+order_reason_id = Column(Integer, ForeignKey("OrderReasons.id"))   # the DB link
+order_reason = relationship("OrderReasons")                         # Python access
+reason.order_reason.name        # follow the link like an attribute
+```
+⚠️ Accessing a relationship in a loop runs **one query per row** (the N+1 problem, T114).
+
+### T109. Common model patterns in dms-backend
+- **`TimestampMixin`** → `created_at/by`, `updated_at/by`, `client_id` on every table.
+- **Soft delete** → `is_deleted`, `deleted_at`, `deleted_by`. Filter `is_deleted == False` in queries!
+- **`client_id`** → multi-tenant: always filter by the user's organisation (`order_queryset(db, client_id=dms_user.organisation_id)`).
+- **Seeders** → `last_perform_seeder_date()` + JSON files for fixed lookup data.
+
+## 📝 Quiz: Day 19 (Q162–Q169)
+**Q162.** What does ORM stand for, and what's the JS equivalent?
+**Q163.** Engine vs Session?
+**Q164.** How does a route get a session in dms-backend?
+**Q165.** `default=` vs `server_default=`?
+**Q166.** What does `relationship("OrderReasons")` give you?
+**Q167.** Which columns does `TimestampMixin` add?
+**Q168.** Why must most queries filter by `client_id` and `is_deleted`?
+**Q169.** Write a model `DriverNotes` (table `DriverNotes`): id PK, driver_id FK → `Drivers.id`, note String(500) not null, is_deleted default False, using `TimestampMixin`.
+
+<details><summary>▶ Answers</summary>
+
+- **Q162.** Object Relational Mapper · Prisma/TypeORM/Sequelize
+- **Q163.** engine = the connection pool for the whole app; session = one unit of work (queries + commit)
+- **Q164.** `db: Session = Depends(get_db)`
+- **Q165.** `default` is set by Python when inserting; `server_default` is set by MySQL itself
+- **Q166.** access to the related object as an attribute (`row.order_reason`)
+- **Q167.** created_at/by, updated_at/by, sync_*_at, client_id
+- **Q168.** so users only see their own organisation's data and deleted rows are hidden
+- **Q169.**
+```python
+class DriverNotes(TimestampMixin):
+    __tablename__ = "DriverNotes"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    driver_id = Column(Integer, ForeignKey("Drivers.id"), index=True)
+    note = Column(String(500), nullable=False)
+    is_deleted = Column(Boolean, default=False, server_default=text("0"), nullable=False)
+```
+</details>
+
+---
+---
+
+# 📅 Day 20: SQLAlchemy queries & writes
+
+### T110. Reading: `query`, `filter`, `first`, `all`
+```python
+order = db.query(Orders).filter(Orders.id == order_id).first()    # one row or None
+orders = db.query(Orders).filter(Orders.status == "D").all()       # list
+count = db.query(Orders).filter(...).count()
+db.query(Orders).get(101)            # by PK (legacy) → prefer db.get(Orders, 101)
+db.query(Orders.id, Orders.status)   # only some columns
+.order_by(Orders.created_at.desc()).offset(20).limit(20)
+```
+⚠️ In `.filter()` use `==` (not `=`). It builds SQL; it doesn't compare in Python.
+🏢 `retrieve_order`: `order_queryset(db=db, client_id=...).filter(Orders.id == order_id).first()`
+
+### T111. Filter operators
+```python
+from sqlalchemy import and_, or_
+.filter(Orders.status != "C")
+.filter(Orders.id.in_([101, 102]))                  # IN
+.filter(Orders.postcode.like("SW1%"))               # LIKE
+.filter(Orders.driver_id.is_(None))                 # IS NULL   (T14!)
+.filter(Orders.driver_id.isnot(None))               # IS NOT NULL
+.filter(Orders.created_at.between(start, end))
+.filter(or_(Orders.status == "D", Orders.status == "P"))
+.filter(Orders.client_id == cid, Orders.is_deleted == False)   # commas = AND
+```
+⚠️ Python's `and`/`or`/`not`/`in` **don't work** inside filters; use `and_`, `or_`, `~`, `.in_()`.
+⚠️ `Orders.is_deleted == False` triggers flake8 E712; `.is_(False)` is the cleaner alternative.
+
+### T112. Writing: add, commit, refresh, rollback
+```python
+note = Notes(order_id=101, note="Leave at door", created_by=user.email)
+db.add(note)          # stage
+db.commit()           # save to MySQL (transaction committed)
+db.refresh(note)      # reload (gets the new id, server defaults)
+note.id
+
+try:
+    ...
+    db.commit()
+except Exception:
+    db.rollback()     # undo on error
+    raise
+```
+🏢 dms-backend's `DBSession` middleware and "ambient session" also manage commit/rollback around requests. Check how the module you're editing does it before adding your own commits.
+
+### T113. Update & delete
+```python
+order.status = "C"                    # change attributes…
+db.commit()                           # …then commit
+
+db.query(Orders).filter(Orders.id.in_(ids)).update({"status": "C"}, synchronize_session=False)   # bulk
+# soft delete (preferred in DMS)
+row.is_deleted = True; row.deleted_at = datetime.now(timezone.utc); row.deleted_by = user.email
+db.commit()
+```
+
+### T114. Joins, eager loading & N+1
+```python
+db.query(Orders, Customers.name).join(Customers, Customers.id == Orders.customer_id).all()
+
+# N+1 problem ❌
+for r in reasons:            # 1 query
+    print(r.order_reason.name)   # +1 query PER row → 1001 queries for 1000 rows
+# Fix ✅: load related rows in the same query
+from sqlalchemy.orm import joinedload
+db.query(EscalationReasons).options(joinedload(EscalationReasons.order_reason)).all()
+```
+💡 Print the SQL: `print(query.statement.compile(compile_kwargs={"literal_binds": True}))`, or turn on echo.
+
+## 📝 Quiz: Day 20 (Q170–Q177)
+**Q170.** `.first()` vs `.all()`: what does each return when nothing matches?
+**Q171.** Why does `.filter(Orders.id = 5)` fail?
+**Q172.** How do you write `WHERE driver_id IS NULL`?
+**Q173.** How do you write `status = 'D' OR status = 'P'`?
+**Q174.** After `db.add(x)`, is the row in MySQL yet?
+**Q175.** Why call `db.refresh(x)` after commit?
+**Q176.** What is the N+1 problem, and one fix?
+**Q177.** Write: get all non-deleted orders for `client_id=cid` with no driver, newest first, page 2 of 20.
+
+<details><summary>▶ Answers</summary>
+
+- **Q170.** `.first()` → `None` · `.all()` → `[]`
+- **Q171.** `=` is assignment (SyntaxError); use `==`
+- **Q172.** `.filter(Orders.driver_id.is_(None))`
+- **Q173.** `.filter(or_(Orders.status == "D", Orders.status == "P"))` or `.filter(Orders.status.in_(["D", "P"]))`
+- **Q174.** no, not until `db.commit()` (or a flush)
+- **Q175.** to load DB-generated values (id, server defaults)
+- **Q176.** one extra query per row when accessing relationships in a loop · `joinedload`/`selectinload`, or a join
+- **Q177.**
+```python
+(db.query(Orders)
+   .filter(Orders.client_id == cid, Orders.is_deleted.is_(False), Orders.driver_id.is_(None))
+   .order_by(Orders.created_at.desc())
+   .offset(20).limit(20)
+   .all())
+```
+</details>
+
+---
+---
+
+# 📅 Day 21: Alembic migrations
+
+### T115. What a migration is
+🧠 A **versioned script** that changes the database structure (add a table/column/index), so every environment (your laptop, staging, production) ends up with the same schema.
+🏠 Building plans with numbered revisions: each one says exactly what to add or remove.
+🟨 Like Prisma Migrate / Knex migrations.
+
+### T116. Creating one
+```bash
+poetry run alembic revision --autogenerate -m "add DriverNotes table"
+```
+- Alembic compares your **models** with the **database** and writes `alembic/versions/<id>_add_drivernotes_table.py`.
+- ⚠️ **Always read the generated file.** Autogenerate can miss renames (it sees drop + add) and may pick up unrelated diffs.
+```python
+def upgrade():
+    op.create_table("DriverNotes", sa.Column("id", sa.Integer(), primary_key=True), ...)
+def downgrade():
+    op.drop_table("DriverNotes")
+```
+
+### T117. Applying & undoing
+```bash
+alembic upgrade head        # apply everything up to the latest
+alembic downgrade -1        # undo the last one
+alembic current             # which revision the DB is on
+alembic history             # list
+```
+`down_revision` chains the files. Two people creating migrations from the same parent → "multiple heads" → `alembic merge heads`.
+
+### T118. Team rules
+- One migration per change; a clear `-m` message.
+- Never edit a migration that's already been run on staging/production. Make a new one.
+- Adding a NOT NULL column to a big table → give it a `server_default`, or the migration fails/locks.
+- Big tables (`Orders`): adding an index can lock; coordinate with the team.
+🏢 Migrations live in `alembic/versions/`; config is in `alembic.ini` and `alembic/env.py`.
+
+## 📝 Quiz: Day 21 (Q178–Q184)
+**Q178.** Why do we need migrations instead of editing tables by hand?
+**Q179.** Which command creates a migration from model changes?
+**Q180.** Which command applies all migrations?
+**Q181.** What should you always do after `--autogenerate`?
+**Q182.** What does `downgrade()` do?
+**Q183.** What is "multiple heads", and how do you fix it?
+**Q184.** Why add a `server_default` when adding a NOT NULL column to an existing table?
+
+<details><summary>▶ Answers</summary>
+
+- **Q178.** every environment gets the same, versioned, repeatable schema changes
+- **Q179.** `alembic revision --autogenerate -m "..."`
+- **Q180.** `alembic upgrade head`
+- **Q181.** read and fix the generated file
+- **Q182.** reverses `upgrade()`
+- **Q183.** two migrations share a parent · `alembic merge heads`
+- **Q184.** existing rows need a value, otherwise the migration fails
+</details>
+
+---
+---
+
+# 📅 Day 22: Auth: hashing, JWT, permissions
+
+### T119. Authentication vs authorization
+- **Authentication** = *who are you?* (login, token) → failure = **401**
+- **Authorization** = *what may you do?* (permissions) → failure = **403**
+🏠 Authentication is showing your ID at the depot gate; authorization is whether that ID lets you into the warehouse.
+
+### T120. Password hashing
+🧠 Never store passwords. Store a **one-way hash**; on login, hash the input and compare.
+```python
+from passlib.hash import argon2
+hashed = argon2.hash("secret")
+argon2.verify("secret", hashed)    # True
+```
+🏢 `passlib[argon2]` is in `pyproject.toml`.
+
+### T121. JWT
+🧠 A signed token: `header.payload.signature`. The server can **verify** it without a DB lookup.
+```python
+import jwt
+token = jwt.encode({"sub": "user-1", "exp": expiry}, SECRET, algorithm="HS256")
+data = jwt.decode(token, SECRET, algorithms=["HS256"])     # raises if expired/tampered
+```
+- Sent as `Authorization: Bearer <token>`.
+- The payload is **readable by anyone** (base64), so never put secrets in it.
+🏢 `sso_login/decorator.py` has `jwt_required` / `jwt_required_async`; `Revocations` (on every router, T85) checks revoked tokens; `AuthMiddleware` runs on every request.
+
+### T122. Permissions in dms-backend
+🏢 Permission strings like `"dms.order.view.read"`:
+```python
+@router.get("/{order_id}")
+@check_permission("dms.order.view.read", ["dms.portal.order.view.read"])   # primary + fallbacks
+def retrieve_order(request: Request, ...):
+```
+- `has_permissions(request, perm)` checks the user's permissions (`get_permission(user_id)` → `(user, permissions)`).
+- `request.state.permissions` is stored for the permission-logging middleware.
+- Plus **data-level** access: `fetch_accessible_customer_ids` and the `client_id` filter, so users only see their own customers' orders.
+
+### T123. Security checklist for every new endpoint
+- [ ] `@check_permission(...)` with the right permission string
+- [ ] filter by `client_id` / accessible customers
+- [ ] the response schema hides internal fields
+- [ ] validate the input with Pydantic
+- [ ] never log tokens or passwords
+- [ ] use SQLAlchemy params, never f-strings in SQL (**SQL injection**)
+
+## 📝 Quiz: Day 22 (Q185–Q192)
+**Q185.** Authentication vs authorization, and their status codes?
+**Q186.** Why hash passwords instead of encrypting/storing them?
+**Q187.** Can anyone read a JWT's payload?
+**Q188.** What happens in `jwt.decode` with an expired token?
+**Q189.** What's the permission string for viewing an order?
+**Q190.** Besides permissions, how does dms-backend stop users seeing other clients' orders?
+**Q191.** Why is `f"SELECT * FROM Orders WHERE id = {order_id}"` dangerous?
+**Q192.** What does `request.state.permissions` hold, and who sets it?
+
+<details><summary>▶ Answers</summary>
+
+- **Q185.** who you are (401) · what you may do (403)
+- **Q186.** a hash is one-way, so a database leak doesn't reveal the passwords
+- **Q187.** yes (base64); only the signature protects it from changes
+- **Q188.** it raises an exception (`ExpiredSignatureError`)
+- **Q189.** `dms.order.view.read`
+- **Q190.** filtering by `client_id` / accessible customer ids
+- **Q191.** SQL injection: user input becomes SQL
+- **Q192.** the list of permissions for this route; set by `check_permission`
+</details>
+
+---
+---
+
+# 📅 Day 23: Redis + Celery
+
+### T124. Redis as a cache
+🧠 A super-fast **in-memory key → value store**. Used to avoid slow repeated work (DB queries, API calls).
+🏠 A whiteboard by the dispatch desk: quick to read, wiped from time to time.
+🏢 Real pattern, `file_operations/routers/department/department.py`:
+```python
+key = f"{config.ENV}.perimeter:department"
+data = redis_client.get(key)
+if not data:                                   # cache MISS → fetch + store
+    status_code, department = InternalRequest(...).send_request()
+    redis_client.set(key, json.dumps((status_code, department)))
+    redis_client.expire(key, 60 * 10)          # 10 minutes
+else:                                          # cache HIT
+    status_code, department = json.loads(data)
+```
+
+### T125. TTL & cache invalidation
+- **TTL** (time to live) = automatic expiry: `expire(key, seconds)` or `set(key, value, ex=600)`.
+- When the source data changes, **delete or refresh** the key, otherwise users see stale data.
+- Redis stores **strings/bytes** → `json.dumps` in, `json.loads` out (T46).
+🏢 The `warm_order_static_cache` beat task refreshes `OrderStaticData_*` keys every 30 minutes.
+
+### T126. Celery tasks
+🧠 Run slow work **in the background** (emails, exports, integrations) so the API responds immediately.
+🏠 The counter takes your order and gives you a ticket; the kitchen cooks it in the back.
+```python
+@celery.task
+def send_delivery_sms(order_id): ...
+
+send_delivery_sms.delay(101)                         # queue it, return immediately
+call_cross_service.apply_async(args=[...], queue="x")   # with options
+```
+🏢 `celery = Celery("dms.celery")` in `config/celery_worker.py`; `offload_webhook_dispatcher.delay()` in `warehouse/.../event_ingest.py`.
+Run a worker: `celery -A app.dependencies.config.celery_worker.celery worker --loglevel=info`
+
+### T127. Celery beat (scheduled tasks)
+🏢 `celery.conf.beat_schedule` in `celery_worker.py`:
+```python
+"warm_order_static_cache_task": {
+    "task": "warm_order_static_cache",
+    "schedule": crontab(minute="*/30"),     # every 30 min
+},
+```
+`crontab(minute=0, hour="1-7")` = every hour between 01:00 and 07:00.
+🟨 Like `node-cron` + a job queue (BullMQ).
+
+### T128. When to go async (Celery) vs inline
+| Inline in the route | Celery task |
+|---|---|
+| fast (< ~1s) | slow / heavy |
+| the user needs the result now | the user can be told "processing…" |
+| must be in the same transaction | retries on failure are useful |
+⚠️ Task arguments must be JSON-serialisable: pass **ids**, not ORM objects.
+
+## 📝 Quiz: Day 23 (Q193–Q200)
+**Q193.** What is Redis used for in dms-backend?
+**Q194.** Cache "hit" vs "miss"?
+**Q195.** What does TTL mean? How long is the department cache?
+**Q196.** Why `json.dumps` before `redis_client.set`?
+**Q197.** What's the difference between calling `task(101)` and `task.delay(101)`?
+**Q198.** Why pass `order_id` instead of the `order` object to a task?
+**Q199.** What does `crontab(minute="*/15")` mean?
+**Q200.** Write the cache pattern for `get_depots()`: key `"depots"`, a 5-minute TTL, fetching from `load_depots_from_db()` on a miss.
+
+<details><summary>▶ Answers</summary>
+
+- **Q193.** caching (static data, external API results) and as the Celery broker/backend
+- **Q194.** hit = found in the cache · miss = not there, so fetch and store
+- **Q195.** time to live (auto-expiry) · 10 minutes (`60 * 10`)
+- **Q196.** Redis stores strings/bytes, not Python objects
+- **Q197.** a direct call runs it now in this process; `.delay` queues it for a worker
+- **Q198.** task args must be serialisable; the task loads fresh data itself
+- **Q199.** every 15 minutes
+- **Q200.**
+```python
+def get_depots():
+    data = redis_client.get("depots")
+    if data:
+        return json.loads(data)
+    depots = load_depots_from_db()
+    redis_client.set("depots", json.dumps(depots), ex=300)
+    return depots
+```
+</details>
+
+---
+---
+
+# 📅 Day 24: Testing with pytest
+🏢 dms-backend tests live in `tests/` (`api/v0`, `api/v1`, `routers`, `services`, `factories`); fixtures are in `tests/conftest.py`.
+
+### T129. Test functions & `assert`
+```python
+# tests/test_fee.py      ← file and function names start with test_
+def test_free_delivery_over_1000():
+    assert delivery_fee(1500) == 0
+
+def test_invalid_qty_raises():
+    with pytest.raises(ValueError):
+        set_qty(0)
+```
+🟨 Jest: `test("...", () => expect(fee(1500)).toBe(0))`. pytest just uses plain `assert`.
+
+### T130. Fixtures & `conftest.py`
+🧠 A **fixture** = reusable setup, injected by **parameter name** (just like `Depends`!).
+```python
+@pytest.fixture
+def sample_order():
+    return {"id": 101, "qty": 2}
+
+def test_qty(sample_order):          # pytest passes the fixture in
+    assert sample_order["qty"] == 2
+```
+- `conftest.py` fixtures are shared by every test in the folder.
+- `scope="session"` = created once per run · `"function"` = fresh for each test.
+- `yield` in a fixture = setup → test → cleanup (T67 again!).
+
+### T131. Testing API endpoints
+🏢 `tests/conftest.py` builds an async client fixture:
+```python
+_app.dependency_overrides[get_db] = lambda: db_session      # use the TEST database
+async with AsyncClient(transport=ASGITransport(app=_app), base_url="http://test") as client:
+    yield client
+```
+A test then looks like:
+```python
+async def test_get_order_not_found(client, auth_headers):
+    res = await client.get("/orders/999999", headers=auth_headers)
+    assert res.status_code == 404
+```
+
+### T132. Factories & mocking
+- **Factories** (`tests/factories/`, `pytest-factoryboy`) create test rows quickly: `OrderFactory(status="D")`.
+- **Mocking** replaces external calls (SMS, S3, other services):
+```python
+from unittest.mock import patch
+with patch("app.services.x.send_sms") as fake:
+    ...
+    fake.assert_called_once()
+```
+
+### T133. Running tests
+```bash
+poetry run pytest                       # all
+poetry run pytest tests/api/v1 -k order # a folder + a name filter
+poetry run pytest -x -vv                # stop at the first failure, verbose
+make test_only                          # Docker services + coverage report
+```
+⚠️ The `conftest.py` note says tests only work if the service containers are running (see the Makefile).
+
+## 📝 Quiz: Day 24 (Q201–Q208)
+**Q201.** How does pytest find tests?
+**Q202.** How do you test that a function raises `ValueError`?
+**Q203.** How does a test receive a fixture?
+**Q204.** What does `scope="session"` mean for a fixture?
+**Q205.** How does dms-backend make the API use a test database?
+**Q206.** Why mock external services in tests?
+**Q207.** Which command runs only the tests with "order" in their name?
+**Q208.** Write tests for `calculate_total` (Q47): no coupon, with a coupon, express.
+
+<details><summary>▶ Answers</summary>
+
+- **Q201.** files `test_*.py`, functions `test_*`
+- **Q202.** `with pytest.raises(ValueError):`
+- **Q203.** by naming it as a parameter
+- **Q204.** created once for the whole test run
+- **Q205.** `app.dependency_overrides[get_db] = lambda: db_session`
+- **Q206.** tests stay fast and reliable, and don't send real SMS/emails
+- **Q207.** `pytest -k order`
+- **Q208.**
+```python
+def test_no_coupon():
+    assert calculate_total(2, 100) == 200
+def test_coupon():
+    assert calculate_total(2, 100, coupon="X") == 180
+def test_express():
+    assert calculate_total(1, 100, express=True) == 250
+```
+</details>
+
+---
+---
+
+# 📅 Day 25: Integrations: HTTP clients, retries, S3, Kafka, config
+
+### T134. Calling other APIs: `requests` / `httpx`
+```python
+import requests
+res = requests.get(url, params={"page": 1}, headers=h, timeout=10)
+res.raise_for_status()           # raises on 4xx/5xx
+data = res.json()
+
+import httpx                     # sync AND async
+async with httpx.AsyncClient(timeout=10) as client:
+    res = await client.post(url, json=payload)
+```
+🟨 `requests` ≈ axios (sync) · `httpx.AsyncClient` ≈ axios with await.
+⚠️ **Always set a timeout.** Without one, a slow partner API can hang your worker for ever.
+⚠️ `requests` is blocking, so don't use it inside `async def` routes (T72).
+🏢 `InternalRequest(...).send_request()` is the team's wrapper for calling other internal services (Perimeter, etc.).
+
+### T135. Retries with `tenacity`
+```python
+from tenacity import retry, stop_after_delay, wait_exponential
+@retry(stop=stop_after_delay(3), wait=wait_exponential(multiplier=0.2))   # 🏢 app/resources.py
+def connect():
+    ...
+```
+Retry **temporary** failures (timeouts, 503), not 400/404.
+
+### T136. AWS S3 with `boto3`
+```python
+import boto3
+s3 = boto3.client("s3")
+s3.upload_file("pod.pdf", "bucket-name", "pods/101.pdf")
+url = s3.generate_presigned_url("get_object", Params={"Bucket": b, "Key": k}, ExpiresIn=3600)
+```
+🏢 Used for PODs, manifests and exports (e.g. `order_create/.../s3_manifest_source.py`, the `s3_resource` service).
+
+### T137. Kafka (overview)
+🧠 An **event stream**: services publish events ("order delivered") and others consume them later. That decouples services.
+🏠 A depot noticeboard: anyone posts an update, and every team reads it when it's ready.
+🏢 `aiokafka` is in the test dependencies; GSIT/integration events flow between services. Learn the details when you get a ticket that touches it.
+
+### T138. Config & environment variables
+```python
+import os
+REGION = os.getenv("REGION", "USA")                               # 🏢 config/config.py
+GSIT_API_TIMEOUT = int(os.getenv("GSIT_API_TIMEOUT", 120))         # env vars are ALWAYS strings → convert
+```
+- Secrets live in `.env` files / CI variables, **never in code or git**.
+- `config.ENV` / `Environment.PRODUCTION` switch behaviour per environment.
+🟨 Node: `process.env.REGION ?? "USA"` + dotenv.
+
+## 📝 Quiz: Day 25 (Q209–Q216)
+**Q209.** Why always pass `timeout=` to HTTP calls?
+**Q210.** What does `res.raise_for_status()` do?
+**Q211.** Which HTTP client should you use inside an `async def` route?
+**Q212.** Which errors are worth retrying, and which aren't?
+**Q213.** What is a presigned S3 URL?
+**Q214.** In one sentence, what is Kafka used for?
+**Q215.** Why `int(os.getenv("X", 120))`?
+**Q216.** Where must secrets never go?
+
+<details><summary>▶ Answers</summary>
+
+- **Q209.** so a slow API can't hang your process for ever
+- **Q210.** raises an exception for 4xx/5xx responses
+- **Q211.** `httpx.AsyncClient` (non-blocking)
+- **Q212.** retry: timeouts/503/connection errors · don't retry: 400/401/403/404
+- **Q213.** a temporary link to download (or upload) a private file
+- **Q214.** publishing and consuming events between services, decoupled
+- **Q215.** env vars are strings, so convert to an int
+- **Q216.** code or git; use env vars / a secret store
+</details>
+
+---
+---
+
+# 📅 Day 26: Team workflow: git, pre-commit, Docker, CI
+
+### T139. Git workflow
+```bash
+git checkout development && git pull
+git checkout -b ay-BJS-12345-short-description     # 🏢 your branch style: initials-ticket-desc
+# ...work...
+git add -p && git commit -m "Add DriverNotes model and create endpoint"
+git push -u origin ay-BJS-12345-short-description
+# open a PR in Bitbucket → review → merge
+```
+🏢 Commit messages in the repo are plain-English imperatives: *"Fail fast on master Orders row-lock waits…"*, *"Allow null order_product_id on POST /qc/create/"*.
+
+### T140. pre-commit, flake8, isort, mypy
+🏢 `.pre-commit-config.yaml` runs `make lint` before each commit, which runs:
+- `isort -c`: import order
+- `flake8`: style/bugs (max line length **90**; E711 `== None`, E712 `== False`…)
+- `mypy --ignore-missing-imports`: type hints (Day 9)
+```bash
+poetry run pre-commit install     # once
+make lint                         # run manually
+make format_code                  # isort fixes imports
+```
+
+### T141. Docker & docker-compose
+🧠 **Docker** packages the app + its dependencies into an image; **compose** runs several containers (app, MySQL, Redis) together.
+```bash
+./start.sh                                        # 🏢 copies env + docker-compose up --build -d
+docker compose -f docker/local/docker-compose.yml ps
+docker compose logs -f
+```
+🟨 Same as for a Node app: `Dockerfile` + `docker-compose.yml`.
+
+### T142. CI: Bitbucket Pipelines
+🏢 `bitbucket-pipelines.yml` steps: **Sonar Scan** (code quality) → **Build** → **Build Image Push**/tags.
+- A red pipeline = fix it before merging.
+- Read the failing step's log bottom-up, just like a traceback.
+
+### T143. PR checklist before you ask for a review
+- [ ] Branch is up to date with `development`
+- [ ] `make lint` is clean
+- [ ] Tests added/updated, and `pytest` passes
+- [ ] Migration included and reviewed (if models changed)
+- [ ] `@check_permission` + `client_id` filtering on new endpoints (T123)
+- [ ] No secrets, no debug `print()`s
+- [ ] The PR description explains the **why** and how to test it
+
+## 📝 Quiz: Day 26 (Q217–Q224)
+**Q217.** What's the branch naming style used in your dms-backend branches?
+**Q218.** What runs automatically before each commit?
+**Q219.** What's the max line length flake8 allows in dms-backend?
+**Q220.** What does `isort` check?
+**Q221.** What does `./start.sh` do?
+**Q222.** Name the Bitbucket pipeline steps.
+**Q223.** The pipeline is red. What do you do first?
+**Q224.** List 5 things to check before opening a PR.
+
+<details><summary>▶ Answers</summary>
+
+- **Q217.** `ay-BJS-<ticket>-<description>`
+- **Q218.** pre-commit → `make lint` (isort, flake8, mypy)
+- **Q219.** 90
+- **Q220.** import ordering
+- **Q221.** copies the local env file and starts docker-compose (build, detached)
+- **Q222.** Sonar Scan, Build (no push), Build Image Push, tag builds
+- **Q223.** open the failing step's log and read it bottom-up
+- **Q224.** any 5 from T143
+</details>
+
+---
+---
+
+# 📚 Resources & weekly habits
+
+| Topic | Link | Use with |
+|---|---|---|
+| Python | https://docs.python.org/3/tutorial/ | Days 1–12 |
+| FastAPI | https://fastapi.tiangolo.com/tutorial/ | Days 14–15 |
+| Pydantic v2 | https://docs.pydantic.dev/latest/ | Day 16 |
+| SQL practice | https://sqlbolt.com | Days 17–18 |
+| SQLAlchemy 2.0 | https://docs.sqlalchemy.org/en/20/tutorial/ | Days 19–20 |
+| Alembic | https://alembic.sqlalchemy.org/en/latest/tutorial.html | Day 21 |
+| Celery | https://docs.celeryq.dev/en/stable/getting-started/ | Day 23 |
+| Redis | https://redis.io/docs/latest/develop/ | Day 23 |
+| pytest | https://docs.pytest.org/en/stable/getting-started.html | Day 24 |
+
+**Weekly habits**
+1. Read one teammate's dms-backend PR every week and understand every line.
 2. Use `http://localhost:8000/docs` (Swagger) as your playground.
-3. Keep a notes file of the JS → Python mappings you discover.
-4. Ask Claude to explain a file "like I'm a React developer", or to quiz you at each checkpoint.
+3. Add any new JS → Python mapping you discover to this file.
+4. Ask Claude to explain a dms-backend file "like I'm a React developer", or to quiz you by Q-number.
+
+---
+---
+
+# 🏗️ Final Project: build a real feature in dms-backend
+**Unlocks after Days 1–26 are ✅.** You write the code; Claude guides and reviews.
+
+**Feature: Driver Notes**, so dispatchers can add notes to a driver ("prefers mornings", "van has a tail-lift").
+
+| Step | What you build | Uses |
+|---|---|---|
+| 1 | Branch `ay-BJS-xxxx-driver-notes` | T139 |
+| 2 | Model `DriverNotes` with `TimestampMixin` + soft delete | T107–T109 |
+| 3 | Alembic migration, reviewed + `upgrade head` | T115–T118 |
+| 4 | Schemas: `DriverNoteCreate`, `DriverNoteUpdate`, `DriverNoteResponse` | T91–T96 |
+| 5 | Routes: `POST /drivers/{id}/notes`, `GET /drivers/{id}/notes` (paginated), `PUT /notes/{id}`, `DELETE /notes/{id}` (soft) | T81–T90 |
+| 6 | `@check_permission` + `client_id` filtering | T122–T123 |
+| 7 | Cache the GET list in Redis (5 min) + invalidate on changes | T124–T125 |
+| 8 | Celery task: notify the depot manager when a note is marked urgent | T126 |
+| 9 | Tests: create, list, 404, permission denied | T129–T133 |
+| 10 | `make lint` clean → PR with a description | T140–T143 |
+
+🎯 **Done when:** the PR checklist (T143) is fully ticked and the tests pass.
